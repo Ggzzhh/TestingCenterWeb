@@ -40,6 +40,6 @@ README
 
 ## 后台编辑器
 
-    使用百度免费的UEditor富文本编辑器
-    [官方github地址](https://github.com/fex-team/ueditor)
+>使用百度免费的UEditor富文本编辑器
+>[官方github地址](https://github.com/fex-team/ueditor)
 
