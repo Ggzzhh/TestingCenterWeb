@@ -7,7 +7,7 @@ README
 
 
 ## 项目结构
-    * 初步设定，后期继续增加
+    初步设定，后期继续增加
     |-TestingCenterWeb
         |-app/                  网站应用
             |-templates/        静态模板
@@ -17,6 +17,11 @@ README
                 |-errors.py     错误处理
                 |-forms.py      表单处理
                 |-views.py      视图处理
+            |-admin/            管理后台
+                |-__init__.py   后台初始化设定
+                |-errors.py     后台错误处理
+                |-forms.py      后台表单处理
+                |-views.py      后台视图处理
             |-__init__.py       网站初始化
             |-email.py          邮箱相关操作
             |-models.py         模板相关
@@ -28,7 +33,7 @@ README
         |-venv/                 版本控制
         |-requirements.txt      所有依赖包
         |-config.py             存储配置
-        [test]: |-manage.py             用于启动程序以及其他的程序任务
+        |-manage.py             用于启动程序以及其他的程序任务
 
 
 ## 角色设定
@@ -40,6 +45,10 @@ README
 
 ## 后台编辑器
 
->使用百度免费的UEditor富文本编辑器
+使用百度免费的UEditor富文本编辑器
+
 >[官方github地址](https://github.com/fex-team/ueditor)
 
+
+## 后台管理
+    TODO: 设计实现一个后台管理页面 可以用于多种情况
