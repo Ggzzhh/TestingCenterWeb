@@ -47,7 +47,7 @@ class Config:
     # 管理员邮箱
     ADMIN_MAIL = os.environ.get('FLASKY_ADMIN')
 
-    # SSL安全协议开关
+    # SSL安全协议开关 False会打开
     SSL_DISABLE = True
 
     # 分页设置 暂时为空

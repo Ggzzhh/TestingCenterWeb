@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+	<h1>测试</h1>
+	<p id="test"></p>
+	<div class="msg"></div>
+{% endblock page_content%}
+
+{% block scripts %}
+	{{ super() }}
+	{{ moment.include_moment() }}
+	<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+	<script>
+		$(document).ready(function () {
+				$.ajax({
+						url: "{{ url_for('admin.admin_index') }}",
+						dataType: "json",
+						type: "GET",
+						success: function (data) {
+								alert(data);
+            }
+				})
+    })
+	</script>
+
+{% endblock scripts %}
