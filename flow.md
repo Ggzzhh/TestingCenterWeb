@@ -10,3 +10,13 @@
     * 在app下个大文件夹内的__init__文件中构造蓝图，并在此进行蓝图注册
     
 3. 设置manage.py 管理整个app
+
+4. 注意Flask-Login要求实现的用户方法，否则会报错，如果不使用，暂时不要注册。
+   FlaskLogin 提供了一个 UserMixin 类
+
+5. 制作网站后台页面
+    * 实现登录功能
+    * 加密使用：
+        * Flask-Login：管理已登录用户的用户会话。
+        * Werkzeug：计算密码散列值并进行核对。
+        * itsdangerous：生成并核对加密安全令牌

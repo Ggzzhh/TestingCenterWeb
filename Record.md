@@ -8,3 +8,10 @@
 
 ## PyCharm新建Flask项目无法关联jinja2的问题
     设置Python Template Lanuages 即可
+    
+## 关于Flask_login
+* 出现错误:<br>
+ `No user_loader has been installed for this LoginManager. 
+ Add one with the 'LoginManager.user_loader' decorator.`
+ <br>原因是:flask要求用户实现一个回调函数 返回用户对象或者None
+ 在model文件中实现

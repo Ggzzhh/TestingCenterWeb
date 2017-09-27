@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 
-from flask import url_for, request, jsonify
+from flask import url_for, render_template, redirect, request
+from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
+from .forms import AdminLoginForm
+from ..models import Administrator
 
 
 @manage.route('/')
-def admin_index():
+@login_required
+def index():
     """管理页面首页"""
-
-    message = {
-        'msg1': '这是信息1',
-        'msg2': {
-            'msg2-1': '信息2-1',
-            'msg2-2': '信息2-2'
-        }
-    }
-
-    return jsonify(message)
+    return render_template('admin/index.html')
 
 
-@manage.route('/', methods=["POST", "PUT"])
-def admin_test_new():
-    """测试用"""
-    data = request.json
-    print(data)
-    if data.get('msg') is not None:
-        return jsonify({'msg': '成功'}, 201)
+@manage.route('/login', methods=["POST", "GET"])
+def login():
+    """后台管理登录页面"""
+    form = AdminLoginForm()
+    if form.validate_on_submit():
+        admin = Administrator()
+        admin = admin.query.filter_by(username=form.username.data).first()
+        if admin is not None and admin.verify_password(form.password.data):
+            login_user(admin)
+            return redirect(request.args.get('next') or url_for('manage.index'))
+    return render_template('admin/login.html', form=form)

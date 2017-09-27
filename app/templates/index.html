@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+	<h1>测试</h1>
+	<p>如果您点击我，我会消失。</p>
+	<p>点击我，我会消失。</p>
+	<p>也要点击我哦。</p>
+	<div class="msg"></div>
+	<button id="test" class="test">测试</button>
+{% endblock page_content%}
+
+{% block scripts %}
+	{{ super() }}
+	{{ moment.include_moment() }}
+	<script>
+      $(document).ready(function () {
+          $("#test").click(function () {
+              $(this).hide();
+              $.ajax({
+                  url: "{{ url_for('manage.index') }}",
+                  dataType: "json",
+                  type: "GET",
+                  success: function (data) {
+                      for (x in data){
+                          alert(data[x]);
+                      }
+                  }
+              });
+          });
+
+      });
+	</script>
+
+{% endblock scripts %}
