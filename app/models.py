@@ -10,7 +10,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 @login_manager.user_loader
 def load_user(user_id):
-    """使用flask_login时必须实现的一个函数"""
+    """使用flask_login时必须实现的函数 返回None?"""
     return Administrator.query.get(int(user_id))
 
 
@@ -19,8 +19,9 @@ class Administrator(UserMixin, db.Model):
 
     def __init__(self, **kwargs):
         super(Administrator, self).__init__(**kwargs)
-        if Administrator.query.get(
-                username=current_app.config['ADMIN_USERNAME']) is None:
+        try:
+            Administrator.query.first()
+        except:
             self.register_admin()
 
     __tablename__ = 'administrator'

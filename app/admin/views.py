@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import url_for, render_template, redirect, request
+from flask import url_for, render_template, redirect, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
@@ -17,7 +17,7 @@ def index():
 
 @manage.route('/login', methods=["POST", "GET"])
 def login():
-    """后台管理登录页面"""
+    """管理系统登录页面"""
     form = AdminLoginForm()
     if form.validate_on_submit():
         admin = Administrator()
@@ -25,4 +25,15 @@ def login():
         if admin is not None and admin.verify_password(form.password.data):
             login_user(admin)
             return redirect(request.args.get('next') or url_for('manage.index'))
+        flash('用户名或密码错误！')
     return render_template('admin/login.html', form=form)
+
+
+@manage.route('/logout')
+@login_required
+def logout():
+    """管理系统登出"""
+    logout_user()
+    flash('退出成功')
+    return redirect(url_for('manage.login'))
+

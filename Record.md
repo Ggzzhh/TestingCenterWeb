@@ -7,11 +7,21 @@
 必须配置日志记录器，日志记录器的配置根据程序所在主机使用的平台而有所不同。
 
 ## PyCharm新建Flask项目无法关联jinja2的问题
-    设置Python Template Lanuages 即可
+    设置Python>Template>Lanuages
     
 ## 关于Flask_login
-* 出现错误:<br>
- `No user_loader has been installed for this LoginManager. 
- Add one with the 'LoginManager.user_loader' decorator.`
- <br>原因是:flask要求用户实现一个回调函数 返回用户对象或者None
- 在model文件中实现
+    * 出现错误:<br>
+         `No user_loader has been installed for this LoginManager. 
+         Add one with the 'LoginManager.user_loader' decorator.`
+     原因是:
+         flask要求用户实现一个回调函数 返回用户对象或者None
+         在model文件中实现
+ 
+## Flask 让jsonify返回的json串支持中文显示
+    设置 app.config['JSON_AS_ASCII'] = False
+参考资料：
+>http://blog.csdn.net/fo11ower/article/details/70062524
+
+## CSS 中height以及width 100%无效的问题
+    height:100% 必须从html开始一级一级顺延下来
+    width 则不用

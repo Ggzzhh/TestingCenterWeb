@@ -2,13 +2,15 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
-	<div class="row">
-		<h1 class="col-md-12">登录</h1>
-		<div class="col-md-2"></div>
-		<div class="col-md-8">
+
+	<div class="container row">
+		<div class="col-md-5"></div>
+		<div class="col-md-7">
+			<div class="page-header">
+				<h1>登录</h1>
+			</div>
 			{{ wtf.quick_form(form) }}
 		</div>
-		<div class="col-md-2"></div>
 	</div>
 
 
