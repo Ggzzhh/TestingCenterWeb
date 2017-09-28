@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"
 				type="text/css">
 {% endblock head %}
-
+{% block title %}浩瀚体育网站管理系统{% endblock title %}
 {% block navbar %}
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
@@ -29,10 +29,11 @@
 			<div id="navbar" class="navbar-collapse collapse" aria-expanded="false"
 					 style="height: 1px;">
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="{{ url_for('manage.index') }}">简 介</a></li>
+					<li><a href="{{ url_for('manage.index') }}">总 览</a></li>
 					<li>
-						<a href="#"><span class="glyphicon glyphicon-cog"
-															aria-hidden="true"></span> 设 置</a>
+						<a href="{{ url_for('manage.web_setting') }}"><span
+										class="glyphicon glyphicon-cog"
+										aria-hidden="true"></span> 设 置</a>
 					</li>
 					<li class="dropdown">
 						<a href="#" id="drop" data-toggle="dropdown" role="button"
@@ -41,14 +42,14 @@
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="drop">
-							<li><a href="#">活动</a></li>
-							<li><a href="#">活动</a></li>
-							<li><a href="#">活动</a></li>
+							<li><a href="#">文章</a></li>
+							<li><a href="#">文章</a></li>
+							<li><a href="#">文章</a></li>
 							<li role="separator" class="divider">分离器</li>
 							<li><a href="{{ url_for('.index') }}">NBA大事件</a></li>
 						</ul>
 					</li>
-					<li><a href="#">帮 助</a></li>
+					<li><a href="#">活动管理</a></li>
 					{% if current_user.is_authenticated %}
 						<li>
 							<a href="{{ url_for('.logout') }}">

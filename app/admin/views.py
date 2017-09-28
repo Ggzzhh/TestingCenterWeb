@@ -37,3 +37,9 @@ def logout():
     flash('退出成功')
     return redirect(url_for('manage.login'))
 
+
+@manage.route('/setting')
+@login_required
+def web_setting():
+    """管理系统相关设置"""
+    return render_template('admin/setting.html')

@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+	<div class="container">
+		<div class="page-header">
+			<h1>设置</h1>
+		</div>
+		<form>
+			<div class="form-group">
+				<label for="corporate_name">公司名称</label>
+				<input type="text" class="form-control" placeholder="None"
+							 id="corporate_name"/>
+			</div>
+			<div class="form-group">
+				<label for="contacts">联系人</label>
+				<input type="text" class="form-control" placeholder="None"
+							 id="contacts">
+			</div>
+			<div class="form-group">
+				<label for="phone_num">联系电话</label>
+				<input type="tel" class="form-control" placeholder="None"
+							 id="phone_num">
+			</div>
+			<div class="form-group">
+				<label for="address">办公地址</label>
+				<input type="text" class="form-control" placeholder="None" id="address">
+			</div>
+			<div class="form-group">
+				<label for="WeChat">微信号或公众号</label>
+				<input type="text" class="form-control" placeholder="None" id="WeChat">
+			</div>
+			<div class="form-group">
+				<label for="WeChat_img">微信二维码</label>
+				<div class="img-rounded">
+					<img src="{{ url_for('static', filename='image/logo.jpg') }}" alt=""
+							 class="img-thumbnail" width="140" height="140">
+				</div>
+					<input type="file" id="WeChat_img"/>
+				<p class="help-block">图片大小最好不要超过2M</p>
+			</div>
+			<div class="form-group">
+				<label for="about_me">关于我们</label>
+				<textarea type="text" class="form-control" placeholder="网站上的关于公司的介绍"
+									id="about_me" rows="3"></textarea>
+			</div>
+			<button class="btn btn-info">提 交</button>
+		</form>
+	</div>
+{% endblock page_content %}
