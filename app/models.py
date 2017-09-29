@@ -62,7 +62,7 @@ class WebSetting(db.Model):
     address = db.Column(db.String(128))
     phone_num = db.Column(db.Integer)
     WeChat = db.Column(db.String(32))
-    WeChat_img = db.Column(db.String(128))
+    WeChat_img = db.Column(db.Text)
     sina_blog = db.Column(db.String(64))
     email = db.Column(db.String(32))
     contacts = db.Column(db.String(32))

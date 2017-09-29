@@ -1,4 +1,8 @@
 /*全局css*/
+html {
+    position: relative;
+    min-height: 100%;
+}
 html,
 body {
     height: 100%;
@@ -7,8 +11,9 @@ body {
 }
 
 body {
-    padding-top: 70px;
+    margin-top: 70px;
     font-size: 1.5em;
+    margin-bottom: 60px;
 }
 
 .navbar {
@@ -20,3 +25,5 @@ body {
     padding: 10px 50px 50px 50px;
     margin-top: 150px;
 }
+
+

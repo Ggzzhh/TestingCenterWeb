@@ -34,17 +34,90 @@
 				<label for="WeChat_img">微信二维码</label>
 				<div class="img-rounded">
 					<img src="{{ url_for('static', filename='image/logo.jpg') }}" alt=""
-							 class="img-thumbnail" width="140" height="140">
+							 class="img-thumbnail" id="uploadPreview" width="200"
+							 height="200">
 				</div>
-					<input type="file" id="WeChat_img"/>
-				<p class="help-block">图片大小最好不要超过2M</p>
+				<br />
+				<input id="uploadImage" type="file" id="WeChat_img" accept="image/*"
+				/>
+				<p class="help-block">图片大小不要超过2M, 切保存时会保存为jpeg</p>
 			</div>
 			<div class="form-group">
 				<label for="about_me">关于我们</label>
 				<textarea type="text" class="form-control" placeholder="网站上的关于公司的介绍"
 									id="about_me" rows="3"></textarea>
 			</div>
-			<button class="btn btn-info">提 交</button>
+			<button class="btn btn-info" id="submit">提 交</button>
 		</form>
 	</div>
 {% endblock page_content %}
+
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+      $(document).ready(function () {
+          if (typeof FileReader === 'undefined') {
+              $('p').text("您的浏览器版本过低，无法使用图片预览功能，请尽快升级");
+              $("#uploadImage").attr("hidden", "True");
+          };
+
+          $("#uploadImage").change(function (obj) {
+              console.log('obj:' + obj);
+
+              var img = this.files[0];
+              console.log("img:" + img);
+
+              var reader = new FileReader();
+              console.log('reader:' + reader);
+
+              reader.onload = function () {
+                  // 压缩 经测试 确实会变小
+                  // 创建canvas元素
+                  var canvas = document.createElement("canvas");
+                  // 创建2d画布 getContext() 方法返回一个用于在画布上绘图的环境。
+                  var ctx = canvas.getContext('2d');
+                  var image = new Image();
+                  image.src = this.result;
+                  image.onload = function () {
+                      var old_width = image.width;
+                      var old_height = image.height;
+                      var width = image.width;
+                      var height = image.height;
+                      if (old_width > 200 && old_width >= old_height) {
+                          width = 200;
+                          height = (200 * old_height) / old_width;
+                      }
+                      if (old_height > 200 && old_width >= old_height ) {
+                          height = 200;
+                          width = (200 * old_width) / old_height;
+                      }
+                      canvas.width = width;
+                      canvas.height = height;
+
+                      ctx.drawImage(image, 0, 0, width, height);
+                      var newImage = canvas.toDataURL("image/jpeg", 0.7);
+                      console.log(newImage);
+											$('#uploadPreview').attr("src", newImage);
+                  };
+              };
+              reader.readAsDataURL(img);
+              console.log(img.length);
+          });
+      });
+
+      oFReader = new FileReader();
+
+      oFReader.onload = function (e) {
+          document.getElementById("uploadPreview").src = e.target.result;
+      };
+
+      function loadImageFile1() {
+          if (document.getElementById("uploadImage").files.length === 0) { return; }
+          var oFile = document.getElementById("uploadImage").files[0];
+          oFReader.readAsDataURL(oFile);
+          console.log(oFile.size);
+      }
+
+	</script>
+{% endblock scripts %}
