@@ -62,4 +62,7 @@ def create_app(config_name):
     from .admin import manage as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/manage')
 
+    from .api_1_0 import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api-v1.0')
+
     return app

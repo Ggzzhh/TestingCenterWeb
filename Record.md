@@ -25,3 +25,15 @@
 ## CSS 中height以及width 100%无效的问题
     height:100% 必须从html开始一级一级顺延下来
     width 则不用
+    
+## 每次变更js或者css文件后,需要清空记录后重新加载方可生效
+    目前chrome中是这样
+    
+## 在用jquery的事件时, 调用外部文件的方法
+    在事件的莫名函数内部调用
+ ```javascript
+ $("#uploadImage").change(function () {
+    upLoadImage(this.files[0], 'uploadPreview');
+ });
+ ```
+      

@@ -6,7 +6,8 @@
 	<meta name="author" content="Ggzzhh" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	{{ super() }}
-	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
+					}}"
 				type="text/css">
 {% endblock head %}
 {% block title %}浩瀚体育网站管理系统{% endblock title %}
@@ -85,5 +86,6 @@
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
-	<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/jquery.serializejson.min.js') }}"></script>
 {% endblock scripts %}
