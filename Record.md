@@ -36,4 +36,21 @@
     upLoadImage(this.files[0], 'uploadPreview');
  });
  ```
-      
+ 
+## Js 操作json
+    JSON.parse()	用于将一个 JSON 字符串转换为 JavaScript 对象。
+    JSON.stringify()	用于将 JavaScript 值转换为 JSON 字符串。
+    
+## 导航变色关键
+```javascript
+<script>
+    $(window).scroll(function () {
+        // scroll 目标发生滚动事件
+        // 如果.navbar 的距离top的偏移量大于50 添加类
+        if ($(".navbar").offset().top > 50) {
+            $(".navbar-fixed-top").addClass("top-nav");
+        }else {
+            $(".navbar-fixed-top").removeClass("top-nav");}
+    })
+</script>
+```

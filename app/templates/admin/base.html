@@ -7,17 +7,17 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	{{ super() }}
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
-					}}"
-				type="text/css">
+			}}"
+		  type="text/css">
 {% endblock head %}
 {% block title %}浩瀚体育网站管理系统{% endblock title %}
 {% block navbar %}
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<nav class="navbar navbar-inverse navbar-fixed-top my-navbar">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed"
-								data-toggle="collapse" data-target="#navbar"
-								aria-expanded="false" aria-controls="navbar">
+						data-toggle="collapse" data-target="#navbar"
+						aria-expanded="false" aria-controls="navbar">
 					<span class="sr-only">Toggle navigation</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -28,17 +28,17 @@
 				</a>
 			</div>
 			<div id="navbar" class="navbar-collapse collapse" aria-expanded="false"
-					 style="height: 1px;">
+				 style="height: 1px;">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="{{ url_for('manage.index') }}">总 览</a></li>
 					<li>
 						<a href="{{ url_for('manage.web_setting') }}"><span
-										class="glyphicon glyphicon-cog"
-										aria-hidden="true"></span> 设 置</a>
+								class="glyphicon glyphicon-cog"
+								aria-hidden="true"></span> 设 置</a>
 					</li>
 					<li class="dropdown">
 						<a href="#" id="drop" data-toggle="dropdown" role="button"
-							 aria-expanded="false" aria-haspopup="true">
+						   aria-expanded="false" aria-haspopup="true">
 							发 布
 							<span class="caret"></span>
 						</a>
@@ -71,7 +71,7 @@
 {% endblock navbar %}
 
 {% block content %}
-	<div class="container-fluid pad-top">
+	<div class="container-fluid pad-bottom">
 		{% for message in get_flashed_messages() %}
 			<div class="alert alert-warning">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -81,11 +81,24 @@
 		{% block page_content %}
 		{% endblock page_content%}
 	</div>
+	<div class="footer text-center navbar-fixed-bottom">维护邮箱：gggzh@139.com</div>
 {% endblock content %}
 
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
 	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/form.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/jquery.serializejson.min.js') }}"></script>
+	<script>
+
+	$(window).scroll(function () {
+            // scroll 目标发生滚动事件
+            // 如果.navbar 的距离top的偏移量大于50 添加类
+            if ($(".navbar").offset().top > 50) {
+                $(".navbar-fixed-top").addClass("bg-transparent");
+            }else {
+                $(".navbar-fixed-top").removeClass("bg-transparent");}
+        })
+	</script>
 {% endblock scripts %}

@@ -6,13 +6,53 @@
 	<meta name="author" content="Ggzzhh" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	{{ super() }}
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
-					}}"
-				type="text/css">
+	<link rel="stylesheet" href="{{ url_for('static',
+	filename='css/style.css')}}" type="text/css">
+
+	<style>
+		html, body {width:100%;height:100%;
+			background-color: #00a2d4;
+		} /*非常重要的样式让背景图片100%适应整个屏幕*/
+		.bg {display: table;width: 100%;height: 100%;padding: 100px 0;text-align: center;
+			color: #fff;
+			background-color: #000;
+			background-size: cover;}
+		.my-navbar {padding:20px 0;transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;}
+		.my-navbar a{background:transparent !important;color: #ff6164 !important}
+		.my-navbar a:hover {color:#45bcf9 !important;background:transparent;outline:0}
+		.my-navbar a {transition: color 0.5s ease-in-out;}/*-webkit-transition ;-moz-transition*/
+		.top-nav {padding:0;background:#000;}
+		button.navbar-toggle {background-color:#fbfbfb;}/*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
+		button.navbar-toggle > span.icon-bar {background-color:#dedede}
+	</style>
 {% endblock head %}
 
 {% block navbar %}
-	这里是导航条
+	<nav class="navbar navbar-fixed-top my-navbar" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#example-navbar-collapse">
+					<span class="sr-only">切换导航</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">菜鸟教程</a>
+			</div>
+			<div class="collapse navbar-collapse" id="example-navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">iOS</a></li>
+					<li><a href="#">SVN</a></li>
+					<li>
+						<a href="#">Asp.Net</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="bg"></div>
+	<p><a href="www.xiandanke.com">闲蛋客</a></p>
 {% endblock navbar %}
 
 {% block content %}
@@ -31,4 +71,14 @@
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
+	<script>
+        $(window).scroll(function () {
+            // scroll 目标发生滚动事件
+            // 如果.navbar 的距离top的偏移量大于50 添加类
+            if ($(".navbar").offset().top > 50) {
+                $(".navbar-fixed-top").addClass("top-nav");
+            }else {
+                $(".navbar-fixed-top").removeClass("top-nav");}
+        })
+	</script>
 {% endblock scripts %}

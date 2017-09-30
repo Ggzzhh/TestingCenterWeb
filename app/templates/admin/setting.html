@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
-	<div class="container">
+	<div class="container shadow">
 		<div class="page-header">
 			<h1>设置</h1>
 		</div>
@@ -10,17 +10,19 @@
 			<div class="form-group">
 				<label for="corporate_name">公司名称</label>
 				<input type="text" class="form-control" placeholder="None"
-							 name="corporate_name"/>
+					   name="corporate_name"/>
 			</div>
 			<div class="form-group">
 				<label for="contacts">联系人</label>
 				<input type="text" class="form-control" placeholder="None"
-							 name="contacts">
+					   name="contacts">
 			</div>
 			<div class="form-group">
 				<label for="phone_num">联系电话</label>
 				<input type="tel" class="form-control" placeholder="None"
-							 name="phone_num">
+					   name="phone_num" pattern="[0-9]{11}"
+					   oninvalid="setCustomValidity('请输入正确的手机号');"
+					   oninput="setCustomValidity('');">
 			</div>
 			<div class="form-group">
 				<label for="address">办公地址</label>
@@ -42,8 +44,8 @@
 				<label for="WeChat_img">微信二维码</label>
 				<div class="img-rounded">
 					<img src="{{ url_for('static', filename='image/logo.jpg') }}" alt=""
-							 class="img-thumbnail" id="uploadPreview" width="200"
-							 height="200">
+						 class="img-thumbnail" id="uploadPreview" width="200"
+						 height="200">
 				</div>
 				<br />
 				<input id="uploadImage" type="file" name="WeChat_img" accept="image/*"
@@ -53,7 +55,7 @@
 			<div class="form-group">
 				<label for="about_me">关于我们</label>
 				<textarea type="text" class="form-control" placeholder="网站上的关于公司的介绍"
-									name="about_me" rows="3"></textarea>
+						  name="about_me" rows="10"></textarea>
 			</div>
 			<button class="btn btn-info" >提 交</button>
 		</form>
@@ -64,42 +66,59 @@
 {% block scripts %}
 	{{ super() }}
 	<script>
-      if (typeof FileReader === 'undefined') {
-          $('p').text("您的浏览器版本过低，无法使用图片预览功能，请尽快升级");
-          $("#uploadImage").attr("hidden", "True");
-      }
+        if (typeof FileReader === 'undefined') {
+            $('p').text("您的浏览器版本过低，无法使用图片预览功能，请尽快升级");
+            $("#uploadImage").attr("hidden", "True");
+        }
 
-      // todo: 获取表单
+        // 写入获取的表单数据
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('api.web_setting') }}",
+            data: "",  // 最终会被转化为查询字符串跟在url后面,如：/your/url/?name=test&age=1
+            dataType: 'json',
+            success: function (data) {
+                // alert(data);
+                console.log(data);
+                infoSettingForm(data);
+            },
+            error: function () {
+                alert("获取数据出错，请跟管理员联系！");
+                window.location.href = '{{ url_for('manage.index') }}'
+            }
+        });
 
 
-      $("#uploadImage").change(function () {
-          upLoadImage(this.files[0], 'uploadPreview');
-      });
+        $("#uploadImage").change(function () {
+            upLoadImage(this.files[0], 'uploadPreview');
+        });
 
-      $('button').click(function (e) {
-          e.preventDefault();
-          // 获取表单的数据 以json形式
-          var json_data = $('form').serializeJSON();
-          // console.log(json_data);
-          var WeChat_img = document.getElementById('uploadPreview').src
-          json_data.WeChat_img = WeChat_img;
-          console.log(json_data);
-          // 提交并更新数据
-					// todo 把发送来的数据类型从bytes转为json
-					// 现在json_data 的类型是bytes
-          $.ajax({
-              type: 'POST',
-              url: "{{ url_for('api.update_web_setting') }}",
-              data: json_data,
-              dataType: 'json',
-              contentType: 'application/json;',
-              success: function (data) {
-                  console.log(data);
-              },
-              error: function (xhr, type) {
-                  alert(xhr, type);
-              }
-          })
-      });
+        $('button').click(function (e) {
+            // e.preventDefault();
+            // 获取表单的数据 以json形式
+            var json_data = $('form').serializeJSON();
+            // console.log(json_data);
+            var WeChat_img = document.getElementById('uploadPreview').src
+            json_data.WeChat_img = WeChat_img;
+
+            // 提交并更新数据
+            // 重要 把发送来的数据类型从bytes转为json
+            json_data = JSON.stringify(json_data);
+            console.log(json_data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.update_web_setting') }}",
+                data: json_data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    console.log(data);
+                    infoSettingForm(data);
+                },
+                error: function (xhr, type) {
+                    alert(xhr, type);
+                }
+            })
+        });
 	</script>
 {% endblock scripts %}

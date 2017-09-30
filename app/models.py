@@ -84,17 +84,29 @@ class WebSetting(db.Model):
 
     def from_json(self, json_data):
         """通过json数据更新网站设置"""
-        return WebSetting(
-            corporate_name=json_data.get('corporate_name'),
-            about_me=json_data.get('about_me'),
-            address=json_data.get('address'),
-            phone_num=json_data.get('phone_num'),
-            WeChat=json_data.get('WeChat'),
-            WeChat_img=json_data.get('WeChat_img'),
-            sina_blog=json_data.get('sina_blog'),
-            email=json_data.get('email'),
-            contacts=json_data.get('contacts')
-        )
+        setting = WebSetting.query.first()
+        if setting is None:
+            return WebSetting(
+                corporate_name=json_data.get('corporate_name'),
+                about_me=json_data.get('about_me'),
+                address=json_data.get('address'),
+                phone_num=json_data.get('phone_num'),
+                WeChat=json_data.get('WeChat'),
+                WeChat_img=json_data.get('WeChat_img'),
+                sina_blog=json_data.get('sina_blog'),
+                email=json_data.get('email'),
+                contacts=json_data.get('contacts')
+            )
+        self.corporate_name = json_data.get('corporate_name')
+        self.about_me = json_data.get('about_me')
+        self.address = json_data.get('address')
+        self.phone_num = json_data.get('phone_num')
+        self.WeChat = json_data.get('WeChat')
+        self.WeChat_img = json_data.get('WeChat_img')
+        self.sina_blog = json_data.get('sina_blog')
+        self.email = json_data.get('email')
+        self.contacts = json_data.get('contacts')
+        return self
 
 
 class SecondPageName(db.Model):
