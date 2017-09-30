@@ -6,12 +6,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from flask import current_app, request, url_for
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from markdown import markdown
+import bleach
 
 
 @login_manager.user_loader
 def load_user(user_id):
     """使用flask_login时必须实现的函数 返回None?"""
     return Administrator.query.get(int(user_id))
+
 
 class AnonymousUser(AnonymousUserMixin):
     """匿名用户类"""
@@ -66,6 +69,8 @@ class WebSetting(db.Model):
     sina_blog = db.Column(db.String(64))
     email = db.Column(db.String(32))
     contacts = db.Column(db.String(32))
+    about_me_html = db.Column(db.Text)
+
 
     def to_json(self):
         """把网站设置转换为字典 返回出去"""
@@ -107,6 +112,27 @@ class WebSetting(db.Model):
         self.email = json_data.get('email')
         self.contacts = json_data.get('contacts')
         return self
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        """
+        set事件的监听程序，只要about_me设置新值，该函数自动被调用
+        主要作用是把body字段中的文本渲染成HTML格式，结果在保存在body_html中
+        """
+        # 允许使用的html标签
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        # 转换过程
+        # 1.markdown将文本转换成html
+        # 2.bleach.clean 清除掉不符合白名单的标签
+        # 3.bleach.linkify 转换文本中类似url以及邮箱为a连接
+        target.about_me_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+# 监听set事件 只要body设置了新值，就会调用on_changed_body
+db.event.listen(WebSetting.about_me, 'set', WebSetting.on_changed_body)
 
 
 class SecondPageName(db.Model):

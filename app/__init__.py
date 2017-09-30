@@ -7,6 +7,8 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
 from flask_mail import Mail
+from flask_pagedown import PageDown
+from flask_wtf.csrf import CsrfProtect
 
 # 导入配置
 from config import config
@@ -18,6 +20,8 @@ login_manager = LoginManager()
 db = SQLAlchemy()
 moment = Moment()
 mail = Mail()
+pagedown = PageDown()
+csrf = CsrfProtect()
 
 # 设置登陆管理
 # 用户会话安全等级
@@ -49,6 +53,8 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    pagedown.init_app(app)
+    csrf.init_app(app)
 
     # 在正常使用时打开ssl安全协议
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:

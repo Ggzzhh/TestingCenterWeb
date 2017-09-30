@@ -38,6 +38,10 @@ body {
     min-height: 800px;
 }
 
+.shadow .form {
+    padding: 20px 60px;
+}
+
 .footer {
     padding: 20px;
     margin-top: 10px;
@@ -52,10 +56,15 @@ body {
     box-shadow: none !important;
 }
 
-.my-navbar a:hover {
-    color: #00a2d4 !important;
+.my-navbar {
+    transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
-.my-navbar {
+.my-navbar a:hover{
+    color: #008db8 !important;
+}
+
+.my-navbar a {
     color: #00a2d4 !important;
+    transition: color 0.5s ease-in-out;
 }

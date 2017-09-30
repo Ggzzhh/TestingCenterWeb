@@ -54,3 +54,13 @@
     })
 </script>
 ```
+
+## 使用pagedown来修饰markdown富文本
+
+    给app注册pagedown类
+    使用页面插入  `{{ pagedown.include_pagedown() }}`
+    在modles的模型中处理markdown文本 因为
+    
+## 使用flask_wtf 进行 CSRF 保护
+参考:
+><http://flask-wtf.readthedocs.io/en/stable/csrf.html?highlight=csrf>

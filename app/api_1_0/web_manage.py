@@ -20,6 +20,8 @@ def web_setting():
 def update_web_setting():
     """更新网站设置"""
     setting = WebSetting.query.first()
+    if setting is None:
+        setting = WebSetting()
     json_data = request.get_json()
     if json_data is None:
         return jsonify({'value': 'None'})

@@ -6,42 +6,42 @@
 		<div class="page-header">
 			<h1>设置</h1>
 		</div>
-		<form>
+		<form class="form">
 			<div class="form-group">
-				<label for="corporate_name">公司名称</label>
+				<label class="control-label" for="corporate_name">公司名称</label>
 				<input type="text" class="form-control" placeholder="None"
 					   name="corporate_name"/>
 			</div>
 			<div class="form-group">
-				<label for="contacts">联系人</label>
+				<label class="control-label" for="contacts">联系人</label>
 				<input type="text" class="form-control" placeholder="None"
 					   name="contacts">
 			</div>
 			<div class="form-group">
-				<label for="phone_num">联系电话</label>
+				<label class="control-label" for="phone_num">联系电话</label>
 				<input type="tel" class="form-control" placeholder="None"
 					   name="phone_num" pattern="[0-9]{11}"
 					   oninvalid="setCustomValidity('请输入正确的手机号');"
 					   oninput="setCustomValidity('');">
 			</div>
 			<div class="form-group">
-				<label for="address">办公地址</label>
+				<label class="control-label" for="address">办公地址</label>
 				<input type="text" class="form-control" placeholder="None" name="address">
 			</div>
 			<div class="form-group">
-				<label for="WeChat">邮 箱</label>
+				<label  class="control-label" for="WeChat">邮 箱</label>
 				<input type="email" class="form-control" placeholder="None" name="email">
 			</div>
 			<div class="form-group">
-				<label for="WeChat">新浪微博</label>
+				<label class="control-label" for="WeChat">新浪微博</label>
 				<input type="text" class="form-control" placeholder="None" name="sina_blog">
 			</div>
 			<div class="form-group">
-				<label for="WeChat">微信号或公众号</label>
+				<label class="control-label" for="WeChat">微信号或公众号</label>
 				<input type="text" class="form-control" placeholder="None" name="WeChat">
 			</div>
 			<div class="form-group">
-				<label for="WeChat_img">微信二维码</label>
+				<label class="control-label" for="WeChat_img">微信二维码</label>
 				<div class="img-rounded">
 					<img src="{{ url_for('static', filename='image/logo.jpg') }}" alt=""
 						 class="img-thumbnail" id="uploadPreview" width="200"
@@ -53,10 +53,45 @@
 				<p class="help-block">图片大小不要超过2M, 切保存时会保存为jpeg</p>
 			</div>
 			<div class="form-group">
-				<label for="about_me">关于我们</label>
-				<textarea type="text" class="form-control" placeholder="网站上的关于公司的介绍"
-						  name="about_me" rows="10"></textarea>
+				<label class="control-label" for="about_me">关于我们</label>
+				<div class="text-danger">
+					<small>
+					这里使用了markdown格式的编辑器 下方可查看预览
+					 >>> <a href="http://www.jianshu.com/p/075d7cac8fef"
+							target="_blank">查看使用教程</a>
+					</small>
+
+				</div>
+
+				<div class="flask-pagedown">
+					<textarea class="form-control flask-pagedown-input"
+							  id="flask-pagedown-body" name="about_me"
+							  rows="10"></textarea>
+				</div>
+				<div class="flask-pagedown-preview"
+					 id="flask-pagedown-body-preview"></div>
 			</div>
+
+			<script type="text/javascript">
+                f = function() {
+                    if (typeof flask_pagedown_converter === "undefined")
+                        flask_pagedown_converter = Markdown.getSanitizingConverter().makeHtml;
+                    var textarea = document.getElementById("flask-pagedown-body");
+                    var preview = document.getElementById("flask-pagedown-body-preview");
+                    textarea.onkeyup = function() {
+                        preview.innerHTML = flask_pagedown_converter(textarea.value);
+                    };
+                    textarea.onkeyup.call(textarea);
+                };
+                if (document.readyState === 'complete')
+                    f();
+                else if (window.addEventListener)
+                    window.addEventListener("load", f, false);
+                else if (window.attachEvent)
+                    window.attachEvent("onload", f);
+                else
+                    f();
+			</script>
 			<button class="btn btn-info" >提 交</button>
 		</form>
 	</div>
@@ -65,6 +100,7 @@
 
 {% block scripts %}
 	{{ super() }}
+	{{ pagedown.include_pagedown() }}
 	<script>
         if (typeof FileReader === 'undefined') {
             $('p').text("您的浏览器版本过低，无法使用图片预览功能，请尽快升级");
@@ -116,7 +152,7 @@
                     infoSettingForm(data);
                 },
                 error: function (xhr, type) {
-                    alert(xhr, type);
+                    alert('提交出错');
                 }
             })
         });
