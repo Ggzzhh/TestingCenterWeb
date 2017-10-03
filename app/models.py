@@ -137,5 +137,27 @@ db.event.listen(WebSetting.about_me, 'set', WebSetting.on_changed_body)
 
 class SecondPageName(db.Model):
     """发布文章二级页面名称管理表"""
+    __tablename__ = 'nav_settings'
     id = db.Column(db.Integer, primary_key=True)
-    second_page_name = db.Column(db.String(32))
+    page_name = db.Column(db.String(32))
+
+    def to_json(self):
+        names = SecondPageName.query.all()
+        json_data = {}
+        if not names:
+             json_data = {
+                 'num': 0
+             }
+        else:
+            json_data = {
+                'num': len(names),
+                'names': [name.page_name for name in names]
+            }
+        return json_data
+
+    def from_json(self, json_data):
+        names = SecondPageName.query.all()
+        if not names:
+            names = json_data.get('names')
+        return names
+            

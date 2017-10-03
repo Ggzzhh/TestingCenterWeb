@@ -43,3 +43,10 @@ def logout():
 def web_setting():
     """管理系统相关设置"""
     return render_template('admin/setting.html')
+
+
+@manage.route('/nav_setting')
+@login_required
+def nav_setting():
+    """导航栏相关设置"""
+    return render_template('admin/nav-setting.html')

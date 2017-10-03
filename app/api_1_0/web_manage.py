@@ -31,3 +31,11 @@ def update_web_setting():
     return jsonify(setting.to_json())
 
 
+@api.route('/nav_setting', methods=["GET"])
+def get_nav_setting():
+    """更新导航设置"""
+    nav_names = SecondPageName.query.all()
+    if not nav_names:
+        return jsonify({'num': 0})
+    return jsonify(SecondPageName().to_json())
+

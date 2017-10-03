@@ -1,0 +1,109 @@
+{% extends 'admin/base.html' %}
+
+{% block page_content %}
+    <div class="container shadow">
+        <div class="page-header text-right">
+            <h1>导航设置</h1>
+        </div>
+        <form class="form" id="form">
+        </form>
+        <div class="pad-left">
+            <div class="col-md-6 col-sm-6 col-xs-6" >
+                <button class="btn btn-info">提交</button>
+            </div>
+            <div class="append text-right col-md-6 col-sm-6 col-xs-6 pull-right">
+            </div>
+        </div>
+
+    </div>
+{% endblock page_content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        var old_names;
+        var id = 1;
+        var num = 0;
+        $.ajax({
+            type: 'GET',
+            url: "{{ url_for('api.get_nav_setting') }}",
+            data: "",
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.num);
+                var content;
+                if (data.num === undefined || data.num === 0){
+                    $('button').hide();
+                    content = "<h3>现在没有自定义导航</h3>";
+                    $('.append').html("<a class='btn' " +
+                        "onclick='append()' id='append'>" +
+                        "<span class='glyphicon glyphicon-plus'><span> " +
+                        "添加一个导航" +
+                        "</a>");
+                }
+                else{
+                    num = data.num;
+                    old_names = data.names;
+
+                    for (old_name in old_names){
+                        content += "<div class='form-group'>" +
+                            "<label class='control-label' for='nav" + id +
+                            "'>导航" + id + "</label>" +
+                            "<input type='text' class='form-control' " +
+                            "value='" + old_name + "'" + "name='nav" + id + "'/>" +
+                            "</div>";
+                    }
+                    if (num < 4 && num !== 0){
+                        $('.append').html("<a class='btn' onclick='append()' " +
+                            "id='append'>" +
+                            "<span class='glyphicon glyphicon-plus'><span> " +
+                            "添加一个导航" +
+                            "</a>");
+                    }
+                }
+                $('form').html(content);
+
+            },
+            error: function () {
+                alert('出现错误，联系维护')
+            }
+        });
+
+        function append() {
+            $('button').show();
+            var form = document.getElementById('form');
+            if (num === 0) {
+                form.innerHTML = '';
+            }
+            if (num < 3) {
+                form.innerHTML += "<div class='form-group'>" +
+                    "<label class='control-label' for='nav" + id +
+                    "'>导航" + id + "</label>" +
+                    "<input type='text' class='form-control' " +
+                    "value='None'" + "name='nav" + id + "'/>" +
+                    "</div>";
+                id++;
+                num ++;
+            }
+            else if (num === 3) {
+                form.innerHTML += "<div class='form-group'>" +
+                    "<label class='control-label' for='nav" + id +
+                    "'>导航" + id + "</label>" +
+                    "<input type='text' class='form-control' " +
+                    "value='None'" + "name='nav" + id + "'/>" +
+                    "</div>";
+                id++;
+                num ++;
+                $('#append').hide();
+            }
+        }
+
+        $('button').click(function () {
+            var json_data = $('form').serializeJSON();
+            json_data = JSON.stringify(json_data);
+            console.log(json_data);
+        });
+
+
+    </script>
+{% endblock scripts %}

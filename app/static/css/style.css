@@ -19,12 +19,12 @@ body {
     box-shadow: 0 2px 4px 2px rgba(0,0,0,0.4);
     height: 50px;
 }
-.navbar a {
-    background:transparent !important;
-}
-.navbar a:hover {
-    background:transparent;
-}
+/*.navbar a {*/
+    /*background:transparent !important;*/
+/*}*/
+/*.navbar a:hover {*/
+    /*background:transparent;*/
+/*}*/
 
 .login {
     padding: 10px 50px 50px 50px;
@@ -34,11 +34,15 @@ body {
 .shadow {
     box-shadow: 0 0 10px 10px rgba(15, 15, 15, 0.4);
     padding-bottom: 20px;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
     min-height: 800px;
 }
 
 .shadow .form {
+    padding: 20px 60px;
+}
+
+.pad-left {
     padding: 20px 60px;
 }
 
@@ -51,9 +55,9 @@ body {
 }
 
 .bg-transparent{
-    background:transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
+    /*background:transparent !important;*/
+    /*border: 0 !important;*/
+    /*box-shadow: none !important;*/
 }
 
 .my-navbar {
@@ -67,4 +71,8 @@ body {
 .my-navbar a {
     color: #00a2d4 !important;
     transition: color 0.5s ease-in-out;
+}
+
+.container {
+    min-height: 800px;
 }
