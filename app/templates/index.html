@@ -1,15 +1,51 @@
 {% extends 'base.html' %}
 
 {% block page_content %}
-	<h1>测试</h1>
-	<p>如果您点击我，我会消失。</p>
-	<p>点击我，我会消失。</p>
-	<p>也要点击我哦。</p>
-	<div class="msg"></div>
-	<button id="test" class="test">测试</button>
+
+	<div id="editor">
+		<p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+	</div>
+	<button>确定</button>
+
+
 {% endblock page_content%}
 
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
+	<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+	<script type="text/javascript" src="{{ url_for('static',
+	filename='js/wangEditor.min.js')}}" ></script>
+	<script type="text/javascript">
+        var E = window.wangEditor;
+        var editor = new E('#editor');
+        // 或者 var editor = new E( document.getElementById('#editor') )
+
+        // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+        // editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+        editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
+
+        // 配置
+        editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'list',  // 列表
+            'justify',  // 对齐方式
+            'emoticon',  // 表情
+            'image',  // 插入图片
+            'undo',  // 撤销
+            'redo'  // 重复
+        ];
+
+        editor.create();
+        $('button').click(function () {
+            console.log(editor.txt.html())
+        })
+	</script>
 {% endblock scripts %}

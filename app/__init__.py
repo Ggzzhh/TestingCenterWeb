@@ -54,7 +54,7 @@ def create_app(config_name):
     db.init_app(app)
     login_manager.init_app(app)
     pagedown.init_app(app)
-    csrf.init_app(app)
+    # csrf.init_app(app)
 
     # 在正常使用时打开ssl安全协议
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:

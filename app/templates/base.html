@@ -71,16 +71,7 @@
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
-		<script type="text/javascript">
-        var csrf_token = "{{ csrf_token() }}";
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
-                }
-            }
-        });
-	</script>
+
 	<script>
         $(window).scroll(function () {
             // scroll 目标发生滚动事件
