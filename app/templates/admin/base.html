@@ -64,9 +64,9 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="drop">
-                            <li><a href="#">周边</a></li>
-                            <li><a href="#">资讯</a></li>
-                            <li><a href="#">赛事</a></li>
+							{% for name, url in current_user.get_names() %}
+								<li><a href="{{ url }}">{{ name }}</a></li>
+							{% endfor %}
                         </ul>
                     </li>
                     <li><a href="#">活动管理</a></li>
@@ -100,7 +100,6 @@
         {% block page_content %}
         {% endblock page_content%}
     </div>
-    <div class="footer text-center navbar-static-bottom">维护邮箱：gggzh@139.com</div>
 {% endblock content %}
 
 {% block scripts %}

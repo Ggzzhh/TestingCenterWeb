@@ -12,7 +12,7 @@ import bleach
 
 @login_manager.user_loader
 def load_user(user_id):
-    """使用flask_login时必须实现的函数 返回None?"""
+    """使用flask_login时必须实现的函数 返回None或者实例"""
     return Administrator.query.get(int(user_id))
 
 
@@ -54,6 +54,12 @@ class Administrator(UserMixin, db.Model):
         only_admin.password = current_app.config['ADMIN_PASSWORD']
         db.session.add(only_admin)
         db.session.commit()
+
+    def get_names(self):
+        names = []
+        for name in SecondPageName.query.all():
+            names.append((name.page_name, name.url))
+        return names
 
 
 class WebSetting(db.Model):
@@ -140,6 +146,7 @@ class SecondPageName(db.Model):
     __tablename__ = 'nav_settings'
     id = db.Column(db.Integer, primary_key=True)
     page_name = db.Column(db.String(32))
+    url = db.Column(db.String(64))
 
     def to_json(self):
         names = SecondPageName.query.all()
@@ -151,13 +158,38 @@ class SecondPageName(db.Model):
         else:
             json_data = {
                 'num': len(names),
-                'names': [name.page_name for name in names]
+                'names': [(name.id, name.page_name) for name in names],
             }
         return json_data
 
     def from_json(self, json_data):
-        names = SecondPageName.query.all()
-        if not names:
-            names = json_data.get('names')
+        name_1 = json_data.get('1')
+        name_2 = json_data.get('2')
+        name_3 = json_data.get('3')
+        names = []
+        if name_1:
+            pagename1 = SecondPageName.query.filter_by(id=1).first()
+            if pagename1 is None:
+                pagename1 = SecondPageName()
+            pagename1.page_name = name_1
+            pagename1.url = '#'
+            names.append(pagename1)
+        if name_2:
+            pagename2 = SecondPageName.query.filter_by(id=2).first()
+            if pagename2 is None:
+                pagename2 = SecondPageName()
+            pagename2.page_name = name_2
+            pagename2.url = '#'
+            names.append(pagename2)
+        if name_3:
+            pagename3 = SecondPageName.query.filter_by(id=3).first()
+            if pagename3 is None:
+                pagename3 = SecondPageName()
+            pagename3.page_name = name_3
+            pagename3.url = '#'
+            names.append(pagename3)
+        if len(SecondPageName.query.all()) > 3:
+            names = None
         return names
-            
+
+
