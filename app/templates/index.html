@@ -13,6 +13,7 @@
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
+
 	<!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
 	<script type="text/javascript" src="{{ url_for('static',
 	filename='js/wangEditor.min.js')}}" ></script>
@@ -42,7 +43,14 @@
             'undo',  // 撤销
             'redo'  // 重复
         ];
-
+        // 设置文件名
+        editor.customConfig.uploadFileName = 'File';
+        // 跨域传递 cookie
+        editor.customConfig.withCredentials = true;
+        var csrf_token = "{{ csrf_token() }}";
+        editor.customConfig.uploadImgParams = {
+            csrf_token: csrf_token   // 属性值会自动进行 encode ，此处无需 encode
+        };
         editor.create();
         $('button').click(function () {
             console.log(editor.txt.html())

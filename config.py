@@ -56,6 +56,10 @@ class Config:
     # 禁止转换asc码
     JSON_AS_ASCII = False
 
+    # 存储图片的位置
+    UPLOAD_FOLDER = 'app\static\image'
+
+
     # 分页设置 暂时为空
 
     # 配置类可以定义 init_app() 类方法，其参数是程序实例。

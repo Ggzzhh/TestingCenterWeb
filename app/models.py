@@ -24,6 +24,9 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+    def get_names(self):
+        return []
+
 login_manager.anonymous_user = AnonymousUser
 
 
@@ -76,7 +79,6 @@ class WebSetting(db.Model):
     email = db.Column(db.String(32))
     contacts = db.Column(db.String(32))
     about_me_html = db.Column(db.Text)
-
 
     def to_json(self):
         """把网站设置转换为字典 返回出去"""
@@ -147,6 +149,8 @@ class SecondPageName(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     page_name = db.Column(db.String(32))
     url = db.Column(db.String(64))
+    posts = db.relationship('Post', backref='category', lazy='dynamic',
+                            cascade='all, delete-orphan')
 
     def to_json(self):
         names = SecondPageName.query.all()
@@ -192,4 +196,33 @@ class SecondPageName(db.Model):
             names = None
         return names
 
+
+class Post(db.Model):
+    """发布文章模版"""
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    category_id = db.Column(db.Integer, db.ForeignKey('nav_settings.id'))
+
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id, _external=True),
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'category': [self.category, url_for('api.get_category',
+                                                id=self.category_id)]
+        }
+        return json_post
+
+    @staticmethod
+    def from_json(json_data):
+        """从前台传来的json数据中创建新文章"""
+        body_html = json_data.get('body_html')
+        category_id = json_data.get('category_id')
+        if body_html is None or body_html == '':
+            raise ValueError('文章不能为空或json数据错误')
+        if category_id is None:
+            raise ValueError('文章类别为空，有问题')
+        return Post(body_html=body_html, category_id=category_id)
 

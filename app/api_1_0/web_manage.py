@@ -63,7 +63,5 @@ def delete_nav_setting(id):
         db.session.delete(nav)
         db.session.commit()
         return jsonify({'result': 'ok'})
-    # a = SecondPageName.query.all()
-    # print([(x.page_name, x.id) for x in a])
     return jsonify({'result': 'error'})
 

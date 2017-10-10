@@ -73,6 +73,7 @@
 	{{ moment.include_moment() }}
 
 	<script>
+	var csrf_token = "{{ csrf_token() }}";
         $(window).scroll(function () {
             // scroll 目标发生滚动事件
             // 如果.navbar 的距离top的偏移量大于50 添加类
