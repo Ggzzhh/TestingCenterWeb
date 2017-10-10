@@ -37,6 +37,7 @@
                 data: data,
                 dataType: 'json',
                 contentType: false,
+				processData:false,
 				success: function (data) {
 					$('#Preview').attr('src', data.data);
                 },
