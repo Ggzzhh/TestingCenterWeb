@@ -1,3 +1,28 @@
+function Upload(img, url) {
+    // 用ajax上传图片或者文件
+    var data = new FormData();
+    data.append('File', img);
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        dataType: 'json',
+        contentType: false
+    })
+        .done(function(data) {    //上传成功
+            if(data.status == true){
+                console.log("success");
+                return data.data
+            }
+        })
+        .fail(function() {
+            console.log("GG,failed");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+}
+
 // 参数 img 是需要上传压缩的图片
 // 参数Preview_id 是预览的img标签的id
 // 默认: 宽度以及高度为200

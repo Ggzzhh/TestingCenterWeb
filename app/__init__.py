@@ -10,6 +10,7 @@ from flask_mail import Mail
 from flask_pagedown import PageDown
 from flask_wtf.csrf import CsrfProtect
 
+
 # 导入配置
 from config import config
 

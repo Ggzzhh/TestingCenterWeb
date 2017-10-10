@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import jsonify, request
+from flask import jsonify, request, flash
 
 from . import api
 from .. import db
@@ -45,7 +45,7 @@ def update_nav_setting():
     """更新导航设置"""
     json_data = request.get_json()
     nav_settings = SecondPageName().from_json(json_data)
-    if json_data is None or nav_settings is None:
+    if json_data is None or nav_settings is None or json_data['num'] > 3:
         return jsonify({'result': 'error'})
     for nav_setting in nav_settings:
         db.session.add(nav_setting)

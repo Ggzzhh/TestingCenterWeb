@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
 from .forms import AdminLoginForm
-from ..models import Administrator
+from ..models import Administrator, Post, SecondPageName
 
 
 @manage.route('/')
@@ -50,3 +50,20 @@ def web_setting():
 def nav_setting():
     """导航栏相关设置"""
     return render_template('admin/nav-setting.html')
+
+
+@manage.route('/posts/<category_id>')
+@login_required
+def get_posts(category_id):
+    """根据类别展示相应的页面"""
+    category = SecondPageName.query.get_or_404(category_id)
+    return render_template('admin/post.html', category=category)
+
+
+@manage.route('/new-posts/<category_id>', methods=["GET","POST"])
+@login_required
+def new_post(category_id):
+    """发布一篇新文章的页面"""
+    category = SecondPageName.query.get_or_404(category_id)
+    return render_template('admin/new-post.html', category=category)
+

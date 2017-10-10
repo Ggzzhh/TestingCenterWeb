@@ -24,6 +24,13 @@
         var names;
         var id = 1;
         var num = 0;
+        var alert = '<div class="alert alert-warning alert-dismissible" role="alert">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span></button>' +
+            '修改成功!' +
+            '</div>';
+
+
         $.ajax({
             type: 'GET',
             url: "{{ url_for('api.get_nav_setting') }}",
@@ -59,7 +66,7 @@
                             "</div>";
                         id ++;
                     }
-                    if (num < 3 && num !== 0){
+                    if (num < 3 && num !== 0 && id <= 3){
                         $('.append').html("<a class='btn' onclick='append()' " +
                             "id='append'>" +
                             "<span class='glyphicon glyphicon-plus'><span> " +
@@ -80,7 +87,7 @@
             if (num === 0) {
                 form.innerHTML = '';
             }
-            if (num < 3 && id < 4) {
+            if (num < 3 && id <= 3) {
                 num ++;
                 form.innerHTML += "<div class='form-group' id='nav"+ id +"'>" +
                     "<label class='control-label' for='nav" + id +
@@ -111,21 +118,22 @@
                         window.location.reload()
                     }
                     console.log('传送的数据出错' + num);
-					$('#nav'+my_id).remove();
+                    $('#nav'+my_id).remove();
                 },
                 error: function () {
                     console.log('提交出错!')
                 }
             });
-			id --;
-			num --;
-			if (num < 3 && id <4){
-			    $('#append').show();
-			}
+            id --;
+            num --;
+            if (num < 3 && id <4){
+                $('#append').show();
+            }
         };
 
         $('#submit').click(function () {
             var json_data = $('form').serializeJSON();
+            json_data.num = num;
             json_data = JSON.stringify(json_data);
             console.log(json_data);
             $.ajax({
@@ -137,7 +145,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.result === 'ok') {
-                        window.location.reload()
+						$('form').before(alert);
                     }
                     console.log('传送的数据出错')
                 },

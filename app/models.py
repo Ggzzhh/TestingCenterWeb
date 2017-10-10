@@ -156,9 +156,9 @@ class SecondPageName(db.Model):
         names = SecondPageName.query.all()
         json_data = {}
         if not names:
-             json_data = {
-                 'num': 0
-             }
+            json_data = {
+                'num': 0
+            }
         else:
             json_data = {
                 'num': len(names),
@@ -176,21 +176,21 @@ class SecondPageName(db.Model):
             if pagename1 is None:
                 pagename1 = SecondPageName()
             pagename1.page_name = name_1
-            pagename1.url = '#'
+            pagename1.url = url_for('manage.get_posts', category_id=1)
             names.append(pagename1)
         if name_2:
             pagename2 = SecondPageName.query.filter_by(id=2).first()
             if pagename2 is None:
                 pagename2 = SecondPageName()
             pagename2.page_name = name_2
-            pagename2.url = '#'
+            pagename2.url = url_for('manage.get_posts', category_id=2)
             names.append(pagename2)
         if name_3:
             pagename3 = SecondPageName.query.filter_by(id=3).first()
             if pagename3 is None:
                 pagename3 = SecondPageName()
             pagename3.page_name = name_3
-            pagename3.url = '#'
+            pagename3.url = url_for('manage.get_posts', category_id=3)
             names.append(pagename3)
         if len(SecondPageName.query.all()) > 3:
             names = None
@@ -201,6 +201,9 @@ class Post(db.Model):
     """发布文章模版"""
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(40), unique=True)
+    image_url = db.Column(
+        db.String(64), default='/static/image/default.jpg')
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     category_id = db.Column(db.Integer, db.ForeignKey('nav_settings.id'))

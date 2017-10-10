@@ -38,6 +38,7 @@ def upload():
                 file_urls.append(file_url)
     json_data = {
         'errno': 0,
-        'data': file_urls
+        'data': file_urls,
+        'status': 'true'
     }
     return jsonify(json_data)
