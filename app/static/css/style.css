@@ -9,13 +9,8 @@ body {
 body {
     margin-top: 70px;
     font-size: 1.5em;
-    margin-bottom: 60px;
 }
 
-.navbar {
-    box-shadow: 0 2px 4px 2px rgba(0,0,0,0.4);
-    height: 50px;
-}
 /*.navbar a {*/
     /*background:transparent !important;*/
 /*}*/
@@ -57,9 +52,9 @@ body {
     /*box-shadow: none !important;*/
 }
 
-.my-navbar {
-    transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
-}
+/*.my-navbar {*/
+    /*transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;*/
+/*}*/
 
 .my-navbar a:hover{
     color: #008db8 !important;
@@ -70,6 +65,8 @@ body {
     transition: color 0.5s ease-in-out;
 }
 
-.container {
-    min-height: 800px;
+.my-block {
+    margin-top: 10px;
+    margin-left: 5px;
+    padding: 5px;
 }

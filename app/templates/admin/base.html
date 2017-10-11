@@ -2,113 +2,113 @@
 
 {% block html_attribs %} lang='zh-CN' {% endblock html_attribs %}
 {% block head %}
-    <meta charset="UTF-8" />
-    <meta name="author" content="Ggzzhh" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
-            }}"
-          type="text/css">
+	<meta charset="UTF-8" />
+	<meta name="author" content="Ggzzhh" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	{{ super() }}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
+			}}"
+		  type="text/css">
 {% endblock head %}
 {% block title %}浩瀚体育网站管理系统{% endblock title %}
 {% block navbar %}
-    <nav class="navbar navbar-inverse navbar-fixed-top my-navbar">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed"
-                        data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="{{ url_for('manage.index') }}" class="navbar-brand">
-                    浩瀚体育网站管理系统
-                </a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse" aria-expanded="false"
-                 style="height: 1px;">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('manage.index') }}">总 览</a></li>
-                    <li class="dropdown">
-                        <a href="#" id="drop"
-                           data-toggle="dropdown" role="button" aria-expanded="false"
-                           aria-haspopup="true">
-                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                            设 置
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="drop">
-                            <li>
-                                <a href="{{ url_for('manage.web_setting') }}">
-                                    基础设置
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ url_for('manage.nav_setting') }}">
-                                    导航设置
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    其 它
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" id="drop" data-toggle="dropdown" role="button"
-                           aria-expanded="false" aria-haspopup="true">
-                            资讯管理
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="drop">
+	<nav class="navbar navbar-inverse navbar-fixed-top my-navbar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#navbar"
+						aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="{{ url_for('manage.index') }}" class="navbar-brand">
+					浩瀚体育网站管理系统
+				</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse" aria-expanded="false"
+				 style="height: 1px;">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="{{ url_for('manage.index') }}">总 览</a></li>
+					<li class="dropdown">
+						<a href="#" id="drop"
+						   data-toggle="dropdown" role="button" aria-expanded="false"
+						   aria-haspopup="true">
+							<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+							设 置
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="drop">
+							<li>
+								<a href="{{ url_for('manage.web_setting') }}">
+									基础设置
+								</a>
+							</li>
+							<li>
+								<a href="{{ url_for('manage.nav_setting') }}">
+									导航设置
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									其 它
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" id="drop" data-toggle="dropdown" role="button"
+						   aria-expanded="false" aria-haspopup="true">
+							资讯管理
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="drop">
 							{% for name, url in current_user.get_names() %}
 								<li><a href="{{ url }}">{{ name }}</a></li>
 							{% endfor %}
-                        </ul>
-                    </li>
-                    <li><a href="#">活动管理</a></li>
-                    {% if current_user.is_authenticated %}
-                        <li>
-                            <a href="{{ url_for('.logout') }}">
-                                <span class="glyphicon glyphicon-off"></span>  退 出
-                            </a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="{{ url_for('.login') }}">
-                                <span class="glyphicon glyphicon-user"></span>  登 录
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+						</ul>
+					</li>
+					<li><a href="#">活动管理</a></li>
+					{% if current_user.is_authenticated %}
+						<li>
+							<a href="{{ url_for('.logout') }}">
+								<span class="glyphicon glyphicon-off"></span>  退 出
+							</a>
+						</li>
+					{% else %}
+						<li>
+							<a href="{{ url_for('.login') }}">
+								<span class="glyphicon glyphicon-user"></span>  登 录
+							</a>
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
 {% endblock navbar %}
 
 {% block content %}
-    <div class="container-fluid pad-bottom">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-info">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-        {% block page_content %}
-        {% endblock page_content%}
-    </div>
+	<div class="container-fluid pad-bottom">
+		{% for message in get_flashed_messages() %}
+			<div class="alert alert-info">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% block page_content %}
+		{% endblock page_content%}
+	</div>
 {% endblock content %}
 
 {% block scripts %}
-    {{ super() }}
-    {{ moment.include_moment() }}
-    <script src="{{ url_for('static', filename='js/image.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/form.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.serializejson.min.js') }}"></script>
-    <script type="text/javascript">
+	{{ super() }}
+	{{ moment.include_moment() }}
+	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/form.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/jquery.serializejson.min.js') }}"></script>
+	<script type="text/javascript">
         var csrf_token = "{{ csrf_token() }}";
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
@@ -117,15 +117,22 @@
                 }
             }
         });
-    </script>
-    <script>
+	</script>
+	<script>
+        if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
+			(navigator.appVersion.split(";")[1]
+				.replace(/[ ]/g, "")
+				.replace("MSIE",""))<9){
+            alert("您的浏览器版本过低，请下载IE9及以上版本");
+        }
+
         $(window).scroll(function () {
             // scroll 目标发生滚动事件
             // 如果.navbar 的距离top的偏移量大于50 添加类
-            if ($(".navbar").offset().top > 50) {
-                $(".navbar-fixed-top").addClass("bg-transparent");
-            }else {
-                $(".navbar-fixed-top").removeClass("bg-transparent");}
+            // if ($(".navbar").offset().top > 50) {
+            //     $(".navbar-fixed-top").addClass("bg-transparent");
+            // }else {
+            //     $(".navbar-fixed-top").removeClass("bg-transparent");}
         })
-    </script>
+	</script>
 {% endblock scripts %}

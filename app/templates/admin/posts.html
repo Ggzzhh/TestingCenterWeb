@@ -1,0 +1,102 @@
+{% extends 'admin/base.html' %}
+{% block page_content %}
+	<div class="shadow container">
+		<div class="page-header text-right">
+			<h1>{{ category.page_name }}</h1>
+		</div>
+		<div class="container">
+			<a href="{{ url_for('manage.new_post', category_id=category.id)
+					}}" class="btn">
+				<span class="glyphicon glyphicon-plus"
+					  aria-hidden="true"></span>
+				添加一篇新{{ category.page_name }}
+			</a>
+			<div class="table row ">
+				<div class="col-md-4 col-sm-6">
+					<div class="thumbnail my-block">
+						<div class="text-center"><h4><b>测试</b></h4><hr/></div>
+						<div class="image">
+							<a href="#">
+								<img src="/static/image/default.jpg"
+									 class="img-responsive img-thumbnail">
+							</a>
+						</div>
+						<div class="caption">
+							<p class="text-right">
+								<button class="btn btn-danger">删除
+									<span class="glyphicon
+								glyphicon-star pull-left"
+										  aria-hidden="true"></span>
+								</button>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 col-sm-6">
+					<div class="thumbnail my-block">
+						<div class="text-center"><h4><b>测试</b></h4><hr/></div>
+						<div class="image">
+							<a href="#">
+								<img src="/static/image/default.jpg"
+									 class="img-responsive img-thumbnail">
+							</a>
+						</div>
+						<div class="caption">
+							<p class="text-right">
+								<button class="btn btn-danger">删除
+									<span class="glyphicon
+								glyphicon-star pull-left"
+										  aria-hidden="true"></span>
+								</button>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 col-sm-6">
+					<div class="thumbnail my-block">
+						<div class="text-center"><h4><b>测试</b></h4><hr/></div>
+						<div class="image">
+							<a href="#">
+								<img src="/static/image/default.jpg"
+									 class="img-responsive img-thumbnail">
+							</a>
+						</div>
+						<div class="caption">
+							<p class="text-right">
+								<button class="btn btn-danger">删除
+									<span class="glyphicon
+								glyphicon-star pull-left"
+										  aria-hidden="true"></span>
+								</button>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock page_content %}
+{% block scripts %}
+	{{ super() }}
+	{{ moment.include_moment() }}
+	<script>
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('api.get_posts', id=category.id) }}",
+            data: '',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+            },
+            error: function (xhr, type) {
+                console.log('出错');
+                console.log(xhr);
+                console.log(type);
+            }
+        });
+
+
+	</script>
+{% endblock scripts %}

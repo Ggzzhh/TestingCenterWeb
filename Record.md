@@ -66,9 +66,14 @@
 ><http://flask-wtf.readthedocs.io/en/stable/csrf.html?highlight=csrf>
 
 ## 使用编辑器上传多个图片
+    传入的数据类型是
 >设置文件名`editor.customConfig.uploadFileName = 'File';`<br/>
 获取多个图片`files = request.files.getlist("File")`
 <br>参考flask官方文档
 
 ## 数据库迁移报错 not up date
     删除表重新执行一遍 bd init    db migrate    db.create_all()
+
+## js中的FormDate对象发送至api
+    需要设置 ： processData:false, contentType: false,
+    

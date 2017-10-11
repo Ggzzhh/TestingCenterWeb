@@ -73,7 +73,13 @@
 	{{ moment.include_moment() }}
 
 	<script>
-	var csrf_token = "{{ csrf_token() }}";
+        if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
+            (navigator.appVersion.split(";")[1]
+                .replace(/[ ]/g, "")
+                .replace("MSIE",""))<9){
+            alert("您的浏览器版本过低，请下载IE9及以上版本");
+        }
+        var csrf_token = "{{ csrf_token() }}";
         $(window).scroll(function () {
             // scroll 目标发生滚动事件
             // 如果.navbar 的距离top的偏移量大于50 添加类

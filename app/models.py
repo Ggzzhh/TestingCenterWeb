@@ -155,18 +155,28 @@ class SecondPageName(db.Model):
     def to_json(self):
         names = SecondPageName.query.all()
         json_data = {}
+        lacks = []
         if not names:
+            lacks = [1, 2, 3]
             json_data = {
-                'num': 0
+                'num': 0,
+                'lacks': lacks
             }
         else:
+            for num in range(1, 4):
+                if SecondPageName.query.get(num) is None:
+                    lacks.append(num)
             json_data = {
                 'num': len(names),
+                'lacks': lacks,
                 'names': [(name.id, name.page_name) for name in names],
             }
         return json_data
 
+
     def from_json(self, json_data):
+        if json_data is None:
+            return None
         name_1 = json_data.get('1')
         name_2 = json_data.get('2')
         name_3 = json_data.get('3')
@@ -176,21 +186,21 @@ class SecondPageName(db.Model):
             if pagename1 is None:
                 pagename1 = SecondPageName()
             pagename1.page_name = name_1
-            pagename1.url = url_for('manage.get_posts', category_id=1)
+            pagename1.url = url_for('manage.posts', category_id=1)
             names.append(pagename1)
         if name_2:
             pagename2 = SecondPageName.query.filter_by(id=2).first()
             if pagename2 is None:
                 pagename2 = SecondPageName()
             pagename2.page_name = name_2
-            pagename2.url = url_for('manage.get_posts', category_id=2)
+            pagename2.url = url_for('manage.posts', category_id=2)
             names.append(pagename2)
         if name_3:
             pagename3 = SecondPageName.query.filter_by(id=3).first()
             if pagename3 is None:
                 pagename3 = SecondPageName()
             pagename3.page_name = name_3
-            pagename3.url = url_for('manage.get_posts', category_id=3)
+            pagename3.url = url_for('manage.posts', category_id=3)
             names.append(pagename3)
         if len(SecondPageName.query.all()) > 3:
             names = None
@@ -204,17 +214,22 @@ class Post(db.Model):
     title = db.Column(db.String(40), unique=True)
     image_url = db.Column(
         db.String(64), default='/static/image/default.jpg')
+    abstract = db.Column(db.String(200))
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     category_id = db.Column(db.Integer, db.ForeignKey('nav_settings.id'))
 
     def to_json(self):
         json_post = {
-            'url': url_for('api.get_post', id=self.id, _external=True),
+            'id': self.id,
+            'title': self.title,
+            'edit_url': url_for('manage.get_post', id=self.id, _external=True),
+            'image_url': self.image_url,
             'body_html': self.body_html,
+            'abstract': self.abstract,
             'timestamp': self.timestamp,
-            'category': [self.category, url_for('api.get_category',
-                                                id=self.category_id)]
+            'category': [self.category.page_name, url_for(
+                'manage.posts', category_id=self.category_id)]
         }
         return json_post
 
@@ -222,10 +237,11 @@ class Post(db.Model):
     def from_json(json_data):
         """从前台传来的json数据中创建新文章"""
         body_html = json_data.get('body_html')
-        category_id = json_data.get('category_id')
-        if body_html is None or body_html == '':
+        title = json_data.get('title')
+        image_url = json_data.get('image_url')
+        abstract = json_data.get('abstract')
+        if title is None or title == '':
             raise ValueError('文章不能为空或json数据错误')
-        if category_id is None:
-            raise ValueError('文章类别为空，有问题')
-        return Post(body_html=body_html, category_id=category_id)
+        return Post(body_html=body_html, abstract=abstract,
+                    title=title, image_url=image_url)
 

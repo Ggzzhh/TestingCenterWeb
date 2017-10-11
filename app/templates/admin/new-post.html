@@ -8,27 +8,43 @@
 			<div class="form-group">
 				<label class="control-label" for="title">标题</label>
 				<input type="text" class="form-control" placeholder="None"
-					   name="title"/>
+					   name="title" id="title" required/>
 			</div>
 			<div class="form-group">
-				<label class="control-label" for="image">展示图</label>
-				<div class="img-rounded thumbnail">
+				<label class="control-label" for="Preview">展示图</label>
+				<div class="thumbnail">
 					<img src="{{ url_for('static', filename='image/default.jpg') }}"
 						 alt="默认展示图" name="image" id="Preview" width="680"
 						 height="340">
 				</div>
 				<input id="uploadImage" type="file" name="image_url"
 					   accept="image/*"/>
-				<p class="help-block">图片大小不要超过2M</p>
+				<p class="help-block">图片大小不要超过2M, 长宽比为2:1</p>
 			</div>
+			<div class="form-group">
+				<label class="control-label" for="abstract">简介</label>
+				<textarea name="abstract" maxlength="200" id="abstract"
+						  placeholder="在这里输入文本，最多200字"
+						  class="form-control" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="editor" class="control-label">内容主体</label>
+				<div id="editor">
+					<p>内容主体</p>
+				</div>
+			</div>
+			<button class="btn btn-info" id="submit">提交</button>
 		</form>
 	</div>
 {% endblock %}
 {% block scripts %}
 	{{ super() }}
 	<script>
-        $('#uploadImage').change(function () {
-{#            var uploadUrl = Upload(this.files[0], "{{ url_for('main.upload') }}");#}
+        $('#uploadImage').change(function (e) {
+            if (this.files[0].size > 1024*1024*2){
+				alert('图片太大了！');
+				return;
+			}
             var data = new FormData();
             data.append('File', this.files[0]);
             $.ajax({
@@ -36,17 +52,85 @@
                 url: "{{ url_for('main.upload') }}",
                 data: data,
                 dataType: 'json',
+                // 不自动更改适配类型
                 contentType: false,
-				processData:false,
-				success: function (data) {
-					$('#Preview').attr('src', data.data);
+                // 发送的信息不需要被转化 设置为false
+                processData:false,
+                success: function (data) {
+                    $('#Preview').attr('src', data.data);
                 },
-				error: function () {
-					console.log('错误')
+                error: function () {
+                    console.log('错误')
                 }
             });
-
-
         });
+
+        $('#submit').click(function (e) {
+            var data = {};
+            data['title'] = $('#title').val();
+            data.abstract = $('#abstract').val();
+            data['image_url'] = $('img').attr('src');
+            data.body_html = editor.txt.html();
+            // console.log(data);
+            // console.log(typeof(data));
+			data = JSON.stringify(data);
+            $.ajax({
+				type: "POST",
+				url: "{{ url_for('api.new_post', id=category.id) }}",
+				data: data,
+				dataType: 'json',
+				contentType: 'application/json;',
+				success: function (data) {
+					console.log(data);
+					window.location.href = "{{ url_for('manage.posts', category_id=category.id) }}";
+                },
+				error: function (xhr, type) {
+					console.log('出错');
+					console.log(xhr);
+					console.log(type);
+                }
+			});
+			e.preventDefault()
+            // console.log(editor.txt.html())
+        })
+	</script>
+	<!-- 编辑器 -->
+	<script type="text/javascript" src="{{ url_for('static',
+	filename='js/wangEditor.min.js')}}" ></script>
+	<script type="text/javascript">
+        var E = window.wangEditor;
+        var editor = new E('#editor');
+        // 或者 var editor = new E( document.getElementById('#editor') )
+
+        // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+        // editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+        editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
+
+        // 配置
+        editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'list',  // 列表
+            'justify',  // 对齐方式
+            // 'emoticon',  // 表情
+            'image',  // 插入图片
+            'undo',  // 撤销
+            'redo'  // 重复
+        ];
+        // 设置文件名
+        editor.customConfig.uploadFileName = 'File';
+        // 跨域传递 cookie
+        editor.customConfig.withCredentials = true;
+        var csrf_token = "{{ csrf_token() }}";
+        editor.customConfig.uploadImgParams = {
+            csrf_token: csrf_token   // 属性值会自动进行 encode ，此处无需 encode
+        };
+        editor.create();
 	</script>
 {% endblock %}

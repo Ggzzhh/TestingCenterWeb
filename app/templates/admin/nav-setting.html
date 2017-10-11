@@ -21,15 +21,14 @@
 {% block scripts %}
 	{{ super() }}
 	<script>
-        var names;
-        var id = 1;
+        var lacks = [];
+        var content;
         var num = 0;
         var alert = '<div class="alert alert-warning alert-dismissible" role="alert">' +
             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span></button>' +
-            '修改成功!' +
+            '修改成功!3秒后自动刷新!' +
             '</div>';
-
 
         $.ajax({
             type: 'GET',
@@ -38,56 +37,79 @@
             dataType: 'json',
             success: function (data) {
                 console.log(data);
-                var content;
-                if (data.num === undefined || data.num === 0 ){
+                num = data.num;
+                lacks = data.lacks;
+                if (data.num < 1 || data.num === undefined){
                     $('button').hide();
                     content = "<h3>现在没有自定义导航</h3>";
-                    $('.append').html("<a class='btn' " +
-                        "onclick='append()' id='append'>" +
+                }else if (data.num >= 1){
+                    content = '';
+                    var names = data.names;
+                    for (var name in names){
+                        content += "<div class='form-group'>" +
+                            "<label class='control-label' " +
+                            "for='" + names[name][0] + "'>导航名</label>" +
+                            "<input type='text' class='form-control' " +
+                            "value='" + names[name][1] + "'" +
+                            "name='" + names[name][0] + "'/>" +
+                            "<button type='button' class='close' aria-label='Close' " +
+                            "onclick=delete_nav(" + names[name][0] + ")>" +
+                            "<span aria-hidden='true'>&times;</span></button>" +
+                            "</div>";
+                    }
+                }
+                if (num < 3){
+                    $('.append').html("<a class='btn' " + "id='append'" +
+                        "onclick='append()'>" +
                         "<span class='glyphicon glyphicon-plus'><span> " +
                         "添加一个导航" +
                         "</a>");
                 }
-                else{
-                    num = data.num;
-                    names = data.names;
-                    content = '';
-                    for (var old_name in names){
-                        content += "<div class='form-group'>" +
-                            "<label class='control-label' for='nav" + id +
-                            "'>导航名</label>" +
-                            "<input type='text' class='form-control' " +
-                            "value='" + names[old_name][1] + "'" + "name='" +
-                            names[old_name][0] +
-                            "'/>" +
-                            "<button type='button' class='close' aria-label='Close' " +
-                            "onclick=delete_nav(" + id + ")>" +
-                            "<span aria-hidden='true'>&times;</span></button>" +
-                            "</div>";
-                        id ++;
-                    }
-                    if (num < 3 && num !== 0 && id <= 3){
-                        $('.append').html("<a class='btn' onclick='append()' " +
-                            "id='append'>" +
-                            "<span class='glyphicon glyphicon-plus'><span> " +
-                            "添加一个导航" +
-                            "</a>");
-                    }
-                }
                 $('form').html(content);
             },
-            error: function () {
-                alert('出现错误，联系维护')
+            error: function (xhr, error) {
+                console.log(xhr);
+                console.log(error);
             }
         });
 
+        function delete_nav(id) {
+
+            $.ajax({
+                type: 'DELETE',
+                url: "/api-v1.0/nav-setting/" + id,
+                date: "",
+                data_type: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.result === 'ok') {
+                        window.location.reload()
+                    }else{
+                        console.log('传送的数据出错' + num);
+                        $('#nav'+id).remove();
+                        lacks.unshift(id);
+                    }
+                },
+                error: function (xhr, error) {
+                    console.log(xhr);
+                    console.log(error);
+                }
+            });
+
+            num --;
+            if (num < 3){
+                $('#append').show();
+            }
+        }
+
         function append() {
-            $('button').show();
+            $('#submit').show();
+            var id  = lacks.shift();
             var form = document.getElementById('form');
             if (num === 0) {
                 form.innerHTML = '';
             }
-            if (num < 3 && id <= 3) {
+            if (num < 3) {
                 num ++;
                 form.innerHTML += "<div class='form-group' id='nav"+ id +"'>" +
                     "<label class='control-label' for='nav" + id +
@@ -98,40 +120,13 @@
                     "onclick=delete_nav(" + id + ")>" +
                     "<span aria-hidden='true'>&times;</span></button>" +
                     "</div>";
-                id++;
             }
-            if (num === 3) {
+            if (num === 3){
                 $('#append').hide();
             }
         }
 
-        function delete_nav(my_id) {
-            console.log(my_id);
-            $.ajax({
-                type: 'DELETE',
-                url: "/api-v1.0/nav_setting/" + my_id,
-                date: "",
-                data_type: 'json',
-                success: function (data) {
-                    console.log(data);
-                    if (data.result === 'ok') {
-                        window.location.reload()
-                    }
-                    console.log('传送的数据出错' + num);
-                    $('#nav'+my_id).remove();
-                },
-                error: function () {
-                    console.log('提交出错!')
-                }
-            });
-            id --;
-            num --;
-            if (num < 3 && id <4){
-                $('#append').show();
-            }
-        };
-
-        $('#submit').click(function () {
+        $('#submit').click(function (e) {
             var json_data = $('form').serializeJSON();
             json_data.num = num;
             json_data = JSON.stringify(json_data);
@@ -145,9 +140,13 @@
                 success: function (data) {
                     console.log(data);
                     if (data.result === 'ok') {
-						$('form').before(alert);
+                        $('form').before(alert);
+                        setTimeout(function () {
+							window.location.reload()
+                        },3000);
+                    }else{
+                        console.log('传送的数据出错')
                     }
-                    console.log('传送的数据出错')
                 },
                 error: function () {
                     console.log('提交出错!')

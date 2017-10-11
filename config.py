@@ -59,8 +59,8 @@ class Config:
     # 存储图片的位置
     UPLOAD_FOLDER = 'app\static\image'
 
-
-    # 分页设置 暂时为空
+    # 分页设置
+    POSTS_PER_PAGE = 20
 
     # 配置类可以定义 init_app() 类方法，其参数是程序实例。
     # 在这个方法中，可以执行对当前 环境的配置初始化。

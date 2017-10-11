@@ -1,21 +1,10 @@
-{% extends 'admin/base.html' %}
-{% block page_content %}
-	<div class="shadow container">
-		<div class="page-header text-right">
-			<h1>{{ category.page_name }}</h1>
-		</div>
-		<div id="{{ category.id }}">
-			<a href="{{ url_for('manage.new_post', category_id=category.id)
-					}}">
-				<span class="glyphicon glyphicon-plus"
-					  aria-hidden="true"></span>
-				添加一篇新{{ category.page_name }}
-			</a>
-		</div>
-	</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Title</title>
+</head>
+<body>
 
-{% endblock page_content %}
-{% block scripts %}
-	{{ super() }}
-	{{ moment.include_moment() }}
-{% endblock scripts %}
+</body>
+</html>

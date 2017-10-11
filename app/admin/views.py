@@ -52,12 +52,12 @@ def nav_setting():
     return render_template('admin/nav-setting.html')
 
 
-@manage.route('/posts/<category_id>')
+@manage.route('/posts/<int:category_id>')
 @login_required
-def get_posts(category_id):
+def posts(category_id):
     """根据类别展示相应的页面"""
     category = SecondPageName.query.get_or_404(category_id)
-    return render_template('admin/post.html', category=category)
+    return render_template('admin/posts.html', category=category)
 
 
 @manage.route('/new-posts/<category_id>', methods=["GET","POST"])
@@ -67,3 +67,9 @@ def new_post(category_id):
     category = SecondPageName.query.get_or_404(category_id)
     return render_template('admin/new-post.html', category=category)
 
+
+@manage.route('/post/<int:id>')
+@login_required
+def get_post(id):
+    """获得某文章"""
+    return render_template('admin/post.html')

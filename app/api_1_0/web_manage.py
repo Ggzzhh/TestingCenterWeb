@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import jsonify, request, flash
+from flask import jsonify, request, flash, current_app, url_for
+from flask_login import login_required
 
 from . import api
 from .. import db
-from ..models import WebSetting, SecondPageName
+from ..models import WebSetting, SecondPageName, Post
 
 
-@api.route('/web_setting')
+@api.route('/web-setting')
+@login_required
 def web_setting():
     """获取网站设置"""
     setting = WebSetting.query.first()
@@ -16,7 +18,8 @@ def web_setting():
     return jsonify(setting.to_json())
 
 
-@api.route('/web_setting', methods=["POST", "PUT"])
+@api.route('/web-setting', methods=["POST", "PUT"])
+@login_required
 def update_web_setting():
     """更新网站设置"""
     setting = WebSetting.query.first()
@@ -31,16 +34,18 @@ def update_web_setting():
     return jsonify(setting.to_json())
 
 
-@api.route('/nav_setting', methods=["GET"])
+@api.route('/nav-setting', methods=["GET"])
+@login_required
 def get_nav_setting():
     """获取导航设置"""
     nav_names = SecondPageName.query.all()
     if not nav_names:
-        return jsonify({'num': 0})
+        return jsonify({'num': 0, 'lacks': [1, 2, 3]})
     return jsonify(SecondPageName().to_json())
 
 
-@api.route('/nav_setting', methods=['POST', 'PUT'])
+@api.route('/nav-setting', methods=['POST', 'PUT'])
+@login_required
 def update_nav_setting():
     """更新导航设置"""
     json_data = request.get_json()
@@ -53,7 +58,8 @@ def update_nav_setting():
     return jsonify({'result': 'ok'})
 
 
-@api.route('/nav_setting/<int:id>', methods=['DELETE'])
+@api.route('/nav-setting/<int:id>', methods=['DELETE'])
+@login_required
 def delete_nav_setting(id):
     """删除导航设置"""
     if id is None:
@@ -64,4 +70,56 @@ def delete_nav_setting(id):
         db.session.commit()
         return jsonify({'result': 'ok'})
     return jsonify({'result': 'error'})
+
+
+@api.route('/get-posts/<int:id>')
+@login_required
+def get_posts(id):
+    """获取某类别的文章"""
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.filter_by(category_id=id).order_by(
+        Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=True)
+    posts = pagination.items
+    # 上一页
+    prev = None
+    if pagination.has_prev:
+        prev = url_for('api.get_posts', id=id, page=page-1, _external=True)
+    # 下一页
+    next = None
+    if pagination.has_next:
+        next = url_for('api.get_posts', id=id, page=page+1, _external=True)
+
+    return jsonify({
+        'posts': [post.to_json() for post in posts],
+        'prev': prev,
+        'next': next,
+        'count': pagination.total
+    })
+
+
+@api.route('/post/<int:id>')
+@login_required
+def get_post(id):
+    """获得某文章"""
+    post = Post.query.get_or_404(id)
+    return jsonify(post.to_json())
+
+
+@api.route('/new-post/<int:id>', methods=["POST", "PUT"])
+@login_required
+def new_post(id):
+    """新建一篇文章"""
+    json_data = request.get_json()
+    if json_data is None or id is None:
+        return jsonify({'result': 'error'}), 400
+    post = Post.from_json(json_data)
+    if SecondPageName.query.filter_by(id=id).first():
+        post.category_id = id
+        db.session.add(post)
+        db.session.commit()
+        return jsonify({'result': 'ok'}), 201
+    return jsonify({'result': 'error'}), 400
+
 
