@@ -184,21 +184,21 @@ class SecondPageName(db.Model):
         if name_1:
             pagename1 = SecondPageName.query.filter_by(id=1).first()
             if pagename1 is None:
-                pagename1 = SecondPageName()
+                pagename1 = SecondPageName(id=1)
             pagename1.page_name = name_1
             pagename1.url = url_for('manage.posts', category_id=1)
             names.append(pagename1)
         if name_2:
             pagename2 = SecondPageName.query.filter_by(id=2).first()
             if pagename2 is None:
-                pagename2 = SecondPageName()
+                pagename2 = SecondPageName(id=2)
             pagename2.page_name = name_2
             pagename2.url = url_for('manage.posts', category_id=2)
             names.append(pagename2)
         if name_3:
             pagename3 = SecondPageName.query.filter_by(id=3).first()
             if pagename3 is None:
-                pagename3 = SecondPageName()
+                pagename3 = SecondPageName(id=3)
             pagename3.page_name = name_3
             pagename3.url = url_for('manage.posts', category_id=3)
             names.append(pagename3)

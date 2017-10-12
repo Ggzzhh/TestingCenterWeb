@@ -77,3 +77,14 @@
 ## js中的FormDate对象发送至api
     需要设置 ： processData:false, contentType: false,
     
+## 瀑布流布局使用js插件--masonry
+    初次加载
+    $('#容器id').masonry()
+    刷新
+    $('#容器id').masonry('reloadItems').masonry();
+cdn地址: <https://cdn.bootcss.com/masonry/4.2.0/masonry.pkgd.js>
+    
+## 无限制下拉刷新 jquery
+```javascript
+
+```

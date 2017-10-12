@@ -88,14 +88,17 @@ def get_posts(id):
         prev = url_for('api.get_posts', id=id, page=page-1, _external=True)
     # 下一页
     next = None
+    new_page = None
     if pagination.has_next:
         next = url_for('api.get_posts', id=id, page=page+1, _external=True)
+        new_page = page + 1
 
     return jsonify({
         'posts': [post.to_json() for post in posts],
         'prev': prev,
         'next': next,
-        'count': pagination.total
+        'count': pagination.total,
+        'new_page': new_page
     })
 
 

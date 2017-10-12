@@ -14,7 +14,27 @@
 			<div class="append text-right col-md-6 col-sm-6 col-xs-6 pull-right">
 			</div>
 		</div>
-
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content text-danger">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel"><b>警告</b></h4>
+					</div>
+					<div class="modal-body text-center">
+						<p>确定要删除么？</p>
+						<p>删除时会一并删除所有属于该导航的文章以及评论！</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn
+						btn-danger" id="delete">确定</button>
+						<button type="button" class="btn btn-default"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock page_content %}
 
@@ -74,32 +94,34 @@
         });
 
         function delete_nav(id) {
-
-            $.ajax({
-                type: 'DELETE',
-                url: "/api-v1.0/nav-setting/" + id,
-                date: "",
-                data_type: 'json',
-                success: function (data) {
-                    console.log(data);
-                    if (data.result === 'ok') {
-                        window.location.reload()
-                    }else{
-                        console.log('传送的数据出错' + num);
-                        $('#nav'+id).remove();
-                        lacks.unshift(id);
+            $('#myModal').modal('show');
+            $('#delete').on('click', function () {
+                $.ajax({
+                    type: 'DELETE',
+                    url: "/api-v1.0/nav-setting/" + id,
+                    date: "",
+                    data_type: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.result === 'ok') {
+                            window.location.reload()
+                        }else{
+                            console.log('传送的数据出错' + num);
+                            $('#nav'+id).remove();
+                            lacks.unshift(id);
+                        }
+                    },
+                    error: function (xhr, error) {
+                        console.log(xhr);
+                        console.log(error);
                     }
-                },
-                error: function (xhr, error) {
-                    console.log(xhr);
-                    console.log(error);
+                });
+
+                num --;
+                if (num < 3){
+                    $('#append').show();
                 }
             });
-
-            num --;
-            if (num < 3){
-                $('#append').show();
-            }
         }
 
         function append() {
@@ -142,7 +164,7 @@
                     if (data.result === 'ok') {
                         $('form').before(alert);
                         setTimeout(function () {
-							window.location.reload()
+                            window.location.reload()
                         },3000);
                     }else{
                         console.log('传送的数据出错')

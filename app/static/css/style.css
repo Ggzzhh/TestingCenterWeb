@@ -4,6 +4,7 @@ body {
     height: 100%;
     width: 100%;
     margin: 0;
+    position: relative;
 }
 
 body {
@@ -20,7 +21,10 @@ body {
 
 .login {
     padding: 10px 50px 50px 50px;
-    margin-top: 150px;
+    margin: auto;
+    height: auto;
+    max-width: 500px;
+    margin-top: 50px;
 }
 
 .shadow {
@@ -67,6 +71,5 @@ body {
 
 .my-block {
     margin-top: 10px;
-    margin-left: 5px;
-    padding: 5px;
+    padding: 10px;
 }
