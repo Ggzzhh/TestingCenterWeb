@@ -62,8 +62,6 @@ def update_nav_setting():
 @login_required
 def delete_nav_setting(id):
     """删除导航设置"""
-    if id is None:
-        return jsonify({'result': 'error'})
     nav = SecondPageName.query.filter_by(id=id).first()
     if nav is not None:
         db.session.delete(nav)
@@ -115,7 +113,7 @@ def get_post(id):
 def new_post(id):
     """新建一篇文章"""
     json_data = request.get_json()
-    if json_data is None or id is None:
+    if json_data is None:
         return jsonify({'result': 'error'}), 400
     post = Post.from_json(json_data)
     if SecondPageName.query.filter_by(id=id).first():
@@ -130,12 +128,24 @@ def new_post(id):
 @login_required
 def delete_post(id):
     """删除某类别中的指定文章"""
-    if id is None:
-        return jsonify({'result': 'error'})
     post = Post.query.get_or_404(id)
     db.session.delete(post)
     db.session.commit()
     return jsonify({'result': 'ok'})
+
+
+@api.route('/edit-post/<int:id>', methods=["POST", "PUT"])
+@login_required
+def edit_post(id):
+    """编辑文章"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'data is None'})
+    post = Post.from_json(json_data)
+    db.session.add(post)
+    db.session.commit()
+    return jsonify({'result': 'ok'})
+
 
 
 

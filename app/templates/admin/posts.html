@@ -62,7 +62,7 @@
                 }
             }
             // else if(scrollTop<=0){
-                // console.log('滑动到顶部')
+            // console.log('滑动到顶部')
             // }
         });
         function get_page(page) {
@@ -91,7 +91,6 @@
                         console.log(num);
                         $(window).scrollTop(num - 1);
                     }
-
                 },
                 error: function (xhr, type) {
                     console.log('出错');
@@ -148,9 +147,9 @@
 		<div class="col-md-4 col-sm-6" id="d-{ id }">
 			<div class="thumbnail my-block">
 				<div class="text-center">
-					<h4><b>{ title }</b></h4>
+					<a href="#" class="a"><h4><b>{ title }</b></h4></a>
 					<p class="text-center">
-						{ timestamp }
+						<b>发布于：</b>{ timestamp }
 					</p>
 				</div>
 				<div class="image">
@@ -163,11 +162,13 @@
 					<p>{ abstract }</p>
 					<p class="text-right">
 						<a href="{ edit_url }" class="btn btn-primary">
+							<span class="glyphicon glyphicon-pencil pull-left"
+								  aria-hidden="true"></span>
 							编辑
 						</a>
 						<button class="btn btn-danger" name="{ id }"
 								id="delete_{ id }" onclick="delete_post({ id })">
-							<span class="glyphicon glyphicon-star pull-left"
+							<span class="glyphicon glyphicon-trash pull-left"
 								  aria-hidden="true"></span>删除
 						</button>
 					</p>
@@ -177,6 +178,13 @@
 	</script>
 	<script>
         //瀑布式布局
-        $('#masonry').masonry();
+        $(function() {
+            $('#masonry').imagesLoaded(function () {
+                $('#masonry').masonry({
+                    isAnimated: true
+                });
+            });
+        });
+
 	</script>
 {% endblock scripts %}

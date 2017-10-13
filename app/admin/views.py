@@ -18,6 +18,9 @@ def index():
 @manage.route('/login', methods=["POST", "GET"])
 def login():
     """管理系统登录页面"""
+    admin = Administrator.query.first()
+    if admin is None:
+        Administrator.register_admin()
     form = AdminLoginForm()
     if form.validate_on_submit():
         admin = Administrator()
@@ -65,7 +68,7 @@ def posts(category_id):
 def new_post(category_id):
     """发布一篇新文章的页面"""
     category = SecondPageName.query.get_or_404(category_id)
-    return render_template('admin/new-post.html', category=category)
+    return render_template('admin/post.html', category=category, id=0)
 
 
 @manage.route('/post/<int:id>')
@@ -73,4 +76,6 @@ def new_post(category_id):
 def get_post(id):
     """获得某文章的编辑页面"""
     post = Post.query.get_or_404(id)
-    return render_template('admin/post.html', post_id=post.id)
+
+    return render_template('admin/post.html', category=post.category,
+                           id=post.id)

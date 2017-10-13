@@ -65,7 +65,7 @@
 参考:
 ><http://flask-wtf.readthedocs.io/en/stable/csrf.html?highlight=csrf>
 
-## 使用编辑器上传多个图片
+## 使用wong编辑器上传多个图片
     传入的数据类型是
 >设置文件名`editor.customConfig.uploadFileName = 'File';`<br/>
 获取多个图片`files = request.files.getlist("File")`
@@ -77,13 +77,18 @@
 ## js中的FormDate对象发送至api
     需要设置 ： processData:false, contentType: false,
     
-## 瀑布流布局使用js插件--masonry
+## 瀑布流布局使用js插件--masonry 
     初次加载
     $('#容器id').masonry()
     刷新
     $('#容器id').masonry('reloadItems').masonry();
 cdn地址: <https://cdn.bootcss.com/masonry/4.2.0/masonry.pkgd.js>
     
+## 瀑布流布局使用插件--imagesLoaded
+    作用是监视未加载的图片
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>    
+    
+
 ## 无限制下拉刷新 jquery
 ```javascript
     // 滚动条到页面底部加载更多案例
@@ -116,3 +121,7 @@ moment(content).format("YYYY年MMMD H:mm:ss" );  // 2017年10月12 15:09:22
 moment(content).fromNow();  // 21分钟前
 ```
 >官方文档<http://momentjs.com/>
+
+## 在wongEditor的内容操作
+    editor.txt.append()
+    可使用editor.txt.clear()清空编辑器内容

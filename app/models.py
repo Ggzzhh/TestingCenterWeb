@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import hashlib
+from random import randint
 from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -50,7 +51,8 @@ class Administrator(UserMixin, db.Model):
         """验证密码，返回布尔值"""
         return check_password_hash(self.password_hash, password)
 
-    def register_admin(self):
+    @staticmethod
+    def register_admin():
         """注册管理员账号"""
         db.create_all()
         only_admin = Administrator(username=current_app.config['ADMIN_USERNAME'])
@@ -173,7 +175,6 @@ class SecondPageName(db.Model):
             }
         return json_data
 
-
     def from_json(self, json_data):
         if json_data is None:
             return None
@@ -211,7 +212,7 @@ class Post(db.Model):
     """发布文章模版"""
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(40), unique=True)
+    title = db.Column(db.String(50))
     image_url = db.Column(
         db.String(64), default='/static/image/default.jpg')
     abstract = db.Column(db.String(200))
@@ -227,21 +228,39 @@ class Post(db.Model):
             'image_url': self.image_url,
             'body_html': self.body_html,
             'abstract': self.abstract,
-            'timestamp': self.timestamp,
-            'category': [self.category.page_name, url_for(
-                'manage.posts', category_id=self.category_id)]
+            'timestamp': self.timestamp  # ,
+            # 'category': [self.category.page_name, url_for(
+            #     'manage.posts', category_id=self.category_id)]
         }
         return json_post
 
     @staticmethod
     def from_json(json_data):
         """从前台传来的json数据中创建新文章"""
+        id = json_data.get('id')
         body_html = json_data.get('body_html')
         title = json_data.get('title')
         image_url = json_data.get('image_url')
         abstract = json_data.get('abstract')
         if title is None or title == '':
             raise ValueError('文章不能为空或json数据错误')
+        if id is not None:
+            post = Post.query.get_or_404(id)
+            post.title = title
+            post.body_html = body_html
+            post.abstract = abstract
+            post.image_url = image_url
+            return post
         return Post(body_html=body_html, abstract=abstract,
                     title=title, image_url=image_url)
 
+    @staticmethod
+    def add_post(num=100):
+        """添加100文章进行测试"""
+        for i in range(num):
+            post = Post(title="测试用文章"+str(i), abstract="我是来卖萌的" * randint(1,
+                                                                          10),
+                        image_url="/static/image/3.gif", body_html="卖萌可耻" * i)
+            post.category_id = randint(1, 3)
+            db.session.add(post)
+        db.session.commit()
