@@ -71,5 +71,6 @@ def new_post(category_id):
 @manage.route('/post/<int:id>')
 @login_required
 def get_post(id):
-    """获得某文章"""
-    return render_template('admin/post.html')
+    """获得某文章的编辑页面"""
+    post = Post.query.get_or_404(id)
+    return render_template('admin/post.html', post_id=post.id)

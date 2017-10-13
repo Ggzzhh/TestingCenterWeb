@@ -15,6 +15,28 @@
 			</div>
 		</div>
 	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content text-danger">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"><b>警告</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<p>确定要删除么？</p>
+					<p>删除时会一并删除所有属于文章的评论！</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-danger" id="delete">确定</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock page_content %}
 {% block scripts %}
@@ -23,6 +45,26 @@
 	<script>
         var next;
         get_page();
+        moment.locale('zh-cn');
+        // 滚动条到页面底部加载更多案例
+        // scroll方法用来监听滚动事件
+        $(window).scroll(function(){
+            var scrollTop = $(this).scrollTop();    //滚动条距离顶部的高度
+            var scrollHeight = $(document).height();   //当前页面的总高度
+            var clientHeight = $(this).height();    //当前可视的页面高度
+
+            if(scrollTop + clientHeight >= scrollHeight - 10){
+                // console.log('当滚动条距离底部10的时候');
+                if (next !== null && next > 1){
+                    // 添加内容
+                    get_page(next);
+                    next = null;
+                }
+            }
+            // else if(scrollTop<=0){
+                // console.log('滑动到顶部')
+            // }
+        });
         function get_page(page) {
             var url = "{{ url_for('api.get_posts', id=category.id) }}";
             if (page === undefined){
@@ -43,12 +85,12 @@
                     $('#masonry').masonry('reloadItems').masonry();
                     if (page === 1){
                         $(window).scrollTop(0);
-					}
-					else{
+                    }
+                    else{
                         var num = $(window).scrollTop();
                         console.log(num);
                         $(window).scrollTop(num - 1);
-					}
+                    }
 
                 },
                 error: function (xhr, type) {
@@ -64,43 +106,51 @@
             for (var i in data.posts){
                 var temp = $('#postsTemp').html();
                 for (var j in data.posts[i] ){
-                    var re = new RegExp("{ " + j + " }");
-                    result = temp.replace(re, data.posts[i][j]);
+                    var re = new RegExp("{ " + j + " }", "g");
+                    var content = data.posts[i][j];
+                    if (j === 'timestamp'){
+                        content = moment(content).fromNow();
+                    }
+                    result = temp.replace(re, content);
                     temp = result;
                 }
                 $('#masonry').append(result);
             }
         }
-        // todo: 刷新导致数据丢失 给保存住  后台传输的数据过多 简单化
-        // 滚动条到页面底部加载更多案例
-        // scroll方法用来监听滚动事件
-        $(window).scroll(function(){
-            var scrollTop = $(this).scrollTop();    //滚动条距离顶部的高度
-            var scrollHeight = $(document).height();   //当前页面的总高度
-            var clientHeight = $(this).height();    //当前可视的页面高度
 
-            // console.log("top:"+scrollTop
-            //  	+",doc:"+scrollHeight+",client:"+clientHeight);
+        function delete_post(post_id) {
+            $('#myModal').modal('show');
+            $('#delete').click(function () {
+                $.ajax({
+                    type: 'DELETE',
+                    url: "/api-v1.0/posts/" + post_id,
+                    date: "",
+                    data_type: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.result !== 'ok') {
+                            console.log('有问题?')
+                        }
+                        $('#myModal').modal('hide');
+                        $('#d-' + post_id).remove();
+                        $('#masonry').masonry('reloadItems').masonry();
+                    },
+                    error: function (xhr, error) {
+                        console.log(xhr);
+                        console.log(error);
+                    }
+                });
+            });
+        }
 
-            if(scrollTop + clientHeight >= scrollHeight - 10){
-                console.log('滑动到底部');
-                if (next !== null && next > 1){
-                    get_page(next);
-                    next = null;
-                }
-            }
-            else if(scrollTop<=0){
-                console.log('滑动到顶部')
-            }
-        });
 	</script>
 	<script id="postsTemp" type="text/template">
-		<div class="col-md-4 col-sm-6">
+		<div class="col-md-4 col-sm-6" id="d-{ id }">
 			<div class="thumbnail my-block">
 				<div class="text-center">
 					<h4><b>{ title }</b></h4>
 					<p class="text-center">
-						发布时间：2017-10-12 09:58
+						{ timestamp }
 					</p>
 				</div>
 				<div class="image">
@@ -112,12 +162,13 @@
 				<div class="caption">
 					<p>{ abstract }</p>
 					<p class="text-right">
-						<button class="btn btn-primary">
+						<a href="{ edit_url }" class="btn btn-primary">
 							编辑
-						</button>
-						<button class="btn btn-danger">删除
+						</a>
+						<button class="btn btn-danger" name="{ id }"
+								id="delete_{ id }" onclick="delete_post({ id })">
 							<span class="glyphicon glyphicon-star pull-left"
-								  aria-hidden="true"></span>
+								  aria-hidden="true"></span>删除
 						</button>
 					</p>
 				</div>
@@ -127,6 +178,5 @@
 	<script>
         //瀑布式布局
         $('#masonry').masonry();
-
 	</script>
 {% endblock scripts %}

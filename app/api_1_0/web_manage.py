@@ -72,7 +72,7 @@ def delete_nav_setting(id):
     return jsonify({'result': 'error'})
 
 
-@api.route('/get-posts/<int:id>')
+@api.route('/posts/<int:id>')
 @login_required
 def get_posts(id):
     """获取某类别的文章"""
@@ -124,5 +124,19 @@ def new_post(id):
         db.session.commit()
         return jsonify({'result': 'ok'}), 201
     return jsonify({'result': 'error'}), 400
+
+
+@api.route('/posts/<int:id>', methods=["DELETE"])
+@login_required
+def delete_post(id):
+    """删除某类别中的指定文章"""
+    if id is None:
+        return jsonify({'result': 'error'})
+    post = Post.query.get_or_404(id)
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'result': 'ok'})
+
+
 
 

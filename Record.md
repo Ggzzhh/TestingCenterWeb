@@ -86,5 +86,33 @@ cdn地址: <https://cdn.bootcss.com/masonry/4.2.0/masonry.pkgd.js>
     
 ## 无限制下拉刷新 jquery
 ```javascript
+    // 滚动条到页面底部加载更多案例
+        // scroll方法用来监听滚动事件
+        $(window).scroll(function(){
+            var scrollTop = $(this).scrollTop();    //滚动条距离顶部的高度
+            var scrollHeight = $(document).height();   //当前页面的总高度
+            var clientHeight = $(this).height();    //当前可视的页面高度
 
+            if(scrollTop + clientHeight >= scrollHeight - 10){
+                // console.log('当滚动条距离底部10的时候');
+                if (next !== null && next > 1){
+                    // 添加内容
+                    get_page(next);
+                    next = null;
+                }
+            }
+            // else if(scrollTop<=0){
+                // console.log('滑动到顶部')
+            // }
+        });
 ```
+
+## 借用moment.js使时间格式化
+```javascript
+// moment设定语言
+moment.locale('zh-cn');
+// 两种时间表示
+moment(content).format("YYYY年MMMD H:mm:ss" );  // 2017年10月12 15:09:22
+moment(content).fromNow();  // 21分钟前
+```
+>官方文档<http://momentjs.com/>

@@ -30,7 +30,6 @@
 			<div class="form-group">
 				<label for="editor" class="control-label">内容主体</label>
 				<div id="editor">
-					<p>内容主体</p>
 				</div>
 			</div>
 			<button class="btn btn-info" id="submit">提交</button>
@@ -42,9 +41,9 @@
 	<script>
         $('#uploadImage').change(function (e) {
             if (this.files[0].size > 1024*1024*2){
-				alert('图片太大了！');
-				return;
-			}
+                alert('图片太大了！');
+                return;
+            }
             var data = new FormData();
             data.append('File', this.files[0]);
             $.ajax({
@@ -73,24 +72,26 @@
             data.body_html = editor.txt.html();
             // console.log(data);
             // console.log(typeof(data));
-			data = JSON.stringify(data);
-            $.ajax({
-				type: "POST",
-				url: "{{ url_for('api.new_post', id=category.id) }}",
-				data: data,
-				dataType: 'json',
-				contentType: 'application/json;',
-				success: function (data) {
-					console.log(data);
-					window.location.href = "{{ url_for('manage.posts', category_id=category.id) }}";
-                },
-				error: function (xhr, type) {
-					console.log('出错');
-					console.log(xhr);
-					console.log(type);
-                }
-			});
-			e.preventDefault()
+            data = JSON.stringify(data);
+            if (data.title !== undefined){
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('api.new_post', id=category.id) }}",
+                    data: data,
+                    dataType: 'json',
+                    contentType: 'application/json;',
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "{{ url_for('manage.posts', category_id=category.id) }}";
+                    },
+                    error: function (xhr, type) {
+                        console.log('出错');
+                        console.log(xhr);
+                        console.log(type);
+                    }
+                });
+            }
+            // e.preventDefault()
             // console.log(editor.txt.html())
         })
 	</script>
