@@ -81,8 +81,10 @@
                     }
                     // console.log(data);
                     create_model(data);
-                    // 重新布局
-                    $('#masonry').masonry('reloadItems').masonry();
+                    // 重新布局 最好等图片加载完再布局 方法如下
+                    $('#masonry').imagesLoaded(function () {
+                        $('#masonry').masonry('reloadItems').masonry();
+                    });
                     if (page === 1){
                         $(window).scrollTop(0);
                     }
@@ -132,7 +134,10 @@
                         }
                         $('#myModal').modal('hide');
                         $('#d-' + post_id).remove();
-                        $('#masonry').masonry('reloadItems').masonry();
+                        $('#masonry').imagesLoaded(function () {
+                            $('#masonry').masonry('reloadItems').masonry();
+                        });
+
                     },
                     error: function (xhr, error) {
                         console.log(xhr);
