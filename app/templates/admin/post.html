@@ -58,7 +58,7 @@
                 type: "GET",
                 url: "{{ url_for('api.get_post', id=id) }}",
                 success: function (data) {
-					console.log(data);
+					// console.log(data);
 					$('#title').val(data.title);
 					$('#abstract').val(data.abstract);
 					$('#Preview').attr('src', data.image_url);
@@ -124,7 +124,7 @@
                     dataType: 'json',
                     contentType: 'application/json;',
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         {% if id > 0 %}
                             $('#alert').show;
                             window.location.reload();

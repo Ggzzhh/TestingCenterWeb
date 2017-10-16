@@ -76,6 +76,12 @@ def new_post(category_id):
 def get_post(id):
     """获得某文章的编辑页面"""
     post = Post.query.get_or_404(id)
-
     return render_template('admin/post.html', category=post.category,
                            id=post.id)
+
+
+@manage.route('/activities')
+@login_required
+def show_activities():
+    """显示活动页面"""
+    return render_template('admin/activity.html')

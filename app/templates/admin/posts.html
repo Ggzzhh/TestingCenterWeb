@@ -90,7 +90,7 @@
                     }
                     else{
                         var num = $(window).scrollTop();
-                        console.log(num);
+                        // console.log(num);
                         $(window).scrollTop(num - 1);
                     }
                 },
@@ -128,9 +128,10 @@
                     date: "",
                     data_type: 'json',
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         if (data.result !== 'ok') {
-                            console.log('有问题?')
+                            // console.log('有问题')
+							return;
                         }
                         $('#myModal').modal('hide');
                         $('#d-' + post_id).remove();
