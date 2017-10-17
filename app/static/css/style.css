@@ -12,10 +12,10 @@ body {
 }
 
 /*.navbar a {*/
-    /*background:transparent !important;*/
+/*background:transparent !important;*/
 /*}*/
 /*.navbar a:hover {*/
-    /*background:transparent;*/
+/*background:transparent;*/
 /*}*/
 
 .login {
@@ -56,7 +56,7 @@ body {
 }
 
 /*.my-navbar {*/
-    /*transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;*/
+/*transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;*/
 /*}*/
 
 .my-navbar a:hover{
@@ -71,4 +71,20 @@ body {
 .my-block {
     margin-top: 10px;
     padding: 10px;
+}
+
+.activity {
+    background-color: #f7f6f5;
+    box-shadow: 5px 5px 5px 5px #949494;
+    padding: 20px;
+}
+.activity-head a{
+    text-decoration: none;
+    color: #ff6e60;
+}
+.activity-head a:hover {
+    color: #d66456
+}
+.activity-content {
+    margin-bottom: 20px;
 }

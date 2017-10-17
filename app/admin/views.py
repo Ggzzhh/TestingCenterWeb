@@ -85,3 +85,10 @@ def get_post(id):
 def show_activities():
     """显示活动页面"""
     return render_template('admin/activity.html')
+
+
+@manage.route('/new-activity')
+@login_required
+def new_activity():
+    """新建一个活动"""
+    return render_template('admin/new-activity.html')

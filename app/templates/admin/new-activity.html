@@ -1,0 +1,41 @@
+{% extends 'admin/base.html' %}
+{% block head %}
+	{{ super() }}
+	<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+{% endblock %}
+{% block page_content %}
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label for="">选择日期：</label>
+				<div class="input-group date" id='date1'>
+					<input type="text" class="form-control" id="val">
+					<span class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<button>呵呵</button>
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+	<script>
+
+        $('#date1').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+		$('button').click(function () {
+			var val = $('#val').val();
+			// 判断是否在时间点之前
+			// 所以存储时可以使用字符串进行存储？？？
+			console.log(moment(val).isBefore('2017-10-17'));
+			// moment().format() 是现在的时间 between是 之间
+			console.log(moment(moment().format()).isBetween('2017-10-10', '2017-10-20'));
+        })
+	</script>
+{% endblock %}
