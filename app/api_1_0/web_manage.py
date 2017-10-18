@@ -5,7 +5,7 @@ from flask_login import login_required
 
 from . import api
 from .. import db
-from ..models import WebSetting, SecondPageName, Post
+from ..models import WebSetting, SecondPageName, Post, Activity
 
 
 @api.route('/web-setting')
@@ -147,6 +147,12 @@ def edit_post(id):
     return jsonify({'result': 'ok'})
 
 
-
+@api.route('/new-activity', methods=["POST"])
+@login_required
+def new_activity():
+    """新增活动"""
+    json_data = request.get_json()
+    print(json_data)
+    return jsonify({'result': 'ok'})
 
 

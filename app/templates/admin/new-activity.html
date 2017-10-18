@@ -2,40 +2,142 @@
 {% block head %}
 	{{ super() }}
 	<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	<style>
+		@media (max-width: 1199px) {
+			.date {
+				margin-top: 15px;
+			}
+		}
+	</style>
 {% endblock %}
 {% block page_content %}
-	<div class="row">
-		<div class="col-sm-6">
-			<div class="form-group">
-				<label for="">选择日期：</label>
-				<div class="input-group date" id='date1'>
-					<input type="text" class="form-control" id="val">
-					<span class="input-group-addon">
-                    <i class="glyphicon glyphicon-calendar"></i>
-                </span>
-				</div>
-			</div>
+	<div class="container shadow">
+		<div class="page-header text-right">
+			<h1>新增活动</h1>
 		</div>
+		<div class="row">
+			<form class="form">
+				<div class="col-md-10">
+					<div class="form-group">
+						<label class="control-label" for="title">标题</label>
+						<input type="text" class="form-control" placeholder="None"
+							   name="title" id="title" required/>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								<label for="">开始日期：</label>
+								<div class="input-group" id='start_date'>
+									<div class="input-group-addon btn
+									btn-default">
+										<span class="glyphicon glyphicon-calendar"></span>
+									</div>
+									<input type="text" class="form-control" id="start_val"
+										   placeholder="活动开始日期" required>
+								</div>
+							</div>
+							<div class="col-md-6 date">
+								<label for="">结束日期：</label>
+								<div class="input-group" id='end_date'>
+									<div class="input-group-addon btn
+									btn-default">
+										<span class="glyphicon
+										glyphicon-calendar"></span>
+									</div>
+									<input type="text" class="form-control"
+										   id="end_val"
+										   placeholder="活动结束日期" required>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="Preview">展示图</label>
+						<div class="thumbnail">
+							<img src="{{ url_for('static', filename='image/default.jpg') }}"
+								 alt="默认展示图" name="image" id="Preview" width="680"
+								 height="340">
+						</div>
+						<input id="uploadImage" type="file" name="image_url"
+							   accept="image/*"/>
+						<p class="help-block">图片大小不要超过2M, 长宽比为2:1</p>
+
+					</div>
+					<div class="form-group">
+						<label for="editor" class="control-label">活动内容</label>
+						<div id="editor">
+							<div>内容</div>
+						</div>
+					</div>
+					<button class="btn btn-info">确定</button>
+				</div>
+
+			</form>
+		</div>
+
+
 	</div>
-	<button>呵呵</button>
+
+
 {% endblock %}
 
 {% block scripts %}
 	{{ super() }}
 	<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 	<script>
-
-        $('#date1').datetimepicker({
+        $('#start_date').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });$('#end_date').datetimepicker({
             format: 'YYYY-MM-DD',
             locale: moment.locale('zh-cn')
         });
-		$('button').click(function () {
-			var val = $('#val').val();
-			// 判断是否在时间点之前
-			// 所以存储时可以使用字符串进行存储？？？
-			console.log(moment(val).isBefore('2017-10-17'));
-			// moment().format() 是现在的时间 between是 之间
-			console.log(moment(moment().format()).isBetween('2017-10-10', '2017-10-20'));
+        $('button').click(function () {
+            var val = $('#end_val').val();
+            // 判断是否在时间点之前
+            // 所以存储时可以使用字符串进行存储？？？
+            console.log(moment(val).isBefore('2017-10-17'));
+            // moment().format() 是现在的时间 between是 之间
+            console.log(moment(moment().format()).isBetween('2017-10-10', '2017-10-20'));
         })
+	</script>
+	<!-- 编辑器 -->
+	<script type="text/javascript" src="{{ url_for('static',
+	filename='js/wangEditor.min.js')}}" ></script>
+	<script type="text/javascript">
+        var E = window.wangEditor;
+        var editor = new E('#editor');
+        // 或者 var editor = new E( document.getElementById('#editor') )
+        // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+        // editor.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
+        editor.customConfig.uploadImgServer = '/upload';  // 上传图片到服务器
+
+        // 配置
+        editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'list',  // 列表
+            'justify',  // 对齐方式
+            // 'emoticon',  // 表情
+            'image',  // 插入图片
+            'undo',  // 撤销
+            'redo'  // 重复
+        ];
+        // 设置文件名
+        editor.customConfig.uploadFileName = 'File';
+        // 跨域传递 cookie
+        editor.customConfig.withCredentials = true;
+        var csrf_token = "{{ csrf_token() }}";
+        editor.customConfig.uploadImgParams = {
+            csrf_token: csrf_token   // 属性值会自动进行 encode ，此处无需 encode
+        };
+
+        editor.create();
 	</script>
 {% endblock %}

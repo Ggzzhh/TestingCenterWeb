@@ -264,3 +264,35 @@ class Post(db.Model):
             post.category_id = randint(1, 3)
             db.session.add(post)
         db.session.commit()
+
+
+class Activity(db.Model):
+    """活动模版"""
+    __tablename__ = 'activities'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(32), default='标题')
+    img_url = db.Column(db.String(64))
+    body = db.Column(db.Text)
+    start_date = db.Column(db.DateTime, index=True)
+    end_date = db.Column(db.DateTime, index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+
+    def to_json(self):
+        json_data = {
+            'title': self.title,
+            'edit_url': '#',
+            'image_url': self.image_url,
+            'body': self.body,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'timestamp': self.timestamp
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(json_data):
+        return Activity(title=json_data.get('title'),
+                        img_url=json_data.get('img_url'),
+                        body=json_data.get('body'),
+                        start_date=json_data.get('start_date'),
+                        end_date=json_data.get('end_date'))
