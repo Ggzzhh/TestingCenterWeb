@@ -292,7 +292,9 @@ class Activity(db.Model):
     @staticmethod
     def from_json(json_data):
         return Activity(title=json_data.get('title'),
-                        img_url=json_data.get('img_url'),
+                        img_url=json_data.get('image_url'),
                         body=json_data.get('body'),
-                        start_date=json_data.get('start_date'),
-                        end_date=json_data.get('end_date'))
+                        start_date=datetime.strptime(json_data.get(
+                            'start_date'), '%Y-%m-%d'),
+                        end_date=datetime.strptime(json_data.get(
+                            'end_date'), '%Y-%m-%d'))

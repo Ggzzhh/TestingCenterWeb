@@ -125,3 +125,13 @@ moment(content).fromNow();  // 21分钟前
 ## 在wongEditor的内容操作
     editor.txt.append()
     可使用editor.txt.clear()清空编辑器内容
+    
+    
+## moment.js 部分操作
+```javascript
+            // 判断是否在时间点之前
+            // 所以存储时可以使用字符串进行存储？？？
+            moment(val).isBefore('2017-10-17'); // 返回true false
+            // moment().format() 是现在的时间 between是 之间
+            moment(moment().format()).isBetween('2017-10-10', '2017-10-20')
+```

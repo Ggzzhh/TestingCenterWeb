@@ -62,5 +62,13 @@
 		<div class="col-md-3 col-sm-2"></div>
 	</div>
 
+	{% import 'admin/_model.html' as model %}
+	{{ model.alert() }}
 
+{% endblock %}
+{% block scripts %}
+	{{ super() }}
+	<script>
+
+	</script>
 {% endblock %}

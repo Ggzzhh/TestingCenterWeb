@@ -140,7 +140,7 @@ def edit_post(id):
     """编辑文章"""
     json_data = request.get_json()
     if json_data is None:
-        return jsonify({'result': 'data is None'})
+        return jsonify({'result': 'error'})
     post = Post.from_json(json_data)
     db.session.add(post)
     db.session.commit()
@@ -152,7 +152,11 @@ def edit_post(id):
 def new_activity():
     """新增活动"""
     json_data = request.get_json()
-    print(json_data)
+    if json_data is None or json_data.get('title') == '':
+        return jsonify({'result': 'error'})
+    activity = Activity.from_json(json_data)
+    db.session.add(activity)
+    db.session.commit()
     return jsonify({'result': 'ok'})
 
 

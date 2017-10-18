@@ -27,25 +27,25 @@
 						<div class="row">
 							<div class="col-md-6">
 								<label for="">开始日期：</label>
-								<div class="input-group" id='start_date'>
+								<div class="input-group">
 									<div class="input-group-addon btn
 									btn-default">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</div>
-									<input type="text" class="form-control" id="start_val"
+									<input type="text" class="form-control" id="start_date"
 										   placeholder="活动开始日期" required>
 								</div>
 							</div>
 							<div class="col-md-6 date">
 								<label for="">结束日期：</label>
-								<div class="input-group" id='end_date'>
+								<div class="input-group">
 									<div class="input-group-addon btn
 									btn-default">
 										<span class="glyphicon
 										glyphicon-calendar"></span>
 									</div>
 									<input type="text" class="form-control"
-										   id="end_val"
+										   id="end_date"
 										   placeholder="活动结束日期" required>
 								</div>
 							</div>
@@ -92,14 +92,79 @@
             format: 'YYYY-MM-DD',
             locale: moment.locale('zh-cn')
         });
-        $('button').click(function () {
-            var val = $('#end_val').val();
-            // 判断是否在时间点之前
-            // 所以存储时可以使用字符串进行存储？？？
-            console.log(moment(val).isBefore('2017-10-17'));
-            // moment().format() 是现在的时间 between是 之间
-            console.log(moment(moment().format()).isBetween('2017-10-10', '2017-10-20'));
-        })
+        $('button').click(function (e) {
+            var json_data = {};
+            json_data.title = $('#title').val();
+            json_data.start_date = $('#start_date').val();
+            json_data.end_date = $('#end_date').val();
+            json_data.image_url = $('#Preview').attr('src');
+            json_data.body = editor.txt.html().replace("<p><br></p>", '');
+            if (json_data['title'] !== '' && json_data.start_date !== '' &&
+                json_data.end_date !== ''){
+                if (moment(json_data.end_date).isBefore(json_data.start_date)){
+                    e.preventDefault();
+                    alert('结束时间不能在开始时间之前！');
+                    $(window).scrollTop(0);
+                    document.getElementById('start_date').focus();
+                    return ;
+                }
+                json_data = JSON.stringify(json_data);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('api.new_activity') }}",
+                    data: json_data,
+                    dataType: 'json',
+                    contentType: 'application/json;',
+                    success: function (data) {
+                        // console.log(data);
+                        if (data.result === 'ok'){
+                            alert('添加成功');
+                            window.location.href = '/manage/activities'
+                        }
+                        if (data.result === 'error'){
+                            alert('添加失败！请重试');
+                        }
+                    },
+                    error: function (xhr, type) {
+                        console.log('出错');
+                        console.log(xhr);
+                        console.log(type);
+                    }
+                })
+            }else{
+                console.log(json_data['title']);
+            }
+
+        });
+
+        $('#uploadImage').change(function (e) {
+            if (this.files[0].size > 1024*1024*2){
+                alert('图片太大了！');
+                return;
+            }
+            var data = new FormData();
+            data.append('File', this.files[0]);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('main.upload') }}",
+                data: data,
+                dataType: 'json',
+                // 不自动更改适配类型
+                contentType: false,
+                // 发送的信息不需要被转化 设置为false
+                processData:false,
+                success: function (data) {
+                    $('#Preview').attr('src', data.data);
+                },
+                error: function (xhr, type) {
+                    console.log('出错');
+                    console.log(xhr);
+                    console.log(type);
+                }
+            });
+        });
+
+
 	</script>
 	<!-- 编辑器 -->
 	<script type="text/javascript" src="{{ url_for('static',
