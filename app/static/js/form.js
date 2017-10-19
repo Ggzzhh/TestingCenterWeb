@@ -1,5 +1,18 @@
 // 表单相关函数或者其他
 
+// 向指定地址发送删除信息
+function MyDelete(url) {
+    $.ajax({
+        type: "DELETE",
+        url: url,
+        success: function () {
+            alert('已删除！');
+            window.location.reload();
+        }
+    })
+
+}
+
 function infoSettingForm (data) {
     if(!$.isEmptyObject(data)){
         $.each(data, function (key, value) {

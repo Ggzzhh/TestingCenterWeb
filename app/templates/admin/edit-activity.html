@@ -13,15 +13,17 @@
 {% block page_content %}
 	<div class="container shadow">
 		<div class="page-header text-right">
-			<h1>新增活动</h1>
+			<h1>编辑活动</h1>
 		</div>
 		<div class="row">
 			<form class="form">
 				<div class="col-md-10">
 					<div class="form-group">
-						<label class="control-label" for="title">标题</label>
+						<label class="control-label" for="title">
+							标题</label>
 						<input type="text" class="form-control" placeholder="None"
-							   name="title" id="title" required/>
+							   name="title" id="title"
+							   value="{{ activity.title }}" required/>
 					</div>
 					<div class="form-group">
 						<div class="row">
@@ -32,7 +34,9 @@
 									btn-default">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</div>
-									<input type="text" class="form-control" id="start_date"
+									<input type="text" class="form-control"
+										   id="start_date"
+										   value="{{ activity.start_date }}"
 										   placeholder="活动开始日期" required>
 								</div>
 							</div>
@@ -46,6 +50,7 @@
 									</div>
 									<input type="text" class="form-control"
 										   id="end_date"
+										   value="{{ activity.end_date }}"
 										   placeholder="活动结束日期" required>
 								</div>
 							</div>
@@ -54,7 +59,7 @@
 					<div class="form-group">
 						<label class="control-label" for="Preview">展示图</label>
 						<div class="thumbnail">
-							<img src="{{ url_for('static', filename='image/default.jpg') }}"
+							<img src="{{ activity.img_url }}"
 								 alt="默认展示图" name="image" id="Preview" width="680"
 								 height="340">
 						</div>
@@ -66,7 +71,6 @@
 					<div class="form-group">
 						<label for="editor" class="control-label">活动内容</label>
 						<div id="editor">
-							<div>内容</div>
 						</div>
 					</div>
 					<button class="btn btn-info">确定</button>
@@ -85,6 +89,7 @@
 	{{ super() }}
 	<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 	<script>
+
         $('#start_date').datetimepicker({
             format: 'YYYY-MM-DD',
             locale: moment.locale('zh-cn')
@@ -93,7 +98,10 @@
             locale: moment.locale('zh-cn')
         });
         $('button').click(function (e) {
+            e.preventDefault();
+
             var json_data = {};
+            json_data.id = {{ activity.id }};
             json_data.title = $('#title').val();
             json_data.start_date = $('#start_date').val();
             json_data.end_date = $('#end_date').val();
@@ -118,7 +126,7 @@
                     success: function (data) {
                         // console.log(data);
                         if (data.result === 'ok'){
-                            alert('添加成功');
+                            alert('修改成功');
                             window.location.href = '/manage/activities'
                         }
                         if (data.result === 'error'){
@@ -163,8 +171,6 @@
                 }
             });
         });
-
-
 	</script>
 	<!-- 编辑器 -->
 	<script type="text/javascript" src="{{ url_for('static',
@@ -202,7 +208,9 @@
         editor.customConfig.uploadImgParams = {
             csrf_token: csrf_token   // 属性值会自动进行 encode ，此处无需 encode
         };
-
         editor.create();
+
+       var content = "{{ activity.body|safe }}";
+		editor.txt.html(content)
 	</script>
 {% endblock %}

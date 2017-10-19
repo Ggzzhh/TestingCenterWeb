@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import jsonify, request, flash, current_app, url_for
+from datetime import datetime
+from flask import jsonify, request, flash, current_app, url_for, abort
 from flask_login import login_required
 
 from . import api
@@ -71,7 +72,6 @@ def delete_nav_setting(id):
 
 
 @api.route('/posts/<int:id>')
-@login_required
 def get_posts(id):
     """获取某类别的文章"""
     page = request.args.get('page', 1, type=int)
@@ -101,7 +101,6 @@ def get_posts(id):
 
 
 @api.route('/post/<int:id>')
-@login_required
 def get_post(id):
     """获得某文章"""
     post = Post.query.get_or_404(id)
@@ -147,10 +146,10 @@ def edit_post(id):
     return jsonify({'result': 'ok'})
 
 
-@api.route('/new-activity', methods=["POST"])
+@api.route('/activity', methods=["POST"])
 @login_required
-def new_activity():
-    """新增活动"""
+def activity():
+    """新增活动或修改"""
     json_data = request.get_json()
     if json_data is None or json_data.get('title') == '':
         return jsonify({'result': 'error'})
@@ -160,3 +159,61 @@ def new_activity():
     return jsonify({'result': 'ok'})
 
 
+@api.route('/activities')
+def get_activities():
+    """获得所有活动的分页"""
+    condition = request.args.get('condition')
+    now = datetime.now()
+    page = request.args.get('page', 1, type=int)
+    if condition == 'start':
+        pagination = Activity.query\
+            .filter(Activity.start_date < now, Activity.end_date > now)\
+            .order_by(Activity.timestamp.desc())\
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'end':
+        pagination = Activity.query\
+            .filter(Activity.end_date < now)\
+            .order_by(Activity.timestamp.desc())\
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'future':
+        pagination = Activity.query \
+            .filter(Activity.start_date > now) \
+            .order_by(Activity.timestamp.desc()) \
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'all':
+        pagination = Activity.query.order_by(
+            Activity.timestamp.desc()).paginate(
+            page, per_page=current_app.config['POSTS_PER_PAGE'],
+            error_out=True)
+    activities = pagination.items
+    prev_page = None
+    if pagination.has_prev:
+        prev_page = page - 1
+    next_page = None
+    if pagination.has_next:
+        next_page = page + 1
+    return jsonify({
+        'activities': [activity.to_json(brief=True) for activity in activities],
+        'prev_page': prev_page,
+        'next_page': next_page
+    })
+
+
+@api.route('/activity/<int:id>')
+def get_activity(id):
+    """获取某活动内容"""
+    activity = Activity.query.get_or_404(id)
+    return jsonify(activity.to_json())
+
+
+@api.route('/activity/<int:id>', methods=["DELETE"])
+@login_required
+def delete_activity(id):
+    """删除某活动"""
+    activity = Activity.query.get_or_404(id)
+    db.session.delete(activity)
+    db.session.commit()
+    return jsonify({'result': 'ok'})

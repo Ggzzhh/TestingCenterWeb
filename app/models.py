@@ -275,22 +275,30 @@ class Activity(db.Model):
     body = db.Column(db.Text)
     start_date = db.Column(db.DateTime, index=True)
     end_date = db.Column(db.DateTime, index=True)
+    sign_up_url = db.Column(db.String(64))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 
-    def to_json(self):
+    def to_json(self, brief=False):
         json_data = {
             'title': self.title,
-            'edit_url': '#',
-            'image_url': self.image_url,
+            'api_url': url_for('api.get_activity', id=self.id),
+            'edit_url': url_for('manage.edit_activity',
+                                id=self.id, _external=True),
+            'image_url': self.img_url,
             'body': self.body,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
+            'start_date': datetime.strftime(self.start_date, '%Y-%m-%d'),
+            'end_date': datetime.strftime(self.end_date, '%Y-%m-%d'),
             'timestamp': self.timestamp
         }
+        if brief:
+            json_data.pop('body')
         return json_data
 
     @staticmethod
     def from_json(json_data):
+        id = json_data.get('id')
+        if id is not None:
+            activity = Activity.query.get_or_404(id)
         return Activity(title=json_data.get('title'),
                         img_url=json_data.get('image_url'),
                         body=json_data.get('body'),

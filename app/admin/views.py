@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
 from .forms import AdminLoginForm
-from ..models import Administrator, Post, SecondPageName
+from ..models import Administrator, Post, SecondPageName, Activity
 
 
 @manage.route('/')
@@ -92,3 +92,11 @@ def show_activities():
 def new_activity():
     """新建一个活动"""
     return render_template('admin/new-activity.html')
+
+
+@manage.route('/activity/<int:id>')
+@login_required
+def edit_activity(id):
+    """展示页面"""
+    activity = Activity.query.get_or_404(id)
+    return render_template('admin/edit-activity.html', activity=activity)

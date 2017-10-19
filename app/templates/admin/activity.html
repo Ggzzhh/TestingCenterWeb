@@ -39,25 +39,8 @@
 	</div>
 	<div class="row">
 		<div class="col-md-3 col-sm-2"></div>
-		<div class="col-md-6 col-sm-8 col-xs-12">
-			<div class="activity">
-				<div class="activity-head text-center page-header">
-					<a href="#" class=""><h1>活动标题</h1></a>
-					<div class="date">活动时间：2017年10月17日 - 2017年11月17日</div>
-				</div>
-				<div class="thumbnail activity-img">
-					<a href="#" class="img-responsive">
-						<img src="/static/image/default.jpg" alt="1">
-					</a>
-				</div>
-				<div class="activity-content text-right">
+		<div class="col-md-6 col-sm-8 col-xs-12" id="content">
 
-					<button class="btn btn-info">编辑</button>
-
-					<button class="btn btn-danger">删除</button>
-
-				</div>
-			</div>
 		</div>
 		<div class="col-md-3 col-sm-2"></div>
 	</div>
@@ -68,7 +51,118 @@
 {% endblock %}
 {% block scripts %}
 	{{ super() }}
-	<script>
 
+	<script>
+        var next_page = null;
+        var condition = 'all';
+        // 初始化masonry
+        $(function() {
+            $('#content').imagesLoaded(function () {
+                $('#content').masonry({
+                    isAnimated: true
+                });
+            });
+        });
+
+        get_activities();
+
+        function get_activities(page, condition, url) {
+            if (page === undefined || page === '' || page === null){
+                page = 1
+            }
+            if (url === undefined || url === '' || url === null){
+                url = "{{ url_for('api.get_activities') }}";
+            }
+            if (condition === undefined || condition === '' || condition === null){
+                condition = 'all'
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: url + "?page=" + page,
+                data: {'condition': condition},
+                dataType: 'json',
+                success: function (data) {
+                    if (data.next_page !== null && data.next_page > next_page){
+                        next_page = data.next_page;
+                    }
+                    // 定位滚动条到最顶端
+                    $(window).scrollTop(0);
+
+                    // 转换其中的时间格式
+					var result = data.activities;
+
+                    // 创建模版
+                    create_temp(result, 'activityTemp');
+
+                    $('#content').imagesLoaded(function () {
+                        $('#content').masonry('reloadItems').masonry();
+                    });
+                    // console.log(data);
+                }
+            })
+        }
+
+        function create_temp(data) {
+            for (var i in data){
+                var temp = $('#Temp').html();
+                for (var j in data[i]){
+                    var re = new RegExp('{ ' + j + ' }', 'g');
+                    temp = temp.replace(re, data[i][j])
+                }
+                $('#content').append(temp);
+            }
+        }
+
+        function MyDelete(url) {
+            $('#myModal').modal('show');
+            $('#delete').click(function () {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+					date: "",
+                    data_type: 'json',
+					success: function (data) {
+						if (data.result === 'ok'){
+						    $('#myModal').modal('hide');
+						    window.location.reload()
+						}
+						else {
+						    alert('删除失败！请重试');
+						    window.location.reload()
+						}
+                    },
+					error: function (xhr, type) {
+                        console.log('出错');
+                        console.log(xhr);
+                        console.log(type);
+                    }
+                })
+            });
+        }
+	</script>
+
+	<script id="Temp" type="text/template">
+		<div class="activity">
+			<div class="activity-head text-center page-header">
+				<a href="{ edit_url }" class="title"><h1 id="title">{ title }</h1></a>
+				<div class="date">活动时间：
+					<i class="text-danger">{ start_date }</i> 至 <i class="text-danger">
+					{ end_date }</i>
+				</div>
+			</div>
+			<div class="thumbnail activity-img">
+				<a href="{ edit_url }" class="img-responsive">
+					<img src="{ image_url }" alt="展示图">
+				</a>
+			</div>
+			<div class="activity-content text-right">
+
+				<a href="{ edit_url }" class="btn btn-info">编辑</a>
+
+				<button class="btn btn-danger"
+						onclick="MyDelete('{ api_url }')">删除</button>
+			</div>
+		</div>
 	</script>
 {% endblock %}

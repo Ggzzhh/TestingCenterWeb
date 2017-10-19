@@ -135,3 +135,7 @@ moment(content).fromNow();  // 21分钟前
             // moment().format() 是现在的时间 between是 之间
             moment(moment().format()).isBetween('2017-10-10', '2017-10-20')
 ```
+
+## SQLAlchemy 中 filter() 方法可以对结果进行过滤
+    如： users = User.query.filter(User.name.startswith('J'), User.age<20)
+    条件之间用,分割
