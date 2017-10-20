@@ -13,18 +13,18 @@
 				</a>
 			</li>
 			<li>
-				<a href="#" role="tab" name="after" data-toggle="tab">
+				<a href="#" role="tab" name="future" data-toggle="tab">
 					未举办
 				</a>
 			</li>
 			<li>
-				<a href="#" role="tab" name="running" data-toggle="tab">
+				<a href="#" role="tab" name="start" data-toggle="tab">
 					正在进行
 				</a>
 			</li>
 			<li>
-				<a href="#" role="tab" name="before" data-toggle="tab">
-					已举办
+				<a href="#" role="tab" name="end" data-toggle="tab">
+					已结束
 				</a>
 			</li>
 		</ul>
@@ -66,7 +66,56 @@
 
         get_activities();
 
+        // 监听滚动到底部 加载下一页
+        $(window).scroll(function () {
+            var scrollTop = $(this).scrollTop();    //滚动条距离顶部的高度
+            var scrollHeight = $(document).height();   //当前页面的总高度
+            var clientHeight = $(this).height();    //当前可视的页面高度
+
+            if(scrollTop + clientHeight >= scrollHeight - 10){
+                if (next_page !== null && next_page > 1) {
+                    // 因为是ajax 所以是异步进行的 如果不把next_page 设置为null的话会重复加载
+                    get_activities(next_page, condition);
+                    next_page = null;
+                }
+            }
+        });
+
+
+        // 按照发布时间显示所有的活动
+        $('a[name=all]').click(function () {
+            $('#content').html('');
+            next_page = 1;
+            condition = 'all';
+            get_activities(next_page, condition);
+        });
+
+        // 显示未举办的活动
+        $('a[name=future]').click(function () {
+            $('#content').html('');
+            next_page = 1;
+            condition = 'future';
+            get_activities(next_page, condition);
+        });
+
+        // 显示已结束的活动
+        $('a[name=end]').click(function () {
+            $('#content').html('');
+            next_page = 1;
+            condition = 'end';
+            get_activities(next_page, condition)
+        });
+
+        // 显示正在进行的活动
+        $('a[name=start]').click(function () {
+            $('#content').html('');
+            next_page = 1;
+            condition = 'start';
+            get_activities(next_page, condition)
+        });
+
         function get_activities(page, condition, url) {
+            // console.log('获取的pgae:' + page);
             if (page === undefined || page === '' || page === null){
                 page = 1
             }
@@ -83,14 +132,22 @@
                 data: {'condition': condition},
                 dataType: 'json',
                 success: function (data) {
-                    if (data.next_page !== null && data.next_page > next_page){
+                    if (data.next_page !== null && ( next_page === null ||
+                            data.next_page > next_page)){
                         next_page = data.next_page;
+                        // console.log('这里' + next_page);
                     }
+                    else if(data.next_page === null){
+                        next_page = null;
+                    }
+
                     // 定位滚动条到最顶端
-                    $(window).scrollTop(0);
+                    if (page === 1){
+                        $(window).scrollTop(0);
+                    }
 
                     // 转换其中的时间格式
-					var result = data.activities;
+                    var result = data.activities;
 
                     // 创建模版
                     create_temp(result, 'activityTemp');
@@ -120,19 +177,19 @@
                 $.ajax({
                     type: "DELETE",
                     url: url,
-					date: "",
+                    date: "",
                     data_type: 'json',
-					success: function (data) {
-						if (data.result === 'ok'){
-						    $('#myModal').modal('hide');
-						    window.location.reload()
-						}
-						else {
-						    alert('删除失败！请重试');
-						    window.location.reload()
-						}
+                    success: function (data) {
+                        if (data.result === 'ok'){
+                            $('#myModal').modal('hide');
+                            window.location.reload()
+                        }
+                        else {
+                            alert('删除失败！请重试');
+                            window.location.reload()
+                        }
                     },
-					error: function (xhr, type) {
+                    error: function (xhr, type) {
                         console.log('出错');
                         console.log(xhr);
                         console.log(type);
@@ -148,7 +205,7 @@
 				<a href="{ edit_url }" class="title"><h1 id="title">{ title }</h1></a>
 				<div class="date">活动时间：
 					<i class="text-danger">{ start_date }</i> 至 <i class="text-danger">
-					{ end_date }</i>
+						{ end_date }</i>
 				</div>
 			</div>
 			<div class="thumbnail activity-img">

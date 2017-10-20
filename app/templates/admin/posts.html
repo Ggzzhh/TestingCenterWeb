@@ -44,6 +44,7 @@
             // console.log('滑动到顶部')
             // }
         });
+
         function get_page(page) {
             var url = "{{ url_for('api.get_posts', id=category.id) }}";
             if (page === undefined){

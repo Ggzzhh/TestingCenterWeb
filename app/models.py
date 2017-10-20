@@ -306,3 +306,4 @@ class Activity(db.Model):
                             'start_date'), '%Y-%m-%d'),
                         end_date=datetime.strptime(json_data.get(
                             'end_date'), '%Y-%m-%d'))
+
