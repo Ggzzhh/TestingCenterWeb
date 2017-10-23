@@ -1,9 +1,28 @@
 {% extends 'base.html' %}
 
 {% block page_content %}
-
-
-	<button>确定</button>
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+			<li data-target="#myCarousel" data-slide-to="1"></li>
+			<li data-target="#myCarousel" data-slide-to="2"></li>
+		</ol>
+		<!-- 轮播（Carousel）项目 -->
+		<div class="carousel-inner">
+			<div class="item active">
+				<img src="/static/image/bg-1.jpg" alt="First slide">
+				<div class="carousel-caption">写点啥呢</div>
+			</div>
+			<div class="item">
+				<img src="/static/image/bg-2.jpg" alt="Second slide">
+				<div class="carousel-caption"></div>
+			</div>
+			<div class="item">
+				<img src="/static/image/bg-3.jpg" alt="Third slide">
+				<div class="carousel-caption"></div>
+			</div>
+		</div>
+	</div>
 
 
 {% endblock page_content%}
@@ -11,6 +30,12 @@
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
-
+	<script>
+        $('.carousel').carousel({
+                interval: 3000,
+                pause: null
+            }
+        )
+	</script>
 
 {% endblock scripts %}

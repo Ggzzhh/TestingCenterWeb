@@ -10,20 +10,34 @@
 	filename='css/style.css')}}" type="text/css">
 
 	<style>
-		html, body {width:100%;height:100%;
-			background-color: #00a2d4;
-		} /*非常重要的样式让背景图片100%适应整个屏幕*/
-		.bg {display: table;width: 100%;height: 100%;padding: 100px 0;text-align: center;
-			color: #fff;
-			background-color: #000;
-			background-size: cover;}
-		.my-navbar {padding:20px 0;transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;}
-		.my-navbar a{background:transparent !important;color: #ff6e60 !important}
-		.my-navbar a:hover {color:#45bcf9 !important;background:transparent;outline:0}
+		html, body {
+			width:100%;
+			height:100%;
+		}
+		.my-navbar {
+			padding-top: 10px;
+			transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
+			font-weight: bold;
+			background-color: rgba(0, 0, 0, 0);
+		}
+		.my-navbar a{background:transparent !important;color: #ff6164 !important}
+		.my-navbar a:hover {color: #d66456 !important;background:transparent;outline:0}
 		.my-navbar a {transition: color 0.5s ease-in-out;}/*-webkit-transition ;-moz-transition*/
-		.top-nav {padding:0;background:#000;}
+		.top-nav {
+			padding:0;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
 		button.navbar-toggle {background-color:#fbfbfb;}/*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
 		button.navbar-toggle > span.icon-bar {background-color:#dedede}
+		#myCarousel {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+		}
+		.div {
+			position: absolute;
+		}
 	</style>
 {% endblock head %}
 
@@ -31,47 +45,62 @@
 	<nav class="navbar navbar-fixed-top my-navbar" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
+				<button type="button" class="navbar-toggle"
+						data-toggle="collapse" id="navar-toggle"
 						data-target="#example-navbar-collapse">
 					<span class="sr-only">切换导航</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#">菜鸟教程</a>
+				<a class="navbar-brand" href="#">浩瀚体育</a>
 			</div>
-			<div class="collapse navbar-collapse" id="example-navbar-collapse">
+			<div class="collapse navbar-collapse text-center"
+				 id="example-navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="#">iOS</a></li>
-					<li><a href="#">SVN</a></li>
+					<li class="active">
+						<a href="#">最新活动</a>
+					</li>
+					{% for name in names %}
+						<li>
+							<a href="#">{{ name }}</a>
+						</li>
+					{% endfor %}
 					<li>
-						<a href="#">Asp.Net</a>
+						<a href="#">灌水 | 约球</a>
+					</li>
+					<li>
+						<a href="#">关于我们</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<a href="#">
+							登 录
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							注 册
+						</a>
 					</li>
 				</ul>
 			</div>
 		</div>
 	</nav>
-	<div class="bg"></div>
-	<p><a href="www.xiandanke.com">闲蛋客</a></p>
 {% endblock navbar %}
 
 {% block content %}
-	<div class="container pad-top">
-		{% for message in get_flashed_messages() %}
-			<div class="alert alert-warning">
-				<button type="button" class="close" data-dismiss="alert">&times;</button>
-				{{ message }}
-			</div>
-		{% endfor %}
+	<div class="container-fluid">
 		{% block page_content %}{% endblock page_content%}
 	</div>
+
 {% endblock content %}
 
 
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
-
 	<script>
         if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
             (navigator.appVersion.split(";")[1]
@@ -87,6 +116,17 @@
                 $(".navbar-fixed-top").addClass("top-nav");
             }else {
                 $(".navbar-fixed-top").removeClass("top-nav");}
-        })
+        });
+
+        $('.navbar-toggle').click(function () {
+            if ($(".navbar").offset().top < 50){
+                if ($('.navbar-fixed-top').hasClass('top-nav')){
+                    $(".navbar-fixed-top").removeClass("top-nav");
+                }
+                else {
+                    $(".navbar-fixed-top").addClass("top-nav");
+                }
+            }
+        });
 	</script>
 {% endblock scripts %}

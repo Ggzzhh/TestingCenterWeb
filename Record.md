@@ -139,3 +139,12 @@ moment(content).fromNow();  // 21分钟前
 ## SQLAlchemy 中 filter() 方法可以对结果进行过滤
     如： users = User.query.filter(User.name.startswith('J'), User.age<20)
     条件之间用,分割
+    
+    
+## flask中添加jinja2的中的变量可使用上下文管理器
+```python
+@app.context_processor
+def get_page_names():
+    """需要返回一个dict 即可在模版中{{ test }}"""
+    return dict(test='test')
+```
