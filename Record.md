@@ -148,3 +148,7 @@ def get_page_names():
     """需要返回一个dict 即可在模版中{{ test }}"""
     return dict(test='test')
 ```
+
+## 利用@media进行自适应调整时 注意样式是进行覆盖的 所以最小分辨率时小的放下面
+    @media screen and (max-width: 1024px){……}
+    @media screen and (max-width: 480px){……}
