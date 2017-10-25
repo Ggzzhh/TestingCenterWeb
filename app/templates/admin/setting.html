@@ -37,28 +37,33 @@
 				<input type="text" class="form-control" placeholder="None" name="sina_blog">
 			</div>
 			<div class="form-group">
+				<label class="control-label" for="qq">QQ</label>
+				<input type="text" class="form-control" placeholder="None"
+					   name="qq">
+			</div>
+			<div class="form-group">
 				<label class="control-label" for="WeChat">微信号或公众号</label>
 				<input type="text" class="form-control" placeholder="None" name="WeChat">
 			</div>
 			<div class="form-group">
 				<label class="control-label" for="WeChat_img">微信二维码</label>
 				<div class="img-rounded">
-					<img src="{{ url_for('static', filename='image/logo.jpg') }}" alt=""
+					<img src="/static/image/logo.jpg" alt=""
 						 class="img-thumbnail" id="uploadPreview" width="200"
 						 height="200">
 				</div>
 				<br />
 				<input id="uploadImage" type="file" name="WeChat_img" accept="image/*"
 				/>
-				<p class="help-block">图片大小不要超过2M, 切保存时会保存为jpeg</p>
+				<p class="help-block">图片大小不要超过2M, 且保存时会保存为jpeg格式</p>
 			</div>
 			<div class="form-group">
 				<label class="control-label" for="about_me">关于我们</label>
 				<div class="text-danger">
 					<small>
-					这里使用了markdown格式的编辑器 下方可查看预览
-					 >>> <a href="http://www.jianshu.com/p/075d7cac8fef"
-							target="_blank">查看使用教程</a>
+						这里使用了markdown格式的编辑器 下方可查看预览
+						>>> <a href="http://www.jianshu.com/p/075d7cac8fef"
+							   target="_blank">查看使用教程</a>
 					</small>
 
 				</div>

@@ -80,6 +80,7 @@ class WebSetting(db.Model):
     sina_blog = db.Column(db.String(64))
     email = db.Column(db.String(32))
     contacts = db.Column(db.String(32))
+    qq = db.Column(db.String(32))
     about_me_html = db.Column(db.Text)
 
     def to_json(self):
@@ -93,7 +94,8 @@ class WebSetting(db.Model):
             'WeChat_img': self.WeChat_img,
             'sina_blog': self.sina_blog,
             'email': self.email,
-            'contacts': self.contacts
+            'contacts': self.contacts,
+            'qq': self.qq
         }
         return json_web_setting
 
@@ -110,7 +112,8 @@ class WebSetting(db.Model):
                 WeChat_img=json_data.get('WeChat_img'),
                 sina_blog=json_data.get('sina_blog'),
                 email=json_data.get('email'),
-                contacts=json_data.get('contacts')
+                contacts=json_data.get('contacts'),
+                qq=json_data.get('qq')
             )
         self.corporate_name = json_data.get('corporate_name')
         self.about_me = json_data.get('about_me')
@@ -121,6 +124,7 @@ class WebSetting(db.Model):
         self.sina_blog = json_data.get('sina_blog')
         self.email = json_data.get('email')
         self.contacts = json_data.get('contacts')
+        self.qq = json_data.get('qq')
         return self
 
     @staticmethod

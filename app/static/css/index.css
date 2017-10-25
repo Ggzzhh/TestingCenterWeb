@@ -1,0 +1,329 @@
+html, body {
+    width:100%;
+    height:100%;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+}
+
+.my-navbar {
+    padding-top: 10px;
+    transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0);
+    position: fixed;
+}
+
+.my-navbar a{
+    background:transparent !important;
+    color: #ff6164 !important
+}
+
+.my-navbar a:hover {
+    color: #d66456 !important;
+    background:transparent;
+    outline:0;
+}
+
+.my-navbar a {
+    transition: color 0.5s ease-in-out;
+}/*-webkit-transition ;-moz-transition*/
+
+.top-nav {
+    padding:0;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+button.navbar-toggle {
+    background-color:#ff6164;
+}/*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
+
+button.navbar-toggle > span.icon-bar {
+    background-color:#dedede
+}
+
+#index {
+    width: 100%;
+    padding: 0;
+}
+
+#myCarousel img {
+    width: 100%;
+    height: 100%;
+}
+
+.down {
+    position: absolute;
+    z-index: 5;
+    bottom: 0;
+    left: calc((100% - 50px)/ 2);
+    font-size: 75px;
+    color: #ff6164;
+    cursor: pointer;
+    animation: bouncing-down 2s infinite;
+}
+
+.normal {
+    width: 100%;
+    min-height: 50%;
+}
+
+.gray {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.content {
+    padding: 0px;
+}
+
+.info {
+    width: 80%;
+    height: 100%;
+    margin: auto;
+    color: #FF6164;
+    min-height: 400px;
+    padding-top: 5em;
+    padding-bottom: 5em;
+}
+
+.info .page-header{
+    font-size: 2em;
+}
+
+.info .page-content {
+    max-width: 860px;
+    font-size: 1.5em;
+    text-indent: 2em;
+    font-weight: bolder;
+    line-height: 2em;
+}
+
+.info a {
+    text-decoration: none;
+}
+
+.info .page-content a{
+    color: #FF6164;
+}
+
+.page-header {
+    border-bottom: none;
+}
+
+.page-header h2 {
+    padding-bottom: 21px;
+    position: relative;
+}
+
+.page-header h2:before {
+    content: "";
+    width: 76px;
+    height: 7px;
+    background: #FF6164;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+}
+
+.border {
+    min-height: 520px;
+    width: 100%;
+    padding: 2em;
+    margin-top: 20px;
+    border: 5px solid;
+    border-radius: 25px;
+    transition: all 0.5s;
+}
+
+.border:hover {
+    box-shadow: 1px 5px 10px 10px rgba(251, 89, 77, 0.8);
+    background-color: #fff;
+}
+
+.step {
+    text-align: center;
+    text-indent: 0;
+    margin: 0 0 15px 0;
+}
+
+.bubble {
+    width: 200px;
+    height: 200px;
+    margin: 10px auto;
+    padding: 60px 0 0 0;
+    background: #fff;
+    border: 2px solid #FF6164;
+    border-radius: 200px;
+    font-size: 1.5em;
+    line-height: 1em;
+    text-align: center;
+    text-indent: 0;
+    color: #FF6164;
+    box-shadow: 0 0 15px 0 rgba(0,0,0,.15);
+    transition: all 250ms;
+}
+
+.bubble small {
+    font-size: 0.5em;
+}
+
+.footer {
+    position: relative;
+    z-index: 1;
+    background-color: #262f36;
+    min-height: 300px;
+    font-size: 1.4em;
+    color: #FF6164;
+    font-weight: bold;
+}
+
+.footer .container {
+    min-height: 240px;
+}
+
+.footer .title {
+    border-bottom: 1px solid #9d9d9d;
+    padding-bottom: 7px;
+    position: relative;
+    margin-bottom: 21px;
+    font-weight: bold;
+}
+
+.footer .title:after {
+    content: "";
+    width: 98px;
+    height: 1px;
+    background: #FF6164;
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+}
+
+.footer .widget {
+    padding-top: 35px;
+}
+
+.footer .content a {
+    display: block;
+    padding-bottom: 12px;
+    color: #c1c1c1;
+    text-decoration: none;
+}
+
+.footer .content a:hover {
+    color: #e3e3e3;
+}
+
+.footer .contact {
+    padding-top: 15%;
+    text-align: center;
+}
+
+.footer .contact .popover{
+    color: #fb4a4c;
+    font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+    font-weight: bolder;
+    font-size: 1.3em;
+    border-radius: 20px;
+}
+
+.footer .contact a{
+    margin-right: 1em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 50%;
+    background: gray;
+    width: 4rem;
+    height: 4rem;
+    text-align: center;
+    padding-top: 1rem;
+    color: #fff !important;
+}
+
+a.weixin:hover{
+    background-color:#609700;
+}
+
+a.weibo:hover{
+    background-color: #fb4a4c;
+}
+
+a.qq:hover{
+    background-color: #2e73fb;
+}
+
+.footer .foot {
+    text-align: center;
+    margin: 20px auto 1px 2px;
+    font-size: 1em;
+    font-weight: normal;
+    color: #9d9d9d;
+}
+@media screen and (max-width: 1024px){
+    .down {
+        display: none;
+    }
+    .info {
+        width: 90%;
+        padding: 10px;
+    }
+    .info .page-header{
+        font-size: 2em;
+    }
+    .info .page-content {
+        font-size: 1.3em;
+    }
+    .border {
+        min-height: 450px;
+    }
+}
+
+@media screen and (max-width: 768px){
+    h2	{
+        font-size: 18px;
+    }
+    .info {
+        width: 80%;
+        padding: 10px;
+    }
+    .info .page-header{
+        font-size: 2em;
+    }
+    .info .page-content {
+        font-size: 1.3em;
+    }
+    .border {
+        min-height: 320px;
+    }
+}
+
+@media screen and (max-width: 450px){
+    .info {
+        width: 100%;
+        padding: 10px;
+    }
+    .info .page-header{
+        font-size: 1.5em;
+    }
+    .info .page-content {
+        font-size: 1.1em;
+    }
+}
+
+@keyframes  bouncing-down{
+    0%, 100%, 20%, 50%, 80% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+
+    60% {
+        transform: translateY(-15px);
+    }
+}

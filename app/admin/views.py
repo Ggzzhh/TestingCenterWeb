@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import url_for, render_template, redirect, request, flash
+from flask import url_for, render_template, redirect, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
 from .forms import AdminLoginForm
-from ..models import Administrator, Post, SecondPageName, Activity
+from ..models import Administrator, Post, SecondPageName, Activity, WebSetting
 
 
 @manage.route('/')
@@ -100,3 +100,10 @@ def edit_activity(id):
     """展示页面"""
     activity = Activity.query.get_or_404(id)
     return render_template('admin/edit-activity.html', activity=activity)
+
+
+@manage.route('/other')
+@login_required
+def other():
+    """其余设置"""
+    return render_template('admin/other.html')

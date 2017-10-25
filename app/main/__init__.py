@@ -7,7 +7,9 @@ main = Blueprint('main', __name__)
 
 from . import errors, views
 
-from ..models import SecondPageName
+from ..models import SecondPageName, WebSetting
+
+
 # 返回数据库内的页面标题以及url
 @main.context_processor
 def get_page_names():
@@ -17,3 +19,10 @@ def get_page_names():
     for name in data:
         names[name.page_name] = name.id
     return dict(names=names)
+
+
+@main.context_processor
+def get_setting():
+    """获得设置"""
+    data = WebSetting.query.get(1)
+    return dict(setting=data.to_json())
