@@ -303,6 +303,14 @@ class Activity(db.Model):
         id = json_data.get('id')
         if id is not None:
             activity = Activity.query.get_or_404(id)
+            activity.title = json_data.get('title')
+            activity.img_url = json_data.get('img_url')
+            activity.body = json_data.get('body')
+            activity.start_date = datetime.strptime(json_data.get(
+                            'start_date'), '%Y-%m-%d')
+            activity.end_date = datetime.strptime(json_data.get(
+                            'end_date'), '%Y-%m-%d')
+            return activity
         return Activity(title=json_data.get('title'),
                         img_url=json_data.get('image_url'),
                         body=json_data.get('body'),
@@ -311,3 +319,31 @@ class Activity(db.Model):
                         end_date=datetime.strptime(json_data.get(
                             'end_date'), '%Y-%m-%d'))
 
+
+class FriendLink(db.Model):
+    """友情链接模版"""
+    __tablename__ = 'friend_links'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    url = db.Column(db.String(32))
+
+    def to_json(self):
+        json_data = {
+            'name': self.name,
+            'url': self.url
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(data):
+        return FriendLink(name=data.get('name'), url=data.get('url'))
+
+    @staticmethod
+    def update_from_json(data):
+        id = data.get('id')
+        if id is not None:
+            link = FriendLink.query.get_or_404(id)
+            link.name = data.get('name')
+            link.url = data.get('url')
+            return link
+        return FriendLink.from_json(data)

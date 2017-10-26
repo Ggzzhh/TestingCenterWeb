@@ -7,100 +7,124 @@
 			margin: 10px auto;
 			padding-bottom: 1px;
 			border-bottom: 2px solid #9d9d9d;
-		}
-
-		.span a {
-			text-decoration: none;
 			font-size: 2em;
 			font-weight: bold;
 			color: #00a2d4;
+		}
+
+		.span a {
+			font-weight: bold;
+		}
+
+		.span .pull-right a {
+			font-size: 0.5em;
+			text-decoration: none;
 		}
 
 		.myCollapse {
 			width: 80%;
 			margin: 10px auto;
 		}
+
+		.myCollapse .delete {
+			cursor: pointer;
+			font-size: 2em;
+			text-align: center;
+			font-weight: bold;
+		}
+		.myCollapse .delete a {
+			text-decoration: none;
+			color: #d90000;
+		}
+
+		.friend-links {
+			padding: 15px;
+		}
 	</style>
 {% endblock %}
+
 {% block page_content %}
 	<div class="container shadow">
 		<div class="page-header text-right">
 			<h1>其他设置</h1>
 		</div>
-		<form class="form-horizontal">
-			<div class="span">
+
+		<div class="span">
+			<div class="span-left">
+				友情链接
 				<a href="#collapse-1" data-toggle="collapse"
-				   aria-expanded="false"
+				   aria-expanded="false" class="btn btn-default btn-xs"
 				   aria-controls="collapse">
-					友情链接
+					收起/放出
+				</a>
+				<div class="pull-right">
+					<a href="#" id="new-link">
+						<span class="glyphicon glyphicon-plus"></span> 新增
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="collapse myCollapse" id="collapse-1">
+			<form class="form-horizontal link-form">
+				<div class="friend-links row"></div>
+			</form>
+			<button class="btn btn-primary" id="friend-link">提交</button>
+		</div>
+
+	</div>
+	{% import 'admin/_model.html' as model %}
+	{{ model.new_link() }}
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+
+	<script id="collapse_temp" type="text/template">
+		<div class="form-group">
+			<label class="control-label col-sm-1"
+				   for="corporate_name">
+				名称:
+			</label>
+			<div class="col-sm-3">
+				<input type="text" class="form-control"
+					   placeholder="None" name="corporate_name"
+					   value="{ name }"/>
+			</div>
+			<label class="control-label col-sm-2"
+				   for="corporate_url">
+				URL 地址:
+			</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control"
+					   placeholder="http://www.xxxx.com" name="corporate_url"
+						value="{ url }"/>
+			</div>
+			<div class="col-sm-2 delete">
+				<a href="#">
+					&times;
 				</a>
 			</div>
-			<div class="collapse myCollapse" id="collapse-1">
-				<div class="form-group">
-					<label class="control-label col-sm-1"
-						   for="corporate_name">
-						名称:
-					</label>
-					<div class="col-sm-3">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-					<label class="control-label col-sm-2"
-						   for="corporate_name">
-						URL 地址:
-					</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-				</div>
+		</div>
+	</script>
 
-				<div class="form-group">
-					<label class="control-label col-sm-1"
-						   for="corporate_name">
-						名称:
-					</label>
-					<div class="col-sm-3">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-					<label class="control-label col-sm-2"
-						   for="corporate_name">
-						URL 地址:
-					</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-				</div>
+	<script>
+        function create_new_temp(name, url) {
+            var temp = $('#collapse_temp').html();
+            temp = temp.replace(/{ name }/g, name);
+            temp = temp.replace(/{ url }/g, url);
+            $('.friend-links').append(temp);
+        }
 
-				<div class="form-group">
-					<label class="control-label col-sm-1"
-						   for="corporate_name">
-						名称:
-					</label>
-					<div class="col-sm-3">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-					<label class="control-label col-sm-2"
-						   for="corporate_name">
-						URL 地址:
-					</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control"
-							   placeholder="None"
-							   name="corporate_name"/>
-					</div>
-				</div>
-			</div>
+        create_new_temp('name', 'url');
 
+        $('#friend-link').click(function (e) {
+            e.preventDefault();
+            console.log($('.link-form').serializeJSON())
+            $('#myModal').modal('show');
+        })
+	</script>
 
-		</form>
-	</div>
+	<script>
+        $('.myCollapse').collapse('show');
+	</script>
 {% endblock %}
