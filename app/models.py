@@ -329,6 +329,7 @@ class FriendLink(db.Model):
 
     def to_json(self):
         json_data = {
+            'id': self.id,
             'name': self.name,
             'url': self.url
         }
@@ -338,12 +339,3 @@ class FriendLink(db.Model):
     def from_json(data):
         return FriendLink(name=data.get('name'), url=data.get('url'))
 
-    @staticmethod
-    def update_from_json(data):
-        id = data.get('id')
-        if id is not None:
-            link = FriendLink.query.get_or_404(id)
-            link.name = data.get('name')
-            link.url = data.get('url')
-            return link
-        return FriendLink.from_json(data)

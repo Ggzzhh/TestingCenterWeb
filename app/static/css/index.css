@@ -5,6 +5,11 @@ html, body {
     font-weight: 400;
 }
 
+h2 a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .my-navbar {
     padding-top: 10px;
     transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
@@ -72,6 +77,8 @@ button.navbar-toggle > span.icon-bar {
     height: 100%;
     margin: 0;
     background-color: #f0f0f0;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .content {
@@ -207,6 +214,13 @@ button.navbar-toggle > span.icon-bar {
     padding-top: 35px;
 }
 
+.footer .content{
+    display: block;
+    padding-bottom: 12px;
+    color: #c1c1c1;
+    text-decoration: none;
+}
+
 .footer .content a {
     display: block;
     padding-bottom: 12px;
@@ -243,6 +257,10 @@ button.navbar-toggle > span.icon-bar {
     text-align: center;
     padding-top: 1rem;
     color: #fff !important;
+}
+
+.footer .table>tbody>tr>td{
+    border: none;
 }
 
 a.weixin:hover{

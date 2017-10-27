@@ -4,14 +4,16 @@ from flask import url_for, render_template, redirect, jsonify, request, current_
 from werkzeug.utils import secure_filename
 
 from . import main
+from ..models import WebSetting
 
 # 允许的类型
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
-@main.route('/', methods=["POST", "GET"])
+@main.route('/')
 def index():
-    return render_template("index.html")
+    setting = WebSetting.query.first()
+    return render_template("index.html", setting=setting)
 
 
 def allowed_file(filename):

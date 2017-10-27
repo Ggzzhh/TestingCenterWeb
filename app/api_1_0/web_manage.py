@@ -6,7 +6,7 @@ from flask_login import login_required
 
 from . import api
 from .. import db
-from ..models import WebSetting, SecondPageName, Post, Activity
+from ..models import WebSetting, SecondPageName, Post, Activity, FriendLink
 
 
 @api.route('/web-setting')
@@ -217,3 +217,47 @@ def delete_activity(id):
     db.session.delete(activity)
     db.session.commit()
     return jsonify({'result': 'ok'})
+
+
+@api.route('/friend-links')
+def get_links():
+    """获得友情链接"""
+    links = FriendLink.query.all()
+    return jsonify({'links': [link.to_json() for link in links]})
+
+
+@api.route('/new-link', methods=["POST"])
+@login_required
+def new_link():
+    """新增友情链接"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    link = FriendLink.from_json(json_data)
+    db.session.add(link)
+    db.session.commit()
+    return jsonify({'result': 'ok'})
+
+
+@api.route('/link/<int:id>', methods=["POST", "PUT"])
+@login_required
+def update_link(id):
+    """修改友情链接"""
+    link = FriendLink.query.get_or_404(id)
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    link.name = json_data.get('name')
+    link.url = json_data.get('url')
+    db.session.add(link)
+    db.session.commit()
+    return jsonify({'result': 'ok'}), 201
+
+
+@api.route('/link/<int:id>', methods=["DELETE"])
+@login_required
+def delete_link(id):
+    link = FriendLink.query.get_or_404(id)
+    db.session.delete(link)
+    db.session.commit()
+    return jsonify({'result': 'ok'}), 201

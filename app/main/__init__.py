@@ -7,7 +7,7 @@ main = Blueprint('main', __name__)
 
 from . import errors, views
 
-from ..models import SecondPageName, WebSetting
+from ..models import SecondPageName, WebSetting, FriendLink
 
 
 # 返回数据库内的页面标题以及url
@@ -26,3 +26,10 @@ def get_setting():
     """获得设置"""
     data = WebSetting.query.get(1)
     return dict(setting=data.to_json())
+
+
+@main.context_processor
+def get_links():
+    """获得设置"""
+    links = FriendLink.query.all()
+    return dict(links=[link.to_json() for link in links])

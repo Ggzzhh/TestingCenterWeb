@@ -59,44 +59,16 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label" for="about_me">关于我们</label>
-				<div class="text-danger">
-					<small>
-						这里使用了markdown格式的编辑器 下方可查看预览
-						>>> <a href="http://www.jianshu.com/p/075d7cac8fef"
-							   target="_blank">查看使用教程</a>
-					</small>
 
-				</div>
 
 				<div class="flask-pagedown">
 					<textarea class="form-control flask-pagedown-input"
 							  id="flask-pagedown-body" name="about_me"
 							  rows="10"></textarea>
 				</div>
-				<div class="flask-pagedown-preview"
-					 id="flask-pagedown-body-preview"></div>
 			</div>
 
-			<script type="text/javascript">
-                f = function() {
-                    if (typeof flask_pagedown_converter === "undefined")
-                        flask_pagedown_converter = Markdown.getSanitizingConverter().makeHtml;
-                    var textarea = document.getElementById("flask-pagedown-body");
-                    var preview = document.getElementById("flask-pagedown-body-preview");
-                    textarea.onkeyup = function() {
-                        preview.innerHTML = flask_pagedown_converter(textarea.value);
-                    };
-                    textarea.onkeyup.call(textarea);
-                };
-                if (document.readyState === 'complete')
-                    f();
-                else if (window.addEventListener)
-                    window.addEventListener("load", f, false);
-                else if (window.attachEvent)
-                    window.attachEvent("onload", f);
-                else
-                    f();
-			</script>
+
 			<button class="btn btn-info" >提 交</button>
 		</form>
 	</div>

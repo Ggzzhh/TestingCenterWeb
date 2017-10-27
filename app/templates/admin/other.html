@@ -68,7 +68,7 @@
 			<form class="form-horizontal link-form">
 				<div class="friend-links row"></div>
 			</form>
-			<button class="btn btn-primary" id="friend-link">提交</button>
+			<button class="btn btn-primary" id="update-link">提交</button>
 		</div>
 
 	</div>
@@ -78,7 +78,6 @@
 
 {% block scripts %}
 	{{ super() }}
-
 	<script id="collapse_temp" type="text/template">
 		<div class="form-group">
 			<label class="control-label col-sm-1"
@@ -87,8 +86,8 @@
 			</label>
 			<div class="col-sm-3">
 				<input type="text" class="form-control"
-					   placeholder="None" name="corporate_name"
-					   value="{ name }"/>
+					   placeholder="None" name="{ name_count }"
+					   value="{ name }" required/>
 			</div>
 			<label class="control-label col-sm-2"
 				   for="corporate_url">
@@ -96,11 +95,11 @@
 			</label>
 			<div class="col-sm-4">
 				<input type="text" class="form-control"
-					   placeholder="http://www.xxxx.com" name="corporate_url"
-						value="{ url }"/>
+					   placeholder="http://www.xxxx.com" name="{ url_count }"
+					   value="{ url }"/>
 			</div>
 			<div class="col-sm-2 delete">
-				<a href="#">
+				<a href="#" name="{ id }" onclick="delete_link({ id })">
 					&times;
 				</a>
 			</div>
@@ -108,23 +107,83 @@
 	</script>
 
 	<script>
-        function create_new_temp(name, url) {
-            var temp = $('#collapse_temp').html();
-            temp = temp.replace(/{ name }/g, name);
-            temp = temp.replace(/{ url }/g, url);
-            $('.friend-links').append(temp);
-        }
+        var count = 0;
 
-        create_new_temp('name', 'url');
+        $.ajax({
+            type: 'GET',
+            url: "{{ url_for('api.get_links') }}",
+            data: '',
+            dataType: 'json',
+            success: function (data) {
+                var links = data.links;
+                if (links.length === 0){
+                    $('#update-link').hide();
+                }
+                for (var i in links){
+                    var name = links[i].name;
+                    var url = links[i].url;
+                    var id = links[i].id;
+                    create_new_temp(name, url, id);
+                }
+                $('.myCollapse').collapse('show');
+            }
+
+        });
+
+        $('#new-link').click(function () {
+            $('#myModal').modal('show');
+        });
+
+        $('#new_link').click(function () {
+            var json_data = {};
+            json_data.name = $('input[name="corporate_name"]').val();
+            var url = $('input[name="corporate_url"]').val();
+            var urlRe = /(\w+\.)+\w+/;
+            if (urlRe.test(url) !== true){
+                alert('url格式错误！请重新输入后重试！');
+                return
+            }
+            json_data.url = url;
+            json_data = JSON.stringify(json_data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.new_link') }}",
+                data: json_data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    window.location.reload();
+                }
+            })
+        });
 
         $('#friend-link').click(function (e) {
             e.preventDefault();
-            console.log($('.link-form').serializeJSON())
-            $('#myModal').modal('show');
-        })
-	</script>
+            console.log($('.link-form').serializeJSON());
+        });
 
-	<script>
-        $('.myCollapse').collapse('show');
+        function delete_link(id) {
+            var result = confirm("你确定要删除么？");
+            if (result === true){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api-v1.0/link/" + id,
+                    success: function (data) {
+                        window.location.reload();
+                    }
+                })
+            }
+        }
+
+        function create_new_temp(name, url, id) {
+            var temp = $('#collapse_temp').html();
+            temp = temp.replace(/{ name }/g, name);
+            temp = temp.replace(/{ url }/g, url);
+            temp = temp.replace(/{ id }/g, id);
+            temp = temp.replace(/{ name_count }/g, "name-" + count);
+            temp = temp.replace(/{ url_count }/g, "url-" + count);
+            $('.friend-links').append(temp);
+            count ++;
+        }
 	</script>
 {% endblock %}

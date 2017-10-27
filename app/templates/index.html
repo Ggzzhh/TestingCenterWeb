@@ -29,11 +29,11 @@
 				<div class="page-header text-center">
 					<h2>
 						<b>给大家介绍一下</b>
-						<a href="#info"><b>@浩瀚体育</b></a>
+						<a onclick="goTo('about_me')"><b>@浩瀚体育</b></a>
 					</h2>
 				</div>
-				<div class="page-content center-block">
-					<a name="info">浩瀚体育</a>是一家集体育赛事、体育传媒和教育培训的体育类管理公司，业务范围涵盖终端消费者的日常体育生活服务、面向企业品牌传播的整合服务。公司业务范围覆盖体育咨询管理、体育赛事运营、体育场馆营运、体育娱乐传媒等。
+				<div class="page-content center-block" id="about_me">
+					{{ setting.about_me }}
 				</div>
 			</div>
 		</div>
@@ -121,17 +121,32 @@
 					<div class="widget">
 						<h4 class="title">友情链接</h4>
 						<div class="content">
-							<a href="">测试</a>
-
+							{% for link in links %}
+								<a href="{{ link.url }}" target="_blank">
+									{{ link.name }}
+								</a>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
 					<div class="widget">
-						<h4 class="title">关于</h4>
+						<h4 class="title">联系方式</h4>
 						<div class="content">
-							<a href="">关于我们</a>
-							<a href="">加入我们</a>
+							<table class="table">
+								<tr>
+									<td>联系人</td>
+									<td>{{ setting.contacts }}</td>
+								</tr>
+								<tr>
+									<td>手机</td>
+									<td>{{ setting.phone_num }}</td>
+								</tr>
+								<tr>
+									<td>email</td>
+									<td>{{ setting.email }}</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -162,6 +177,8 @@
 	{{ super() }}
 	{{ moment.include_moment() }}
 	<script>
+
+
         $(function ()
         {
             $(".weixin").popover({
@@ -169,7 +186,7 @@
                 html: true,
                 content: "<p class='text-center'>来！扫我！</p>" +
                 "<img class='thumbnail' src='{{ setting.WeChat_img }}' " +
-				"width='200' height='200'>",
+                "width='200' height='200'>",
                 animation: true,
                 placement: 'top'
             });
@@ -205,6 +222,11 @@
             $("html, body").animate({scrollTop:$('.carousel-inner').height()}, 700);
         }
 
+        function goTo(id) {
+            var num = $('#myCarousel').height() - 30;
+            console.log(num);
+            $("html, body").animate({scrollTop: num}, 700)
+        }
 	</script>
 
 {% endblock scripts %}
