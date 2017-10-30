@@ -6,7 +6,8 @@ from flask_login import login_required
 
 from . import api
 from .. import db
-from ..models import WebSetting, SecondPageName, Post, Activity, FriendLink
+from ..models import WebSetting, SecondPageName, Post, Activity, \
+    FriendLink, Carousel
 
 
 @api.route('/web-setting')
@@ -261,3 +262,10 @@ def delete_link(id):
     db.session.delete(link)
     db.session.commit()
     return jsonify({'result': 'ok'}), 201
+
+
+@api.route('/carousels')
+def get_carousels():
+    """获得轮播图"""
+    carousels = Carousel.query.all()
+    return jsonify({'carousels': [carousel.to_json() for carousel in carousels]})

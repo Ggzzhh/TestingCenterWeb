@@ -48,28 +48,56 @@
 		<div class="page-header text-right">
 			<h1>其他设置</h1>
 		</div>
-
-		<div class="span">
-			<div class="span-left">
-				友情链接
-				<a href="#collapse-1" data-toggle="collapse"
-				   aria-expanded="false" class="btn btn-default btn-xs"
-				   aria-controls="collapse">
-					收起/放出
-				</a>
-				<div class="pull-right">
-					<a href="#" id="new-link">
-						<span class="glyphicon glyphicon-plus"></span> 新增
+		<div class="model">
+			<div class="span">
+				<div class="span-left">
+					友情链接
+					<a href="#collapse-1" data-toggle="collapse"
+					   aria-expanded="false" class="btn btn-default btn-xs"
+					   aria-controls="collapse">
+						收起/放出
 					</a>
+					<div class="pull-right">
+						<a href="#" id="new-link">
+							<span class="glyphicon glyphicon-plus"></span> 新增
+						</a>
+					</div>
 				</div>
 			</div>
+			<div class="collapse myCollapse" id="collapse-1">
+				<form class="form-horizontal link-form">
+					<div class="friend-links row"></div>
+				</form>
+				<button class="btn btn-primary" id="update-link">提交</button>
+			</div>
 		</div>
-		<div class="collapse myCollapse" id="collapse-1">
-			<form class="form-horizontal link-form">
-				<div class="friend-links row"></div>
-			</form>
-			<button class="btn btn-primary" id="update-link">提交</button>
+
+
+		<div class="model">
+			<div class="span">
+				<div class="span-left">
+					首页轮播图
+					<a href="#collapse-2" data-toggle="collapse"
+					   aria-expanded="false" class="btn btn-default btn-xs"
+					   aria-controls="collapse">
+						收起/放出
+					</a>
+					<div class="pull-right">
+						<a href="#" id="new-carousel">
+							<span class="glyphicon glyphicon-plus"></span> 新增
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="collapse myCollapse" id="collapse-2">
+				<form class="form-horizontal carousel-form">
+					<div class="carousel row"></div>
+				</form>
+				<button class="btn btn-primary" id="update-carousel">提交</button>
+			</div>
 		</div>
+
+
 
 	</div>
 	{% import 'admin/_model.html' as model %}
@@ -119,16 +147,43 @@
                 if (links.length === 0){
                     $('#update-link').hide();
                 }
-                for (var i in links){
-                    var name = links[i].name;
-                    var url = links[i].url;
-                    var id = links[i].id;
-                    create_new_temp(name, url, id);
+                else{
+                    for (var i in links){
+                        var name = links[i].name;
+                        var url = links[i].url;
+                        var id = links[i].id;
+                        create_new_link_temp(name, url, id);
+                    }
+                    $('.myCollapse').collapse('show');
                 }
-                $('.myCollapse').collapse('show');
-            }
 
+            }
         });
+
+        $.ajax({
+            type: 'GET',
+            url: "{{ url_for('api.get_carousels') }}",
+            data: '',
+            dataType: 'json',
+            success: function (data) {
+                var carousels = data.carousels;
+                if (carousels.length === 0){
+                    $('#update-carousel').hide();
+                }
+                else{
+                    for (var i in carousels){
+                        var url = carousels[i].url;
+                        var id = carousels[i].id;
+                        console.log(id + ":" + url);
+                        // todo: 完成首页轮播图的增删改 以及页面显示效果
+						$('#collapse-2 .carousel').append("<img src='" + url +
+							"' width=300 height=300>")
+                    }
+                    $('.myCollapse').collapse('show');
+                }
+            }
+        });
+
 
         $('#new-link').click(function () {
             $('#myModal').modal('show');
@@ -175,7 +230,7 @@
             }
         }
 
-        function create_new_temp(name, url, id) {
+        function create_new_link_temp(name, url, id) {
             var temp = $('#collapse_temp').html();
             temp = temp.replace(/{ name }/g, name);
             temp = temp.replace(/{ url }/g, url);

@@ -152,3 +152,14 @@ def get_page_names():
 ## 利用@media进行自适应调整时 注意样式是进行覆盖的 所以最小分辨率时小的放下面
     @media screen and (max-width: 1024px){……}
     @media screen and (max-width: 480px){……}
+    
+    
+## 建表时如果同时存在多个外键指向报错问题
+    在外键对应的关系中，添加`foreign_keys=[外键1, 外键2]`
+    
+## 搜索方法 模糊搜索
+```python
+user = ​User.query.filter(
+    User.name.like("%"+search+"%") if search is not None else "", 
+    User.age.like("%"+search+"%") if search is not None else "")
+```

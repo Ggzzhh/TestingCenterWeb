@@ -14,7 +14,9 @@ import bleach
 @login_manager.user_loader
 def load_user(user_id):
     """使用flask_login时必须实现的函数 返回None或者实例"""
-    return Administrator.query.get(int(user_id))
+    if int(user_id) == 1:
+        return Administrator.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -270,6 +272,20 @@ class Post(db.Model):
         db.session.commit()
 
 
+class Enroll(db.Model):
+    """报名表 活动以及参加活动的队伍 多对多关系表"""
+    __tablename__ = 'enrolls'
+    id = db.Column(db.Integer, primary_key=True)
+    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'),
+                            primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'),
+                        primary_key=True)
+    # 报名时间戳
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    # 冠军
+    champion_team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+
+
 class Activity(db.Model):
     """活动模版"""
     __tablename__ = 'activities'
@@ -279,7 +295,14 @@ class Activity(db.Model):
     body = db.Column(db.Text)
     start_date = db.Column(db.DateTime, index=True)
     end_date = db.Column(db.DateTime, index=True)
+    # 活动报名页面地址
     sign_up_url = db.Column(db.String(64))
+    # 活动参与人数 例如：1v1
+    number = db.Column(db.Integer)
+    # 参与的队伍
+    teams = db.relationship("Enroll", foreign_keys=[Enroll.activity_id],
+                            backref='activity', lazy='dynamic',
+                            cascade='all, delete-orphan')
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 
     def to_json(self, brief=False):
@@ -292,7 +315,9 @@ class Activity(db.Model):
             'body': self.body,
             'start_date': datetime.strftime(self.start_date, '%Y-%m-%d'),
             'end_date': datetime.strftime(self.end_date, '%Y-%m-%d'),
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'sign_up_url': self.sign_up_url,
+            'number': self.number
         }
         if brief:
             json_data.pop('body')
@@ -303,21 +328,17 @@ class Activity(db.Model):
         id = json_data.get('id')
         if id is not None:
             activity = Activity.query.get_or_404(id)
-            activity.title = json_data.get('title')
-            activity.img_url = json_data.get('img_url')
-            activity.body = json_data.get('body')
-            activity.start_date = datetime.strptime(json_data.get(
-                            'start_date'), '%Y-%m-%d')
-            activity.end_date = datetime.strptime(json_data.get(
-                            'end_date'), '%Y-%m-%d')
-            return activity
-        return Activity(title=json_data.get('title'),
-                        img_url=json_data.get('image_url'),
-                        body=json_data.get('body'),
-                        start_date=datetime.strptime(json_data.get(
-                            'start_date'), '%Y-%m-%d'),
-                        end_date=datetime.strptime(json_data.get(
-                            'end_date'), '%Y-%m-%d'))
+        else:
+            activity = Activity()
+        activity.title = json_data.get('title')
+        activity.img_url = json_data.get('img_url')
+        activity.body = json_data.get('body')
+        activity.start_date = datetime.strptime(json_data.get(
+                        'start_date'), '%Y-%m-%d')
+        activity.end_date = datetime.strptime(json_data.get(
+                        'end_date'), '%Y-%m-%d')
+        activity.number = json_data.get('number')
+        return activity
 
 
 class FriendLink(db.Model):
@@ -338,4 +359,111 @@ class FriendLink(db.Model):
     @staticmethod
     def from_json(data):
         return FriendLink(name=data.get('name'), url=data.get('url'))
+
+
+class Carousel(db.Model):
+    """首页轮播图"""
+    __tablename__ = 'carousels'
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(32), nullable=True)
+
+    def to_json(self):
+        json_data = {
+            'id': self.id,
+            'url': self.url
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(data):
+        return Carousel(url=data.get('url'))
+
+
+class User(db.Model, UserMixin):
+    """用户模版
+        有一个默认的协助管理账户 id为999 这样用户注册时最小id即为1000
+        管理者有权限删除留言
+        删除留言后 在用户的通知信息中 显示信息
+    """
+    # 头像hash
+    avatar_hash = db.Column(db.String(32))
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = \
+                hashlib.md5(self.email.encode('utf-8')).hexdigest()
+
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    is_admin = db.Column(db.Boolean, default=False)
+    info = db.relationship("Info", backref='user', lazy='dynamic')
+    # 必填
+    username = db.Column(db.String(32), unique=True, nullable=True)
+    email = db.Column(db.String(32), unique=True, nullable=True)
+    password_hash = db.Column(db.String(128))
+    # 选填
+    name = db.Column(db.String(10))
+    phone = db.Column(db.Integer)
+    # 是否是男性
+    male = db.Column(db.Boolean, default=True)
+    age = db.Column(db.Integer, default=0)
+    tops = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    position = db.Column(db.String(16))
+    about_me = db.Column(db.Text)
+    qq = db.Column(db.Integer)
+    WeChat = db.Column(db.String(16))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
+
+
+    @property
+    def password(self):
+        raise AttributeError("这不是一个可读属性")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        """验证密码，返回布尔值"""
+        return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def is_position(value):
+        """检验值是否是三个位置中的一个, 可删减"""
+        positions = ['后卫', '前锋', '中锋']
+        if value in positions:
+            return True
+        return False
+
+
+class Info(db.Model):
+    """用户接受的信息"""
+    __tablename__ = 'info'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    message = db.Column(db.Text)
+
+
+class Team(db.Model):
+    """队伍模版"""
+    __tablename__ = 'teams'
+    id = db.Column(db.Integer, primary_key=True)
+    # 队长id
+    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # 队伍名
+    name = db.Column(db.String(32), unique=True, nullable=True)
+    # 队员
+    players = db.relationship("User", foreign_keys=[User.team_id], backref='team',
+                              lazy='dynamic')
+    # 参与的活动
+    activities = db.relationship("Enroll", foreign_keys=[Enroll.team_id],
+                                 backref='team', lazy='dynamic',
+                                 cascade='all, delete-orphan')
+    # 成立时间
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+
+
+
 

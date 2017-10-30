@@ -23,8 +23,7 @@ def login():
         Administrator.register_admin()
     form = AdminLoginForm()
     if form.validate_on_submit():
-        admin = Administrator()
-        admin = admin.query.filter_by(username=form.username.data).first()
+        admin = Administrator.query.filter_by(username=form.username.data).first()
         if admin is not None and admin.verify_password(form.password.data):
             login_user(admin)
             return redirect(request.args.get('next') or url_for('manage.index'))
