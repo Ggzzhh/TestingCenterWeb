@@ -11,8 +11,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<link rel="shortcut icon" href="/static/image/favicon.ico"
 		  type="image/x-icon"/>
-	<style>
-	</style>
 {% endblock head %}
 
 {% block navbar %}
@@ -51,7 +49,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="#">
+						<a href="{{ url_for('main.register') }}">
 							注 册
 						</a>
 					</li>

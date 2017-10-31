@@ -397,7 +397,8 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     is_admin = db.Column(db.Boolean, default=False)
-    info = db.relationship("Info", backref='user', lazy='dynamic')
+    # 接收的信息
+    infos = db.relationship("Info", backref='user', lazy='dynamic')
     # 必填
     username = db.Column(db.String(32), unique=True, nullable=True)
     email = db.Column(db.String(32), unique=True, nullable=True)
@@ -406,7 +407,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(10))
     phone = db.Column(db.Integer)
     # 是否是男性
-    male = db.Column(db.Boolean, default=True)
+    male = db.Column(db.Integer, default=2)
     age = db.Column(db.Integer, default=0)
     tops = db.Column(db.Integer)
     weight = db.Column(db.Integer)
@@ -415,7 +416,6 @@ class User(db.Model, UserMixin):
     qq = db.Column(db.Integer)
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
-
 
     @property
     def password(self):

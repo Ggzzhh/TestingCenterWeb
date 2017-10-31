@@ -16,6 +16,11 @@ def index():
     return render_template("index.html", setting=setting)
 
 
+@main.route('/register')
+def register():
+    return render_template("register.html")
+
+
 def allowed_file(filename):
     """验证文件类型是否符合条件"""
     return '.' in filename and \
