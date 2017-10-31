@@ -19,7 +19,7 @@ h2 a {
 
 .my-navbar a{
     background:transparent !important;
-    color: #ff6164 !important
+    color: #ff000a !important
 }
 
 .my-navbar a:hover {
@@ -38,7 +38,7 @@ h2 a {
 }
 
 button.navbar-toggle {
-    background-color:#ff6164;
+    background-color:#ff000a;
 }/*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
 
 button.navbar-toggle > span.icon-bar {
@@ -61,7 +61,7 @@ button.navbar-toggle > span.icon-bar {
     bottom: 0;
     left: calc((100% - 50px)/ 2);
     font-size: 75px;
-    color: #ff6164;
+    color: #ff000a;
     cursor: pointer;
     animation: bouncing-down 2s infinite;
 }
@@ -88,7 +88,7 @@ button.navbar-toggle > span.icon-bar {
     width: 80%;
     height: 100%;
     margin: auto;
-    color: #FF6164;
+    color: #ff000a;
     min-height: 400px;
     padding-top: 5em;
     padding-bottom: 5em;
@@ -111,7 +111,7 @@ button.navbar-toggle > span.icon-bar {
 }
 
 .info .page-content a{
-    color: #FF6164;
+    color: #ff000a;
 }
 
 .page-header {
@@ -127,7 +127,7 @@ button.navbar-toggle > span.icon-bar {
     content: "";
     width: 76px;
     height: 7px;
-    background: #FF6164;
+    background: #ff000a;
     position: absolute;
     left: 0;
     right: 0;
@@ -162,13 +162,13 @@ button.navbar-toggle > span.icon-bar {
     margin: 10px auto;
     padding: 60px 0 0 0;
     background: #fff;
-    border: 2px solid #FF6164;
+    border: 2px solid #ff000a;
     border-radius: 200px;
     font-size: 1.5em;
     line-height: 1em;
     text-align: center;
     text-indent: 0;
-    color: #FF6164;
+    color: #ff000a;
     box-shadow: 0 0 15px 0 rgba(0,0,0,.15);
     transition: all 250ms;
 }
@@ -183,7 +183,7 @@ button.navbar-toggle > span.icon-bar {
     background-color: #262f36;
     min-height: 300px;
     font-size: 1.4em;
-    color: #FF6164;
+    color: #ff000a;
     font-weight: bold;
 }
 
@@ -203,7 +203,7 @@ button.navbar-toggle > span.icon-bar {
     content: "";
     width: 98px;
     height: 1px;
-    background: #FF6164;
+    background: #ff000a;
     position: absolute;
     left: 0;
     bottom: -1px;
