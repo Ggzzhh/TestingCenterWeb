@@ -1,8 +1,8 @@
 html, body {
     width:100%;
     height:100%;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
+    font-weight: bold;
+    font-size: 1em;
 }
 
 h2 a {
@@ -19,18 +19,17 @@ h2 a {
 
 .my-navbar a{
     background:transparent !important;
-    color: #ff000a !important
-}
-
-.my-navbar a:hover {
-    color: #d66456 !important;
-    background:transparent;
-    outline:0;
-}
-
-.my-navbar a {
+    color: #fb4a4c !important;
+    font-weight: bold;
     transition: color 0.5s ease-in-out;
 }/*-webkit-transition ;-moz-transition*/
+
+.my-navbar a:hover {
+    color: #b3000a !important;
+    background:transparent;
+    outline:0;
+    font-weight: bold;
+}
 
 .top-nav {
     padding:0;

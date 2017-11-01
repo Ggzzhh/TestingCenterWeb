@@ -177,8 +177,6 @@
 	{{ super() }}
 	{{ moment.include_moment() }}
 	<script>
-
-
         $(function ()
         {
             $(".weixin").popover({
@@ -223,8 +221,9 @@
         }
 
         function goTo(id) {
-            var num = $('#myCarousel').height() - 30;
-            console.log(num);
+            var num = $('#' + id).height() + $('.carousel-inner').height() -
+				350;
+            // console.log(num);
             $("html, body").animate({scrollTop: num}, 700)
         }
 	</script>

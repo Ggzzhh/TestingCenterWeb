@@ -163,3 +163,5 @@ user = ​User.query.filter(
     User.name.like("%"+search+"%") if search is not None else "", 
     User.age.like("%"+search+"%") if search is not None else "")
 ```
+
+## 汉字正则表达式[\u4e00-\u9fa5]

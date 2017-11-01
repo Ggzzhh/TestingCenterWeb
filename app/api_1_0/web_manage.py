@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 from datetime import datetime
 from flask import jsonify, request, flash, current_app, url_for, abort
 from flask_login import login_required
@@ -7,11 +6,13 @@ from flask_login import login_required
 from . import api
 from .. import db
 from ..models import WebSetting, SecondPageName, Post, Activity, \
-    FriendLink, Carousel
+    FriendLink, User
+from ..decorators import super_admin_required
 
 
 @api.route('/web-setting')
 @login_required
+@super_admin_required
 def web_setting():
     """获取网站设置"""
     setting = WebSetting.query.first()
@@ -22,6 +23,7 @@ def web_setting():
 
 @api.route('/web-setting', methods=["POST", "PUT"])
 @login_required
+@super_admin_required
 def update_web_setting():
     """更新网站设置"""
     setting = WebSetting.query.first()
@@ -38,6 +40,7 @@ def update_web_setting():
 
 @api.route('/nav-setting', methods=["GET"])
 @login_required
+@super_admin_required
 def get_nav_setting():
     """获取导航设置"""
     nav_names = SecondPageName.query.all()
@@ -48,6 +51,7 @@ def get_nav_setting():
 
 @api.route('/nav-setting', methods=['POST', 'PUT'])
 @login_required
+@super_admin_required
 def update_nav_setting():
     """更新导航设置"""
     json_data = request.get_json()
@@ -62,6 +66,7 @@ def update_nav_setting():
 
 @api.route('/nav-setting/<int:id>', methods=['DELETE'])
 @login_required
+@super_admin_required
 def delete_nav_setting(id):
     """删除导航设置"""
     nav = SecondPageName.query.filter_by(id=id).first()
@@ -110,6 +115,7 @@ def get_post(id):
 
 @api.route('/new-post/<int:id>', methods=["POST", "PUT"])
 @login_required
+@super_admin_required
 def new_post(id):
     """新建一篇文章"""
     json_data = request.get_json()
@@ -126,6 +132,7 @@ def new_post(id):
 
 @api.route('/posts/<int:id>', methods=["DELETE"])
 @login_required
+@super_admin_required
 def delete_post(id):
     """删除某类别中的指定文章"""
     post = Post.query.get_or_404(id)
@@ -136,6 +143,7 @@ def delete_post(id):
 
 @api.route('/edit-post/<int:id>', methods=["POST", "PUT"])
 @login_required
+@super_admin_required
 def edit_post(id):
     """编辑文章"""
     json_data = request.get_json()
@@ -149,6 +157,7 @@ def edit_post(id):
 
 @api.route('/activity', methods=["POST"])
 @login_required
+@super_admin_required
 def activity():
     """新增活动或修改"""
     json_data = request.get_json()
@@ -167,15 +176,15 @@ def get_activities():
     now = datetime.now()
     page = request.args.get('page', 1, type=int)
     if condition == 'start':
-        pagination = Activity.query\
-            .filter(Activity.start_date < now, Activity.end_date > now)\
-            .order_by(Activity.timestamp.desc())\
+        pagination = Activity.query \
+            .filter(Activity.start_date < now, Activity.end_date > now) \
+            .order_by(Activity.timestamp.desc()) \
             .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                       error_out=True)
     if condition == 'end':
-        pagination = Activity.query\
-            .filter(Activity.end_date < now)\
-            .order_by(Activity.timestamp.desc())\
+        pagination = Activity.query \
+            .filter(Activity.end_date < now) \
+            .order_by(Activity.timestamp.desc()) \
             .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                       error_out=True)
     if condition == 'future':
@@ -212,6 +221,7 @@ def get_activity(id):
 
 @api.route('/activity/<int:id>', methods=["DELETE"])
 @login_required
+@super_admin_required
 def delete_activity(id):
     """删除某活动"""
     activity = Activity.query.get_or_404(id)
@@ -229,6 +239,7 @@ def get_links():
 
 @api.route('/new-link', methods=["POST"])
 @login_required
+@super_admin_required
 def new_link():
     """新增友情链接"""
     json_data = request.get_json()
@@ -242,6 +253,7 @@ def new_link():
 
 @api.route('/link/<int:id>', methods=["POST", "PUT"])
 @login_required
+@super_admin_required
 def update_link(id):
     """修改友情链接"""
     link = FriendLink.query.get_or_404(id)
@@ -257,9 +269,13 @@ def update_link(id):
 
 @api.route('/link/<int:id>', methods=["DELETE"])
 @login_required
+@super_admin_required
 def delete_link(id):
+    """删除友情链接"""
     link = FriendLink.query.get_or_404(id)
     db.session.delete(link)
     db.session.commit()
     return jsonify({'result': 'ok'}), 201
+
+
 

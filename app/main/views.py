@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
-from flask import url_for, render_template, redirect, jsonify, request, current_app
+from flask import url_for, render_template, redirect, \
+    jsonify, request, current_app, flash
 from werkzeug.utils import secure_filename
+from flask_login import logout_user, login_user, current_user
 
 from . import main
-from ..models import WebSetting
+from ..models import WebSetting, User
 
 # 允许的类型
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -19,6 +21,17 @@ def index():
 @main.route('/register')
 def register():
     return render_template("register.html")
+
+
+@main.route('/login')
+def login():
+    return render_template("login.html")
+
+
+@main.route('/register_ok')
+def register_ok():
+    flash('注册成功，请前往邮箱进行验证后登录!')
+    return render_template("login.html")
 
 
 def allowed_file(filename):

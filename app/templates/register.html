@@ -54,9 +54,24 @@
 		#submit{
 			width: 60%;
 		}
+
+		/* 取消number中的上下小箭头 */
+		input[type=number]::-webkit-inner-spin-button,
+		input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			appearance: none;
+			margin: 0;
+		}
+
 		@media screen and (max-width: 1024px){
+			body {
+				font-size: 0.9em;
+			}
 			.register-box {
 				width: 90%;
+			}
+			.mod-body {
+				width: 100%;
 			}
 		}
 	</style>
@@ -71,7 +86,7 @@
 				<h1>注册新用户</h1>
 			</div>
 			<div class="mod-body">
-				<form class="form">
+				<form class="form" action="#" id="form">
 					<div class="page-header">
 						<b>必填</b>
 					</div>
@@ -80,9 +95,9 @@
 							<input class="form-control"
 								   type="text" name="username"
 								   placeholder="用户名"
-								   value="">
+								   value="" required>
 							<span class="help-block text-left">
-								* 6位以上的数字、字母、下划线
+								* 6-18位的数字、字母、下划线
 							</span>
 						</li>
 						<li id="email">
@@ -91,59 +106,73 @@
 								   placeholder="邮箱"
 								   data-toggle="popover"
 								   data-placement="top"
-								   value="">
+								   value="" required>
 							<span class="help-block text-left">
 								* 例如： 1234567@qq.com
 							</span>
 						</li>
 						<li id="password">
 							<input class="form-control"
-								   type="text" name="password"
+								   type="password" name="password"
 								   placeholder="密码"
 								   data-toggle="popover"
 								   data-placement="top"
-								   value="">
+								   value="" required>
 							<span class="help-block text-left">
-								* 6位以上的数字、字母、下划线（不能是纯数字）
+								* 6-18位的数字、字母、下划线
 							</span>
 						</li>
 						<hr />
 						<div class="page-header">
-							<b>主要联系方式</b>
-							<small><b>(只有自己与球队队长可见)</b></small>
+							<b>主要联系方式</b><br />
+							<small><b>(自己、球队队长可见)</b></small>
 						</div>
-						<li class="text-left">
+						<li class="text-left" id="phone">
 							<label for="phone">手机号:</label>
 							<input class="form-control"
-								   type="text" name="phone"
+								   type="number" name="phone"
 								   placeholder="无"
-								   value="" id="phone">
+								   value="" >
 							<span class="help-block text-left"></span>
 						</li>
-						<li class="text-left">
+						<li class="text-left" id="qq">
 							<label for="qq">QQ:</label>
 							<input class="form-control"
-								   type="text" name="qq"
+								   type="number" name="qq"
 								   placeholder="无"
-								   value="" id="qq">
+								   value="" >
 							<span class="help-block text-left"></span>
 						</li>
-						<li class="text-left">
+						<li class="text-left" id="WeChat">
 							<label for="WeChat">微信号:</label>
 							<input class="form-control"
 								   type="text" name="WeChat"
 								   placeholder="无"
-								   value="" id="WeChat">
+								   value="">
 							<span class="help-block text-left"></span>
 						</li>
 						<hr />
 						<div class="page-header"><b>选填</b></div>
-						<li class="text-left">
+						<li class="text-left" id="name">
 							<label for="name">真实姓名:</label>
 							<input class="form-control"
 								   type="text" name="name"
 								   placeholder="例如：李狗蛋"
-								   value="" id="name">
+								   value="" >
+						</li>
+						<li class="text-left" id="nickname">
+							<label for="nickname">绰号:</label>
+							<input class="form-control"
+								   type="text" name="nickname"
+								   placeholder="例如：二狗子"
+								   value="" >
+						</li>
+						<li class="text-left" id="about_me">
+							<label for="about_me">一句话介绍:</label>
+							<input class="form-control"
+								   type="text" name="about_me"
+								   placeholder="例如：我叫李狗蛋，绰号二狗子，是一个风一样的男子"
+								   value="">
 						</li>
 						<li id="gender" class="text-left radio">
 							<b>性别:</b> &nbsp;
@@ -157,30 +186,43 @@
 							</label>&nbsp;
 							<label>
 								<input type="radio" value='3' name="gender" checked>
-								???
+								待定
 							</label>
 						</li>
 
-						<li class="text-left">
+						<li class="text-left" id="age">
 							<label for="age">年龄:</label>
 							<input class="form-control"
-								   type="text" name="age"
+								   type="number" name="age"
 								   placeholder="例如：3"
-								   value="" id="age">
+								   value="" >
+							<span class="help-block text-left"></span>
 						</li>
-						<li class="text-left">
+						<li class="text-left" id="tops">
 							<label for="tops">身高:</label>
-							<input class="form-control"
-								   type="text" name="tops"
-								   placeholder="150cm”"
-								   value="" id="tops">
+							<div class="input-group">
+								<input class="form-control"
+									   type="number" name="tops"
+									   placeholder="150"
+									   value="" >
+								<span class="input-group-addon"
+									  id="Kg">CM</span>
+							</div>
+							<span class="help-block text-left"></span>
 						</li>
-						<li class="text-left">
+						<li class="text-left" id="weight">
 							<label for="weight">体重:</label>
-							<input class="form-control"
-								   type="text" name="weight"
-								   placeholder="150kg"
-								   value="" id="weight">
+							<div class="input-group">
+								<input class="form-control"
+									   type="number" name="weight"
+									   placeholder="150"
+									   value=""
+									   aria-label="Amount (to the nearest dollar)">
+								<span class="input-group-addon"
+									  id="Kg">KG</span>
+
+							</div>
+							<span class="help-block text-left"></span>
 						</li>
 
 						<li id="position" class="text-left">
@@ -203,8 +245,58 @@
 	{{ super() }}
 	<script src="{{ url_for('static', filename='js/register.js') }}"></script>
 	<script type="text/javascript">
-        $('[name="email"]').focusin(function () {
-            wrong('email')
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
         });
 	</script>
+	<script>
+        var re_result = {
+            'username': false,
+            'email': false,
+            'password': false
+        };
+        bind_register();
+        $('#submit').click(function (e) {
+            var values = $('#form').serializeArray();
+            var json_data = {};
+            for (var i in values){
+                json_data[values[i].name] = values[i].value
+            }
+            json_data = JSON.stringify(json_data);
+
+            for (var i in re_result){
+                if (re_result[i] !== true){
+                    $("html, body").animate({scrollTop: $('#'+i).offset().top
+					- 150},700);
+                    has_error(i, "&times; 验证不通过！");
+                    return
+                }
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('api.register') }}",
+                data: json_data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        alert('注册成功！');
+                        window.location.href =
+							"{{ url_for('main.register_ok') }}"
+					}
+                },
+                error: function () {
+                    alert('注册失败！请联系单位工作人员！')
+                }
+            });
+        })
+	</script>
+
+
 {% endblock %}

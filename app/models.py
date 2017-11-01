@@ -16,7 +16,9 @@ def load_user(user_id):
     """使用flask_login时必须实现的函数 返回None或者实例"""
     if int(user_id) == 1:
         return Administrator.query.get(int(user_id))
-    return User.query.get(int(user_id))
+    if int(user_id) >= 999:
+        return User.query.get(int(user_id))
+    return None
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -334,9 +336,9 @@ class Activity(db.Model):
         activity.img_url = json_data.get('img_url')
         activity.body = json_data.get('body')
         activity.start_date = datetime.strptime(json_data.get(
-                        'start_date'), '%Y-%m-%d')
+            'start_date'), '%Y-%m-%d')
         activity.end_date = datetime.strptime(json_data.get(
-                        'end_date'), '%Y-%m-%d')
+            'end_date'), '%Y-%m-%d')
         activity.number = json_data.get('number')
         return activity
 
@@ -404,11 +406,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(32), unique=True, nullable=True)
     password_hash = db.Column(db.String(128))
     # 选填
-    name = db.Column(db.String(10))
+    name = db.Column(db.String(16))
     phone = db.Column(db.Integer)
+    # 昵称
+    nickname = db.Column(db.String(32))
     # 是否是男性
-    male = db.Column(db.Integer, default=2)
-    age = db.Column(db.Integer, default=0)
+    male = db.Column(db.Integer)
+    age = db.Column(db.Integer)
     tops = db.Column(db.Integer)
     weight = db.Column(db.Integer)
     position = db.Column(db.String(16))
@@ -437,6 +441,66 @@ class User(db.Model, UserMixin):
             return True
         return False
 
+    @staticmethod
+    def default_user():
+        """自动注册一个id为999的管理者， 之后注册的用户id从1000开始"""
+        user = User(id=999, is_admin=True,
+                    email=current_app.config['ADMIN_USERNAME'],
+                    username='admin')
+        user.password = current_app.config['ADMIN_PASSWORD']
+        db.session.add(user)
+        db.session.commit()
+
+    def get_info(self):
+        """返回用户收到的信息"""
+        return {'info': self.infos}
+
+    def to_json(self):
+        """返回一个json"""
+        json_data = {
+            'id': self.id,
+            'username': self.username,
+            'avatar': self.avatar_hash,
+            'email': self.email,
+            'phone': self.phone,
+            'qq': self.qq,
+            'WeChat': self.WeChat,
+            'name': self.name,
+            'nickname': self.nickname,
+            'male':self.male,
+            'age': self.age,
+            'tops': self.tops,
+            'weight': self.weight,
+            'position': self.position,
+            'about_me': self.about_me,
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(data):
+        id = data.get('id')
+        if id is not None:
+            user = User.query.get_or_404(id)
+        else:
+            user = User()
+            user.username = data.get('username')
+            user.email = data.get('email')
+            user.password = data.get('password')
+        user.avatar_hash = data.get('avatar')
+        user.phone = data.get('phone')
+        user.qq = data.get('qq')
+        user.WeChat = data.get('WeChat')
+        user.name = data.get('name')
+        user.nickname = data.get('nickname')
+        user.male = data.get('male')
+        user.age = data.get('age')
+        user.tops = data.get('tops')
+        user.weight = data.get('weight')
+        user.about_me = data.get('about_me')
+        if user.is_position(data.get('position')):
+            user.position = data.get('position')
+        return user
+
 
 class Info(db.Model):
     """用户接受的信息"""
@@ -444,6 +508,18 @@ class Info(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     message = db.Column(db.Text)
+
+    def to_json(self):
+        json_data = {
+            'user_id': self.user_id,
+            'message': self.message
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(data):
+        return Info(user_id=data.get('user_id'), message=data.get('message'))
+
 
 
 class Team(db.Model):

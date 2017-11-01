@@ -38,12 +38,3 @@ def get_links():
     links = FriendLink.query.all()
     return dict(links=[link.to_json() for link in links])
 
-
-def default_user():
-    """自动注册一个id为999的管理者， 之后注册的用户id从1000开始"""
-    user = User(id=999, is_admin=True,
-                email=current_app.config['ADMIN_USERNAME'],
-                username='admin')
-    user.password = current_app.config['ADMIN_PASSWORD']
-    db.session.add(user)
-    db.session.commit()
