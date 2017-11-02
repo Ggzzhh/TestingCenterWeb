@@ -7,7 +7,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     """基础配置，导入所有配置中"""
     # 密匙
-    SECRET_KEY = os.environ.get('SECRET_KEY') or "PDSSZLJSJDJYCSZX"
+    SECRET_KEY = os.environ.get('SECRET_KEY') or "PDSHHTY"
 
     # 数据库自动提交数据
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True

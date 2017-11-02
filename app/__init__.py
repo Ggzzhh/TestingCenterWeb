@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 # 导入依赖包
-from flask import Flask
+from datetime import timedelta
+
+from flask import Flask, session
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -28,14 +30,13 @@ csrf = CsrfProtect()
 # 用户会话安全等级
 login_manager.session_protection = "strong"
 # 要在用户登录时重定向到的视图的名称
-login_manager.login_view = 'manage.login'
+login_manager.login_view = '.login'
 # 进行登录检查没有通过时显示的信息
 login_manager.login_message = '该页面需要登录后才能访问'
 # login_message的类型
 login_manager.login_message_category = 'info'
-
-# 定义匿名用户类 后 导入
-# login_manager.anonymous_user =
+# cookie过期时间 默认为1年
+login_manager.remember_cookie_duration=timedelta(days=1)
 
 
 def create_app(config_name):
@@ -56,6 +57,9 @@ def create_app(config_name):
     login_manager.init_app(app)
     pagedown.init_app(app)
     csrf.init_app(app)
+
+    # 设置session设置的过期时间 也就是关闭浏览器5分钟内不用重新登录
+    app.permanent_session_lifetime = timedelta(minutes=5)
 
     # 在正常使用时打开ssl安全协议
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:

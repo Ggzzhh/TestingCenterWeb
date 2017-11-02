@@ -165,3 +165,15 @@ user = ​User.query.filter(
 ```
 
 ## 汉字正则表达式[\u4e00-\u9fa5]
+
+
+## 在 Flask-Login 中，如果你不特殊处理的话，session 是在你关闭浏览器之后就失效的。
+    也就是说每次重新打开页面都是需要重新登录的。
+    如果你需要自己控制 session 的过期时间的话，
+    设置 session 的过期时间
+   
+    app.permanent_session_lifetime = timedelta(minutes=5)
+    同时，还需要注意的是 cookie 的默认有效期其实是 一年 的，所以，我们最好也设置一下：
+    
+    login_manager.remember_cookie_duration=timedelta(days=1)
+

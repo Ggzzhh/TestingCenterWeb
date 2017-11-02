@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from flask import url_for, render_template, redirect, \
-    jsonify, request, current_app, flash
+    jsonify, request, current_app, flash, session
 from werkzeug.utils import secure_filename
 from flask_login import logout_user, login_user, current_user
 
@@ -25,12 +25,24 @@ def register():
 
 @main.route('/login')
 def login():
+    """用户登陆"""
+    if current_user.is_authenticated:
+        return redirect(url_for('.index'))
     return render_template("login.html")
+
+
+@main.route('/logout/<username>')
+def logout(username):
+    """用户登出"""
+    if current_user.username == username:
+        logout_user()
+        flash('你已登出！')
+    return redirect(request.args.get('next') or url_for('.login'))
 
 
 @main.route('/register_ok')
 def register_ok():
-    flash('注册成功，请前往邮箱进行验证后登录!')
+    flash('注册成功，请前往邮箱进行验证!')
     return render_template("login.html")
 
 

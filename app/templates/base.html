@@ -8,6 +8,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	{{ super() }}
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" type="text/css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/sweetalert2.min.css') }}" type="text/css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<link rel="shortcut icon" href="/static/image/favicon.ico"
 		  type="image/x-icon"/>
@@ -43,16 +44,28 @@
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li>
-						<a href="#">
-							登 录
-						</a>
-					</li>
-					<li>
-						<a href="{{ url_for('main.register') }}">
-							注 册
-						</a>
-					</li>
+					{% if current_user.is_authenticated %}
+						<li>
+							<a href="#">
+								欢迎，{{ current_user.username }}
+								<span class="glyphicon glyphicon-cog"></span>
+							</a>
+						</li>
+						<li><a href="/logout/{{ current_user.username }}">
+							注 销</a></li>
+					{% else %}
+						<li>
+							<a href="/login">
+								登 录
+							</a>
+						</li>
+						<li>
+							<a href="{{ url_for('main.register') }}">
+								注 册
+							</a>
+						</li>
+					{% endif %}
+
 				</ul>
 			</div>
 		</div>
@@ -63,13 +76,72 @@
 	<main role="main" class="main">
 		{% block page_content %}{% endblock page_content%}
 	</main>
-	{% block footer %}{% endblock footer %}
+	{% block footer %}
+		<footer class="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="widget">
+							<h4 class="title">友情链接</h4>
+							<div class="content">
+								{% for link in links %}
+									<a href="{{ link.url }}" target="_blank">
+										{{ link.name }}
+									</a>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="widget">
+							<h4 class="title">联系方式</h4>
+							<div class="content">
+								<table class="table">
+									<tr>
+										<td>联系人</td>
+										<td>{{ setting.contacts }}</td>
+									</tr>
+									<tr>
+										<td>手机</td>
+										<td>{{ setting.phone_num }}</td>
+									</tr>
+									<tr>
+										<td>email</td>
+										<td>{{ setting.email }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="contact">
+							<a class="weixin">
+								<i class="fa fa-weixin fa-lg">
+								</i>
+							</a>
+							<a class="weibo" href="{{ setting.sina_blog }}" target="_blank">
+								<i class="fa fa-weibo fa-lg"></i>
+							</a>
+							<a class="qq">
+								<i class="fa fa-qq fa-lg"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="foot">
+				备案号: 京 ICP 证 xxxxxxxx 号
+			</div>
+		</footer>
+	{% endblock footer %}
 {% endblock content %}
 
 
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
+	<script src="{{ url_for('static', filename='js/sweetalert2.min.js') }}"></script>
 	<script>
         if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
             (navigator.appVersion.split(";")[1]
@@ -77,7 +149,16 @@
                 .replace("MSIE",""))<9){
             alert("您的浏览器版本过低，请下载IE9及以上版本");
         }
+
         var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+
         $(window).scroll(function () {
             // scroll 目标发生滚动事件
             // 如果.navbar 的距离top的偏移量大于50 添加类
@@ -105,7 +186,34 @@
                 }
             }
         });
+        $(function ()
+        {
+            $(".weixin").popover({
+                trigger: 'hover',
+                html: true,
+                content: "<p class='text-center'>来！扫我！</p>" +
+                "<img class='thumbnail' src='{{ setting.WeChat_img }}' " +
+                "width='200' height='200'>",
+                animation: true,
+                placement: 'top'
+            });
 
+            $(".weibo").popover({
+                trigger: 'hover',
+                html: true,
+                content: "点我！",
+                animation: true,
+                placement: 'top'
+            });
+
+            $(".qq").popover({
+                trigger: 'hover',
+                html: true,
+                content: "{{ setting.qq }}",
+                animation: true,
+                placement: 'top'
+            });
+        });
 
 	</script>
 {% endblock scripts %}

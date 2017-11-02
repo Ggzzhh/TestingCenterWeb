@@ -1,10 +1,207 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>Title</title>
-</head>
-<body>
-登录界面耶耶耶
-</body>
-</html>
+{% extends "base.html" %}
+{% block head %}
+	{{ super() }}
+	<style>
+		body{
+			background: #f0f0f0;
+			height: auto;
+		}
+
+		.login-box{
+			min-height: 60%;
+		}
+
+		.login-body {
+			margin: 150px auto 30px;
+			width: 715px;
+			border: 1px solid #b3b3b3;
+			border-radius: 10px;
+			height: 500px;
+			background: #ffffff;
+
+		}
+
+		.login-body .content{
+			padding: 20px;
+			line-height: 30px;
+			width: 70%;
+			margin: 0 auto;
+		}
+
+		.login-body .img-circle {
+			border-radius: 50%;
+		}
+
+		.login-body .content li {
+			padding: 10px;
+		}
+
+		.login-body .content .inline{
+			margin-bottom: 20px;
+			color: #9c9c9c;
+			font-size: 0.5em;
+		}
+
+		.login-body .content .inline a{
+			text-decoration: none;
+
+		}
+
+		.login-body .content .left{
+			width: 70%;
+			float: left;
+			display: inline-block;
+			text-align: left;
+		}
+		.login-body .content .right{
+			width: 30%;
+			float: right;
+			display: inline-block;
+			text-align: right;
+		}
+
+		.login-body #submit {
+			min-width: 130px;
+			margin-top: 20px;
+			width: 20%;
+		}
+
+		.alert {
+			width: 70%;
+			position: fixed;
+			margin: -70px 15% 50px;
+		}
+
+		@media screen and (max-width: 1024px) {
+			body {
+				height: auto;
+			}
+			.login-body {
+				width: 70%;
+			}
+		}
+
+		@media screen and (max-width: 767px) {
+			body {
+				height: auto;
+			}
+			.login-body {
+				width: 85%;
+				border: none;
+				height: 100%
+			}
+			.login-body .content{
+				width: 100%;
+			}
+			.footer {
+				display: none;
+			}
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	{% block page_content %}
+		{% for message in get_flashed_messages() %}
+			<div class="alert alert-info">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message }}
+			</div>
+		{% endfor %}
+		<div class="login-box">
+			<div class="login-body">
+				<div class="content">
+					<form action="" class="form">
+						<ul>
+							<li class="text-center">
+								<img src="\static\image\logo.jpg" width="140" height="140" class="img-circle">
+							</li>
+							<li>
+								<input type="text" class="form-control" required
+									   placeholder="邮箱/用户名" name="username"/>
+							</li>
+							<li><input type="password" class="form-control"
+									   placeholder="密码" required
+									   name="password"/></li>
+							<li class="inline">
+								<div class="left">
+									还没有注册？<a href="/register">立即注册</a>
+								</div>
+								<div class="right">
+									<a href="#">忘记密码</a>
+								</div>
+
+							</li>
+							<li class="text-center">
+								<button class="btn btn-info btn-lg"
+										id="submit">登录</button>
+							</li>
+						</ul>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	{% endblock %}
+	{% block footer %}
+		{{ super() }}
+	{% endblock %}
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+        $('#submit').click(function (e) {
+            var data = {};
+            var re = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            if (re.test($('[name="username"]').val()) === true){
+                data.email = $('[name="username"]').val();
+            }
+            else{
+                data.username = $('[name="username"]').val();
+            }
+            data.password = $('[name="password"]').val();
+            if (data.password !== "" &&
+                (data.username !== "" || data.email !== "")){
+                e.preventDefault();
+                data = JSON.stringify(data);
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '/api-v1.0/login',
+                    data: data,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.result === 'ok'){
+                            // todo: 制作一个属于自己的alert（周末完成）
+                            swal({
+                                type: 'success',
+                                title:'登录成功!',
+                                text: '2秒后自动跳转到首页',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).catch(function () {
+                                window.location.href = '/'
+                            });
+
+                        }
+                        else if (data.result === 'error'){
+                            swal('错误','用户名或密码错误', 'error')
+                                .catch(function () {
+                                    $('[name="password"]').val('');
+                                    $('[name="username"]').focus()
+                                });
+                        }
+                        else{
+                            swal('错误','登录失败！请重试！', 'error')
+                                .catch(function () {
+                                    $('[name="password"]').val('');
+                                     $('[name="username"]').focus()
+                                });
+                        }
+                    }
+                })
+            }
+        })
+	</script>
+{% endblock %}

@@ -89,7 +89,7 @@
 					<div class="col-ms-4 col-md-4">
 						<div class="step">步骤1</div>
 						<div class="bubble">
-							<p><a href="#">注册</a></p>
+							<p><a href="/register">注册</a></p>
 							<small>注册成为会员</small>
 						</div>
 					</div>
@@ -114,97 +114,17 @@
 {% endblock page_content%}
 
 {% block footer %}
-	<footer class="footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-4">
-					<div class="widget">
-						<h4 class="title">友情链接</h4>
-						<div class="content">
-							{% for link in links %}
-								<a href="{{ link.url }}" target="_blank">
-									{{ link.name }}
-								</a>
-							{% endfor %}
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="widget">
-						<h4 class="title">联系方式</h4>
-						<div class="content">
-							<table class="table">
-								<tr>
-									<td>联系人</td>
-									<td>{{ setting.contacts }}</td>
-								</tr>
-								<tr>
-									<td>手机</td>
-									<td>{{ setting.phone_num }}</td>
-								</tr>
-								<tr>
-									<td>email</td>
-									<td>{{ setting.email }}</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="contact">
-						<a class="weixin">
-							<i class="fa fa-weixin fa-lg">
-							</i>
-						</a>
-						<a class="weibo" href="{{ setting.sina_blog }}" target="_blank">
-							<i class="fa fa-weibo fa-lg"></i>
-						</a>
-						<a class="qq">
-							<i class="fa fa-qq fa-lg"></i>
-						</a>
-					</div>
-				</div>
-			</div>
+	<div class="gray">
+		{{ super() }}
+	</div>
 
-		</div>
-		<div class="foot">
-			备案号: 京 ICP 证 xxxxxxxx 号
-		</div>
-	</footer>
 {% endblock footer %}
 
 {% block scripts %}
 	{{ super() }}
 	{{ moment.include_moment() }}
 	<script>
-        $(function ()
-        {
-            $(".weixin").popover({
-                trigger: 'hover',
-                html: true,
-                content: "<p class='text-center'>来！扫我！</p>" +
-                "<img class='thumbnail' src='{{ setting.WeChat_img }}' " +
-                "width='200' height='200'>",
-                animation: true,
-                placement: 'top'
-            });
 
-            $(".weibo").popover({
-                trigger: 'hover',
-                html: true,
-                content: "点我！",
-                animation: true,
-                placement: 'top'
-            });
-
-            $(".qq").popover({
-                trigger: 'hover',
-                html: true,
-                content: "{{ setting.qq }}",
-                animation: true,
-                placement: 'top'
-            });
-        });
 
         $('#myCarousel').find('img').css('max-height', $(this).height());
         $(window).resize(function () {
@@ -222,7 +142,7 @@
 
         function goTo(id) {
             var num = $('#' + id).height() + $('.carousel-inner').height() -
-				350;
+                350;
             // console.log(num);
             $("html, body").animate({scrollTop: num}, 700)
         }
