@@ -18,34 +18,6 @@ def index():
     return render_template("index.html", setting=setting)
 
 
-@main.route('/register')
-def register():
-    return render_template("register.html")
-
-
-@main.route('/login')
-def login():
-    """用户登陆"""
-    if current_user.is_authenticated:
-        return redirect(url_for('.index'))
-    return render_template("login.html")
-
-
-@main.route('/logout/<username>')
-def logout(username):
-    """用户登出"""
-    if current_user.username == username:
-        logout_user()
-        flash('你已登出！')
-    return redirect(request.args.get('next') or url_for('.login'))
-
-
-@main.route('/register_ok')
-def register_ok():
-    flash('注册成功，请前往邮箱进行验证!')
-    return render_template("login.html")
-
-
 def allowed_file(filename):
     """验证文件类型是否符合条件"""
     return '.' in filename and \

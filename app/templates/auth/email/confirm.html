@@ -1,0 +1,29 @@
+<style>
+	.red {
+		color: red;
+		font-size: large;
+	}
+</style>
+<pre>
+Email 地址验证：
+		<b>{{ user.username }},</b>
+    这封信是由  <span class="red">浩瀚体育</span> 发送的，您收到这封邮件，是由于这个邮箱地址在 浩瀚体育
+    被登记为用户邮箱， 这封邮件是验证邮箱所用！
+
+    <hr/>
+    重要！
+    <hr/>
+
+    如果您是 <span class="red">浩瀚体育</span> 的新用户，或在修改您的注册 Email 时使用了本地址，
+		我们需要对您的地址有效性进行验证以避免垃圾邮件或地址被滥用。
+
+    您只需点击下面的链接即可激活您的帐号：
+    <a href="{{ url_for('auth.confirm', token=token, _external=True)
+            }}">点击此处</a>
+    (如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)
+
+    感谢您的访问，祝您使用愉快！
+
+    此致 <div class="red">浩瀚体育</div>.
+</pre>
+

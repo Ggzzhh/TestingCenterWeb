@@ -51,16 +51,16 @@
 								<span class="glyphicon glyphicon-cog"></span>
 							</a>
 						</li>
-						<li><a href="/logout/{{ current_user.username }}">
+						<li><a href="/auth/logout/{{ current_user.username }}">
 							注 销</a></li>
 					{% else %}
 						<li>
-							<a href="/login">
+							<a href="/auth/login">
 								登 录
 							</a>
 						</li>
 						<li>
-							<a href="{{ url_for('main.register') }}">
+							<a href="{{ url_for('auth.register') }}">
 								注 册
 							</a>
 						</li>

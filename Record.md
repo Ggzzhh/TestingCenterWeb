@@ -177,3 +177,7 @@ user = ​User.query.filter(
     
     login_manager.remember_cookie_duration=timedelta(days=1)
 
+## mac系统中设置初始化环境变量
+    `sudo vi ~/.bash_profile` 编辑开机时自动运行的命令 如:
+    `export MAIL = '******'`
+

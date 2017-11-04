@@ -124,7 +124,7 @@
 									   name="password"/></li>
 							<li class="inline">
 								<div class="left">
-									还没有注册？<a href="/register">立即注册</a>
+									还没有注册？<a href="{{ url_for('auth.register') }}">立即注册</a>
 								</div>
 								<div class="right">
 									<a href="#">忘记密码</a>
@@ -164,7 +164,7 @@
                 (data.username !== "" || data.email !== "")){
                 e.preventDefault();
                 data = JSON.stringify(data);
-                console.log(data);
+                // console.log(data);
                 $.ajax({
                     type: "POST",
                     url: '/api-v1.0/login',
@@ -173,7 +173,6 @@
                     contentType: 'application/json',
                     success: function (data) {
                         if (data.result === 'ok'){
-                            // todo: 制作一个属于自己的alert（周末完成）
                             swal({
                                 type: 'success',
                                 title:'登录成功!',
@@ -181,7 +180,9 @@
                                 timer: 2000,
                                 showConfirmButton: false
                             }).catch(function () {
-                                window.location.href = '/'
+                                // console.log(data);
+                                window.location.href = '{{ url_for("main.index")
+                                 }}'
                             });
 
                         }

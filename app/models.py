@@ -421,6 +421,8 @@ class User(db.Model, UserMixin):
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
+    confirmed = db.Column(db.Boolean, default=False)
+
     @property
     def password(self):
         raise AttributeError("这不是一个可读属性")
@@ -450,6 +452,24 @@ class User(db.Model, UserMixin):
         user.password = current_app.config['ADMIN_PASSWORD']
         db.session.add(user)
         db.session.commit()
+        
+    def generate_confirmation_token(self, expiration=3600):
+        """生成一个验证用token 持续时间为1天"""
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'confirm': self.id})
+
+    def confirm(self, token):
+        """验证token的值"""
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        return True
 
     def get_info(self):
         """返回用户收到的信息"""

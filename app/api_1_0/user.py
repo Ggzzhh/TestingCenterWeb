@@ -6,6 +6,7 @@ from flask_login import login_required, login_user, logout_user
 from . import api
 from .. import db
 from ..models import User
+from ..email import send_email
 
 
 @api.route('/repeat', methods=["POST"])
@@ -26,11 +27,16 @@ def repeat():
 @api.route('/register', methods=['POST'])
 def register():
     """用户注册"""
+    if User.query.get(999) is None:
+        User.default_user()
     json_data = request.get_json()
     if json_data is not None:
         user = User.from_json(json_data)
         db.session.add(user)
         db.session.commit()
+        token = user.generate_confirmation_token()
+        send_email(user.email, '确认你的账户', 'auth/email/confirm', user=user,
+                   token=token)
         return jsonify({'result': 'ok'})
     return jsonify({'result': 'error'})
 

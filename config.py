@@ -23,10 +23,10 @@ class Config:
     SQLALCHEMY_RECORD_QUERIES = True
 
     # 邮件主题前缀
-    MAIL_SUBJECT_PREFIX = '<平顶山检测中心>'
+    MAIL_SUBJECT_PREFIX = '<平顶山浩瀚体育>'
 
     # 寄件人名称
-    MAIL_SENDER = '平顶山检测中心'
+    MAIL_SENDER = '平顶山浩瀚体育 <gggzh@139.com>'
 
     # 邮箱端口号
     MAIL_PORT = 465
@@ -37,15 +37,15 @@ class Config:
     # 发送邮件时使用TLS安全协议 默认为False
     MAIL_USE_TLS = False
 
-    # 发送邮件时使用LLS安全协议 默认为False
-    MAIL_USE_LLS = True
+    # 发送邮件时使用SSL安全协议 默认为False
+    MAIL_USE_SSL = True
 
     # 发送邮件所用的邮箱用户名以及密码
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
     # 管理员邮箱
-    ADMIN_MAIL = os.environ.get('FLASKY_ADMIN')
+    ADMIN_MAIL = os.environ.get('ADMIN_EMAIL')
     # 管理员账号
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
     # 管理员密码

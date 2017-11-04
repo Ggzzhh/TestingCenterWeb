@@ -209,14 +209,14 @@
                 success: function (data) {
                     if (data.result === 'ok'){
                         swal({
-                            title: '注册成功',
+                            title: '注册成功,一封确认邮件已发往您的邮箱!',
                             type: 'success',
-                            text: '请前往邮箱进行验证,3秒后自动跳转到首页',
+                            text: '请<b>登录</b>后前往邮箱进行验证! 3秒后自动跳转到首页',
                             timer: 3000,
                             showConfirmButton: false
                         }).catch(function () {
                             window.location.href =
-                                "{{ url_for('main.register_ok') }}"
+                                "{{ url_for('auth.register_ok') }}"
                         });
 
                     }
