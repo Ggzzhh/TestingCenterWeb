@@ -43,7 +43,6 @@
     
 ## 导航变色关键
 ```javascript
-<script>
     $(window).scroll(function () {
         // scroll 目标发生滚动事件
         // 如果.navbar 的距离top的偏移量大于50 添加类
@@ -51,8 +50,7 @@
             $(".navbar-fixed-top").addClass("top-nav");
         }else {
             $(".navbar-fixed-top").removeClass("top-nav");}
-    })
-</script>
+    });
 ```
 
 ## 使用pagedown来修饰markdown富文本
@@ -180,4 +178,7 @@ user = ​User.query.filter(
 ## mac系统中设置初始化环境变量
     `sudo vi ~/.bash_profile` 编辑开机时自动运行的命令 如:
     `export MAIL = '******'`
+
+## 发送邮件时报错 501 有可能是：寄件人格式错误
+     MAIL_SENDER = '平顶山浩瀚体育 <gggzh@139.com>' 要带上尖括号以及其中的内容
 
