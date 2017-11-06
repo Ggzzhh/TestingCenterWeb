@@ -89,7 +89,14 @@
 					<div class="col-ms-4 col-md-4">
 						<div class="step">步骤1</div>
 						<div class="bubble">
-							<p><a href="/register">注册</a></p>
+							<p>
+								{% if current_user.is_authenticated %}
+									<a>注册</a>
+								{% else %}
+									<a href="/auth/register">注册</a>
+								{% endif %}
+
+							</p>
 							<small>注册成为会员</small>
 						</div>
 					</div>

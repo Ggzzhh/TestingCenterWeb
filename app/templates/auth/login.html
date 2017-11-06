@@ -1,103 +1,9 @@
 {% extends "base.html" %}
 {% block head %}
 	{{ super() }}
-	<style>
-		body{
-			background: #f0f0f0;
-			height: auto;
-		}
-
-		.login-box{
-			min-height: 60%;
-		}
-
-		.login-body {
-			margin: 150px auto 30px;
-			width: 715px;
-			border: 1px solid #b3b3b3;
-			border-radius: 10px;
-			height: 500px;
-			background: #ffffff;
-
-		}
-
-		.login-body .content{
-			padding: 20px;
-			line-height: 30px;
-			width: 70%;
-			margin: 0 auto;
-		}
-
-		.login-body .img-circle {
-			border-radius: 50%;
-		}
-
-		.login-body .content li {
-			padding: 10px;
-		}
-
-		.login-body .content .inline{
-			margin-bottom: 20px;
-			color: #9c9c9c;
-			font-size: 0.5em;
-		}
-
-		.login-body .content .inline a{
-			text-decoration: none;
-
-		}
-
-		.login-body .content .left{
-			width: 70%;
-			float: left;
-			display: inline-block;
-			text-align: left;
-		}
-		.login-body .content .right{
-			width: 30%;
-			float: right;
-			display: inline-block;
-			text-align: right;
-		}
-
-		.login-body #submit {
-			min-width: 130px;
-			margin-top: 20px;
-			width: 20%;
-		}
-
-		.alert {
-			width: 70%;
-			position: fixed;
-			margin: -70px 15% 50px;
-		}
-
-		@media screen and (max-width: 1024px) {
-			body {
-				height: auto;
-			}
-			.login-body {
-				width: 70%;
-			}
-		}
-
-		@media screen and (max-width: 767px) {
-			body {
-				height: auto;
-			}
-			.login-body {
-				width: 85%;
-				border: none;
-				height: 100%
-			}
-			.login-body .content{
-				width: 100%;
-			}
-			.footer {
-				display: none;
-			}
-		}
-	</style>
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/login.css') }}"
+		  type="text/css">
 {% endblock %}
 {% block content %}
 	{% block page_content %}
@@ -181,8 +87,8 @@
                                 showConfirmButton: false
                             }).catch(function () {
                                 // console.log(data);
-                                window.location.href = '{{ url_for("main.index")
-                                 }}'
+                                window.location.href =
+									'{{ url_for("main.index") }}'
                             });
 
                         }

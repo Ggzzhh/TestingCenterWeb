@@ -1,13 +1,178 @@
 {% extends 'base.html' %}
-{% block content %}
-    {% block page_content %}
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-info">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endblock %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/user.css') }}"
+		  type="text/css">
+	<style>
+		.user {
+			width: 100%;
+			background: #292929;
+			margin-top: 100px;
+			margin-bottom: 50px;
+			border: 1px solid #e6e6e6;
+			padding: 35px;
+			color: #ccc;
+			text-align: center;
+
+		}
+
+		.user .box-header {
+			border-bottom: 5px solid #ff000a;
+			padding-bottom: 15px;
+		}
+
+		.user .box-header .user-thumbnail {
+			padding: 3px;
+			border: 3px solid #ccc;
+		}
+
+		.user .box-header h1 {
+			font-size: 55px;
+			font-weight: 900;
+			text-shadow: -1px -1px 0 #fff,1px 1px 0 #333,1px 1px 0 #444;
+		}
+
+		.user .box-header h1>small{
+			color: #ccc;
+		}
+
+		.user .box-content {
+			width: 70%;
+			margin: 0 auto;
+			padding-top: 60px;
+			font-size: 1.5em;
+		}
+
+		.user .table>tbody>tr>td {
+			border-top: none;
+			width: 50%;
+		}
+
+		.user hr {
+			margin-top: 60px;
+			margin-bottom: 0;
+			border-top: none;
+			border-bottom: 5px solid #ff000a;
+		}
+
+		.user .box-content .page-header {
+			margin-top: 0;
+		}
+
+		@media screen and (max-width: 768px){
+			.user {
+				margin-top: 50px;
+				padding: 5px;
+			}
+			.user .box-header h1{
+				font-size: 2em;
+			}
+			.user .box-content {
+				width: 100%;
+				font-size: 1em;
+			}
+		}
+	</style>
+{% endblock %}
+{% block page_content %}
+	<div class="container">
+		<div class="user">
+			{% for message in get_flashed_messages() %}
+				<div class="alert alert-info">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="box-header">
+				<img class="img-rounded user-thumbnail"
+					 src="{{ user.gravatar(size=128) }}">
+				<h1>
+					{{ user.username }}
+					<small>({{ user.nickname }})</small>
+				</h1>
+				<h2>
+					<b>自我评价：{{ user.about_me }}</b>
+				</h2>
+			</div>
+			<div class="box-content">
+				<table class="table">
+					<tr>
+						<td>司职：</td>
+						<td>{{ user.position }}</td>
+					</tr>
+					<tr>
+						<td>性别：</td>
+						<td>
+							{% if user.male == 1 %}
+								男
+							{% elif user.male == 2 %}
+								女
+							{% else %}
+								待定
+							{% endif %}
+						</td>
+					</tr>
+					<tr>
+						<td>年龄：</td>
+						<td>{{ user.age }}</td>
+					</tr>
+					<tr>
+						<td>身高：</td>
+						<td>{{ user.tops }} cm</td>
+					</tr>
+					<tr>
+						<td>体重：</td>
+						<td>{{ user.weight }} kg</td>
+					</tr>
+					<tr>
+						<td>队伍：</td>
+						<td>
+							{% if user.team == None %}
+								<div class="text-info">独行侠</div>
+							{% else %}
+								<a href="#">user.team.name</a>
+							{% endif %}
+						</td>
+					</tr>
+				</table>
+			</div>
+			{% if current_user.id == user.id or current_user.id == user.team.captain_id %}
+				<hr />
+				<div class="box-content">
+					<div class="page-header">
+						<h1>个人资料</h1>
+						<small>（以下信息仅自己以及队长可见）</small>
+					</div>
+					<table class="table">
+						<tr>
+							<td>真实姓名：</td>
+							<td>{{ user.name }}</td>
+						</tr>
+						<tr>
+							<td>QQ：</td>
+							<td>{{ user.qq }}</td>
+						</tr>
+						<tr>
+							<td>手机：</td>
+							<td>{{ user.phone }}</td>
+						</tr>
+						<tr>
+							<td>微信号：</td>
+							<td>{{ user.WeChat }}</td>
+						</tr>
+						<tr>
+							<td>邮箱：</td>
+							<td>{{ user.email }}</td>
+						</tr>
+					</table>
+			{% endif %}
+		</div>
+	</div>
+
+{% endblock %}
+{% block footer %}
+	{{ super() }}
 {% endblock %}
 
 {# todo:完成本页面 完成忘记密码 以及修改密码 修改邮箱等功能 #}

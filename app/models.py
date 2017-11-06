@@ -42,6 +42,7 @@ class Administrator(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
+    confirmed = db.Column(db.Boolean, default=True)
 
     @property
     def password(self):
@@ -448,11 +449,11 @@ class User(db.Model, UserMixin):
         """自动注册一个id为999的管理者， 之后注册的用户id从1000开始"""
         user = User(id=999, is_admin=True,
                     email=current_app.config['ADMIN_USERNAME'],
-                    username='admin')
+                    username='管理员')
         user.password = current_app.config['ADMIN_PASSWORD']
         db.session.add(user)
         db.session.commit()
-        
+
     def generate_confirmation_token(self, expiration=3600):
         """生成一个验证用token 持续时间为1天"""
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
@@ -487,7 +488,7 @@ class User(db.Model, UserMixin):
             'WeChat': self.WeChat,
             'name': self.name,
             'nickname': self.nickname,
-            'male':self.male,
+            'male': self.male,
             'age': self.age,
             'tops': self.tops,
             'weight': self.weight,
@@ -512,7 +513,7 @@ class User(db.Model, UserMixin):
         user.WeChat = data.get('WeChat')
         user.name = data.get('name')
         user.nickname = data.get('nickname')
-        user.male = data.get('male')
+        user.male = int(data.get('male'))
         user.age = data.get('age')
         user.tops = data.get('tops')
         user.weight = data.get('weight')
@@ -520,6 +521,18 @@ class User(db.Model, UserMixin):
         if user.is_position(data.get('position')):
             user.position = data.get('position')
         return user
+
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        """使用gravatar生成用户头像"""
+        if request.is_secure:  # 如果响应是安全的
+            url = 'https://secure.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        my_hash = self.avatar_hash or hashlib.md5(self.email.encode(
+            'utf-8')).hexdigest()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=my_hash, size=size, default=default, rating=rating
+        )
 
 
 class Info(db.Model):
@@ -551,8 +564,8 @@ class Team(db.Model):
     # 队伍名
     name = db.Column(db.String(32), unique=True, nullable=True)
     # 队员
-    players = db.relationship("User", foreign_keys=[User.team_id], backref='team',
-                              lazy='dynamic')
+    players = db.relationship("User", foreign_keys=[User.team_id],
+                              backref='team', lazy='dynamic')
     # 参与的活动
     activities = db.relationship("Enroll", foreign_keys=[Enroll.team_id],
                                  backref='team', lazy='dynamic',

@@ -1,8 +1,11 @@
 body{
     background: #f0f0f0;
 }
+.register {
+    padding-top: 150px;
+}
 .register-box {
-    margin: 150px auto 40px;
+    margin: 0 auto;
     width: 60%;
     height: auto;
     padding: 50px 0;
@@ -31,6 +34,12 @@ body{
 .mod-body .page-header {
     color: #ff000a;
     font-size: 1.2em;
+}
+
+.mod-body .page-content {
+    font-size: larger;
+    font-weight: bolder;
+    line-height: 30px;
 }
 
 .aw-register-box ul li input[type="text"],

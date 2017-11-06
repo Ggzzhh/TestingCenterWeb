@@ -1,2 +1,33 @@
 {% extends "base.html" %}
-{# todo:完成本页面 #}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/register.css') }}"
+		  type="text/css">
+{% endblock %}
+{% block page_content %}
+	<div class="register">
+		<div class="register-box">
+			<div class="mod-body">
+				<div class="page-header">
+					<h1>
+						<b>您好！ {{ current_user.username }}!</b>
+					</h1>
+					<h3>您尚未确认您的帐户。</h3>
+					<hr/>
+				</div>
+				<div class="page-content">
+					<p class="text-left">
+						在您访问此站点之前，您需要确认您的帐户。<br/>
+						您的收件箱应该收到一封带有确认链接的电子邮件。<br/>
+						请点击链接进行验证。
+					</p>
+					<p class="text-left">
+						需要另确认电子邮件吗？
+						<a href="{{ url_for('auth.resend_confirmation') }}">点击这里</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

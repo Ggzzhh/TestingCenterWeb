@@ -62,10 +62,9 @@ body {
 }
 
 .my-block {
-    width: 100%;
-    margin-top: 10px;
+    width: 95%;
+    margin: 10px auto 30px;
     padding: 10px;
-    margin-bottom: 30px;
 }
 
 .activity {

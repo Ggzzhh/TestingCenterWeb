@@ -5,9 +5,6 @@
 	<link rel="stylesheet"
 		  href="{{ url_for('static', filename='css/register.css') }}"
 		  type="text/css">
-	<style>
-
-	</style>
 {% endblock %}
 
 {% block page_content %}
@@ -191,7 +188,6 @@
                 json_data[values[i].name] = values[i].value
             }
             json_data = JSON.stringify(json_data);
-
             for (var i in re_result){
                 if (re_result[i] !== true){
                     $("html, body").animate({scrollTop: $('#'+i).offset().top
@@ -200,6 +196,7 @@
                     return
                 }
             }
+            console.log(json_data);
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('api.register') }}",
@@ -211,7 +208,7 @@
                         swal({
                             title: '注册成功,一封确认邮件已发往您的邮箱!',
                             type: 'success',
-                            text: '请<b>登录</b>后前往邮箱进行验证! 3秒后自动跳转到首页',
+                            text: '请登录后前往邮箱进行验证! 3秒后自动跳转到首页',
                             timer: 3000,
                             showConfirmButton: false
                         }).catch(function () {

@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from . import auth
 from ..models import User
+from ..email import send_email
 
 
 @auth.before_app_request
@@ -20,13 +21,16 @@ def before_request():
             return redirect(url_for('auth.unconfirmed'))
         
 
-@auth.route('/index')
-def index():
+@auth.route('/<int:id>')
+@login_required
+def index(id):
     """用户资料首页"""
-    return render_template('auth/index.html')
+    user = User.query.get_or_404(id)
+    return render_template('auth/index.html', user=user)
 
 
 @auth.route('/unconfirmed')
+@login_required
 def unconfirmed():
     if current_user.confirmed:
         return redirect(url_for('main.index'))
@@ -35,6 +39,8 @@ def unconfirmed():
 
 @auth.route('/register')
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     return render_template("auth/register.html")
 
 
@@ -73,3 +79,14 @@ def confirm(token):
     else:
         flash("验证无效或已过期，请重新验证邮箱！")
     return redirect(url_for('auth.index'))
+
+
+@auth.route('/confirm')
+@login_required
+def resend_confirmation():
+    """重新发送验证邮件"""
+    token = current_user.generate_confirmation_token()
+    send_email(current_user.email, '确认你的账户', 'auth/email/confirm',
+               user=current_user,   token=token)
+    flash("有一封确认邮件发送到了你的邮箱，请<b>登录</b>后完成邮箱认证！")
+    return redirect(url_for('main.index'))

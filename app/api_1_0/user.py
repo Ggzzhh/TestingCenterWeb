@@ -57,7 +57,7 @@ def login():
         user = User.query.filter_by(username=username).first()
     if user is None:
         return jsonify({'result': 'error'})
-    if user.verify_password(password):
+    if user.verify_password(password) and user.id >= 999:
         login_user(user)
         return jsonify({'result': 'ok'})
     return jsonify({'result': 'error'})

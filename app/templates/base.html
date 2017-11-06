@@ -1,7 +1,7 @@
 {% extends "bootstrap/base.html" %}
 
 {% block html_attribs %} lang='zh-CN' {% endblock html_attribs %}
-{% block title %}{{ setting.corporate_name }}{% endblock %}
+{% block title %}{{ setting.corporate_name|safe }}{%endblock %}
 {% block head %}
 	<meta charset="UTF-8" />
 	<meta name="author" content="Ggzzhh" />
@@ -46,9 +46,10 @@
 				<ul class="nav navbar-nav navbar-right">
 					{% if current_user.is_authenticated %}
 						<li>
-							<a href="#">
-								欢迎，{{ current_user.username }}
-								<span class="glyphicon glyphicon-cog"></span>
+							<a href="{{ url_for('auth.index', id=current_user.id) }}">
+								欢迎，
+								<span class="glyphicon glyphicon-user"></span>
+								{{ current_user.username }}
 							</a>
 						</li>
 						<li><a href="/auth/logout/{{ current_user.username }}">
