@@ -27,13 +27,13 @@ function Upload(img, url) {
 // 参数Preview_id 是预览的img标签的id
 // 默认: 宽度以及高度为200
 function upLoadImage(img, Preview_id) {
-    console.log("img:" + img);
+    // console.log("img:" + img);
 
     var reader = new FileReader();
-    console.log('reader:' + reader);
+    // console.log('reader:' + reader);
 
     reader.readAsDataURL(img);
-    console.log(img.length);
+    // console.log(img.length);
 
     reader.onerror = function () {
         console.log("读取异常....");

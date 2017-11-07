@@ -4,6 +4,28 @@
 	<link rel="stylesheet"
 		  href="{{ url_for('static', filename='css/user.css') }}"
 		  type="text/css">
+	<style>
+		.box-header input{
+			max-width: 500px;
+			margin: 0 auto;
+		}
+
+		.img-file {
+			display: inline-block;
+			position: relative;
+
+		}
+		.img-file input {
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 140px;
+			height: 140px;
+			opacity: 0;
+			cursor: pointer;
+		}
+	</style>
 {% endblock %}
 {% block page_content %}
 	<div class="container">
@@ -15,12 +37,30 @@
 				</div>
 			{% endfor %}
 			<div class="box-header">
-				<img class="img-rounded user-thumbnail"
-					 src="{{ user.gravatar(size=128) }}">
-				<h1>
-					{{ user.username }}
-					<small>({{ user.nickname|default('无', True) }})</small>
-				</h1>
+				<div class="form-group">
+					<p>点击图片更换头像 <small>（2M以内）</small></p>
+					<div class="img-file">
+						<a href="#">
+							<img src="{{ user.gravatar(size=128) }}" alt=""
+								 class="img-rounded user-thumbnail"
+								 id="uploadPreview" width="140"
+								 height="140">
+						</a>
+						<input id="uploadImage" type="file"
+							   name="avatar_hash" accept="image/*"/>
+						<!--todo: 完成本页面-->
+					</div>
+
+				</div>
+
+				<div class="form-group">
+					<label class="control-label" for="username">用户名</label>
+					<input type="text" value="{{ user.username }}"
+						   class="form-control" name="username" id="username">
+				</div>
+
+				<small>({{ user.nickname|default('无', True) }})</small>
+
 				<h2>
 					<b>自我评价：{{ user.about_me|default('无', True) }}</b>
 				</h2>
@@ -104,10 +144,13 @@
 			</div>
 		</div>
 	</div>
-
 {% endblock %}
-{% block footer %}
+{% block scripts %}
 	{{ super() }}
+	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script>
+        $("#uploadImage").change(function () {
+            upLoadImage(this.files[0], 'uploadPreview');
+        });
+	</script>
 {% endblock %}
-
-{# todo:修改邮箱等功能 #}

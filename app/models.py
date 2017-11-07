@@ -389,13 +389,7 @@ class User(db.Model, UserMixin):
         删除留言后 在用户的通知信息中 显示信息
     """
     # 头像hash
-    avatar_hash = db.Column(db.String(32))
-
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.email is not None and self.avatar_hash is None:
-            self.avatar_hash = \
-                hashlib.md5(self.email.encode('utf-8')).hexdigest()
+    avatar_hash = db.Column(db.Text)
 
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -411,7 +405,7 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.Integer)
     # 昵称
     nickname = db.Column(db.String(32))
-    # 是否是男性
+    # 1是男性 2女 3待定
     male = db.Column(db.Integer)
     age = db.Column(db.Integer)
     tops = db.Column(db.Integer)
@@ -481,7 +475,6 @@ class User(db.Model, UserMixin):
         json_data = {
             'id': self.id,
             'username': self.username,
-            'avatar': self.avatar_hash,
             'email': self.email,
             'phone': self.phone,
             'qq': self.qq,
@@ -494,6 +487,19 @@ class User(db.Model, UserMixin):
             'weight': self.weight,
             'position': self.position,
             'about_me': self.about_me,
+            'avatar_hash': self.avatar_hash
+        }
+        return json_data
+
+    def easy_to_json(self):
+        """返回不保密的用户信息"""
+        json_data = {
+            'username': self.username,
+            'avatar_hash': self.avatar_hash,
+            'nickname': self.nickname,
+            'position': self.position,
+            'about_me': self.about_me,
+            'auth_url': url_for('auth.index', id=self.id)
         }
         return json_data
 
@@ -524,15 +530,27 @@ class User(db.Model, UserMixin):
 
     def gravatar(self, size=100, default='identicon', rating='g'):
         """使用gravatar生成用户头像"""
+        if self.avatar_hash is not None:
+            return self.avatar_hash
         if request.is_secure:  # 如果响应是安全的
             url = 'https://secure.gravatar.com/avatar'
         else:
             url = 'http://www.gravatar.com/avatar'
-        my_hash = self.avatar_hash or hashlib.md5(self.email.encode(
+        my_hash = hashlib.md5(self.email.encode(
             'utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=my_hash, size=size, default=default, rating=rating
         )
+
+    @staticmethod
+    def get_user_id(token):
+        """通过token获取用户id"""
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return data.get('confirm')
 
 
 class Info(db.Model):

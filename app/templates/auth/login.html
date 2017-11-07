@@ -14,7 +14,7 @@
 			</div>
 		{% endfor %}
 		<div class="login-box">
-			<div class="login-body">
+			<div class="box-body">
 				<div class="content">
 					<form action="" class="form">
 						<ul>
@@ -33,7 +33,7 @@
 									还没有注册？<a href="{{ url_for('auth.register') }}">立即注册</a>
 								</div>
 								<div class="right">
-									<a href="#">忘记密码</a>
+									<a href="{{ url_for('auth.reset_password') }}">忘记密码</a>
 								</div>
 
 							</li>

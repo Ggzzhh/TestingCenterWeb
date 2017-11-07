@@ -7,8 +7,8 @@ body{
     min-height: 60%;
 }
 
-.login-body {
-    margin: 150px auto 30px;
+.box-body {
+    margin: 130px auto 10px;
     width: 715px;
     border: 1px solid #b3b3b3;
     border-radius: 10px;
@@ -17,49 +17,62 @@ body{
 
 }
 
-.login-body .content{
+.box-body .content{
     padding: 20px;
     line-height: 30px;
     width: 70%;
     margin: 0 auto;
 }
 
-.login-body .img-circle {
+.box-body .img-circle {
     border-radius: 50%;
 }
 
-.login-body .content li {
+.box-body .content li {
     padding: 10px;
 }
 
-.login-body .content .inline{
+.box-body .content .inline{
     margin-bottom: 20px;
     color: #9c9c9c;
     font-size: 0.5em;
 }
 
-.login-body .content .inline a{
+.box-body .content .inline a{
     text-decoration: none;
 
 }
 
-.login-body .content .left{
+.box-body .content .left{
     width: 70%;
     float: left;
     display: inline-block;
     text-align: left;
 }
-.login-body .content .right{
+.box-body .content .right{
     width: 30%;
     float: right;
     display: inline-block;
     text-align: right;
 }
 
-.login-body #submit {
+.box-body #submit {
     min-width: 130px;
     margin-top: 20px;
     width: 20%;
+}
+
+.reset_password {
+    font-size: 20px;
+    line-height: 35px;
+    color: #ff000a;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reset_password button{
+    margin-top: 25px;
 }
 
 .alert {
@@ -72,7 +85,7 @@ body{
     body {
         height: auto;
     }
-    .login-body {
+    .box-body {
         width: 70%;
     }
 }
@@ -81,15 +94,21 @@ body{
     body {
         height: auto;
     }
-    .login-body {
+    .box-body {
         width: 85%;
         border: none;
         height: 100%
     }
-    .login-body .content{
+    .box-body .content{
         width: 100%;
     }
     .footer {
         display: none;
+    }
+    .reset_password {
+        font-size: 15px;
+    }
+    .reset_password button{
+        margin-top: 15px;
     }
 }

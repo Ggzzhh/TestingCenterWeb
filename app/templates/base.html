@@ -45,15 +45,25 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					{% if current_user.is_authenticated %}
-						<li>
-							<a href="{{ url_for('auth.index', id=current_user.id) }}">
-								欢迎，
+						<li class="btn-group">
+							<a href="#"
+							   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<span class="glyphicon glyphicon-user"></span>
 								{{ current_user.username }}
+								<span class="caret"></span>
 							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="{{ url_for('auth.index', id=current_user.id) }}">我的资料</a>
+								</li>
+								<li><a href="#">我的战队</a></li>
+								<li><a href="#">我的活动</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="/auth/logout/{{ current_user.username }}">
+									注 销</a></li>
+							</ul>
 						</li>
-						<li><a href="/auth/logout/{{ current_user.username }}">
-							注 销</a></li>
+
 					{% else %}
 						<li>
 							<a href="/auth/login">

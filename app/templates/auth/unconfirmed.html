@@ -7,6 +7,12 @@
 {% endblock %}
 {% block page_content %}
 	<div class="register">
+		{% for message in get_flashed_messages() %}
+			<div class="alert alert-info" style="">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message }}
+			</div>
+		{% endfor %}
 		<div class="register-box">
 			<div class="mod-body">
 				<div class="page-header">

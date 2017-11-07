@@ -17,7 +17,6 @@ def before_request():
                 and request.endpoint \
                 and request.endpoint[:5] != 'auth.' \
                 and request.endpoint != 'static':
-            print(request.endpoint)
             return redirect(url_for('auth.unconfirmed'))
         
 
@@ -88,5 +87,42 @@ def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, '确认你的账户', 'auth/email/confirm',
                user=current_user,   token=token)
-    flash("有一封确认邮件发送到了你的邮箱，请<b>登录</b>后完成邮箱认证！")
-    return redirect(url_for('main.index'))
+    flash("有一封确认邮件发送到了你的邮箱，请登录后完成邮箱认证！")
+    return render_template('auth/unconfirmed.html')
+
+
+@auth.route('/edit/<int:id>')
+@login_required
+def edit(id):
+    """编辑个人资料"""
+    user = User.query.get_or_404(id)
+    return render_template('auth/edit.html', user=user)
+
+
+@auth.route('/reset_password')
+def reset_password():
+    """重置密码"""
+    if not current_user.is_anonymous:
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html')
+
+
+@auth.route('/reset_password/<token>')
+def reset_password_request(token):
+    """重置密码请求"""
+    # 解密token获取id 登录该id账号 转入修改密码界面
+    id = User.get_user_id(token)
+    if id is not None:
+        user = User.query.get_or_404(id)
+        login_user(user)
+        return redirect(url_for('auth.change_password', id=user.id))
+    flash('链接已过期或者无效!请重新进行密码重置！')
+    return render_template('auth/reset_password.html')
+
+
+
+@auth.route('/change-password/<int:id>')
+@login_required
+def change_password(id):
+    """修改密码"""
+    return render_template('auth/change_password.html', id=id)
