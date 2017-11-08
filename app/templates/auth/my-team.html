@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/user.css') }}"
+		  type="text/css">
+	<style>
+		.user {
+			overflow: hidden;
+			min-height: 700px;
+		}
+		.left-nav{
+			position: relative;
+			width: 30%;
+			padding-right: 10px;
+			padding-left: 10px;
+			float: left;
+			margin-top: 30px;
+		}
+		.right-content {
+			margin-top: 30px;
+			width: 70%;
+			float: right;
+		}
+
+		/*胶囊式导航的css*/
+		.nav-pills>li.active>a,
+		.nav-pills>li.active>a:focus,
+		.nav-pills>li.active>a:hover {
+			color: #0f0f0f;
+			background-color: #ff000a;
+		}
+
+		.nav-pills>li>a {
+			color: #0f0f0f;
+		}
+
+		.nav-pills>li>a:hover {
+			color: #0f0f0f;
+			background-color: #f52f2f;
+		}
+
+		.create-team {
+			margin-top: 100px;
+			font-size: 1.5em;
+			text-decoration: none;
+			padding-bottom: 50px;
+		}
+
+		.modal .modal-body{
+			font-size: 1.3em;
+		}
+
+		@media screen and (max-width: 767px){
+			.left-nav {
+				width: 100%;
+				clear: both;
+				padding-bottom: 20px;
+			}
+			.right-content {
+				width: 100%;
+				clear: both;
+			}
+		}
+	</style>
+{% endblock %}
+{% block page_content %}
+	<div class="container">
+		<div class="user">
+			<div class="box-header">
+				<h1>我的战队</h1>
+			</div>
+			<div class="left-nav well">
+				<ul class="nav nav-pills nav-stacked" role="tablist" id="nav">
+					<li role="presentation" class="active">
+						<a href="#home" aria-controls="content" role="tab"
+						   data-toggle="tab">首页</a>
+					</li>
+					<li role="presentation">
+						<a href="#profile" aria-controls="profile" role="tab"
+						   data-toggle="tab">资料</a>
+					</li>
+					<li role="presentation">
+						<a href="#settings" aria-controls="messages"
+						   role="tab" data-toggle="tab">操作</a>
+					</li>
+				</ul>
+			</div>
+			<div class="right-content">
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane active" id="home">
+						{% if current_user.team %}
+							队徽
+							座右铭
+							队名
+							创建时间
+							成员
+							简介
+						{% else %}
+							<div class="create-team">
+								<p>独行者，你还没有战队</p>
+								<a href="#" id="create-team"
+								   data-toggle="modal"
+								   data-target="#CTeam">
+									创建战队
+								</a>
+								| <a href="#">加入战队</a>
+							</div>
+						{% endif %}
+					</div>
+					<div role="tabpanel" class="tab-pane" id="profile">
+						<button id="ajax">image</button>
+					</div>
+					<div role="tabpanel" class="tab-pane" id="settings">3</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<!-- todo: 转移这个模版到 _models中   完成战队的改查 以及队员的增删改查-->
+	<div class="modal fade bs-example-modal-lg"
+		 id="CTeam" tabindex="-1" role="dialog"
+		 aria-labelledby="CreateTeam">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="CreateTeam"><b>创建战队</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<form id="form" class="form">
+						<div class="form-group" id="name">
+							<label class="control-label"
+								   for="name">队名</label>
+							<input type="text" placeholder="例：洛杉矶湖人队"
+								   class="form-control" name="name" maxlength="16">
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="captain">
+							<label class="control-label"
+								   for="username">队长</label>
+							<input type="text" name="captain" maxlength="16"
+								   value="{{ current_user.username }}"
+								   class="form-control" readonly>
+						</div>
+
+						<div class="form-group" id="maxim">
+							<label class="control-label"
+								   for="maxim">座右铭</label>
+							<input type="text" placeholder="例：Royal Never Give up"
+								   class="form-control" name="maxim"
+								   maxlength="32">
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="about_us">
+							<label class="control-label"
+								   for="about_us">队伍简介</label>
+							<textarea rows="4" class="form-control"
+									  name="about_us"></textarea>
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group">
+							<p>
+								队徽 <br/>
+								<small>（2M以下,需要转换大小请点
+									<a href="http://www.gaitubao.com/"
+									   target="_blank">这里</a>）
+								</small>
+							</p>
+							<div class="img-file">
+								<a href="#">
+									<img src="/static/image/logo.jpg" alt=""
+										 class="img-rounded user-thumbnail"
+										 id="uploadPreview" width="140"
+										 height="140">
+								</a>
+								<input id="uploadImage" type="file"
+									   name="avatar" accept="image/*"/>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-info" id="submit">提交</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{% block scripts %}
+	{{ super() }}
+	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script>
+        var screen = $(window).width();
+        console.log(screen);
+        if (screen < 767){
+            $('#nav').removeClass('nav-stacked')
+        }
+
+        $("#uploadImage").change(function () {
+            if (this.files[0].size > 1024 * 1024 * 2){
+                swal('信息', '图片太大了！处理一下吧！','info');
+                return
+            }
+            upLoadImage(this.files[0], 'uploadPreview');
+        });
+
+        $("#create-team").on("click", function() {
+
+        });
+	</script>
+{% endblock %}

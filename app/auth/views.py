@@ -119,9 +119,15 @@ def reset_password_request(token):
     return render_template('auth/reset_password.html')
 
 
-
 @auth.route('/change-password/<int:id>')
 @login_required
 def change_password(id):
     """修改密码"""
     return render_template('auth/change_password.html', id=id)
+
+
+@auth.route('/my-team/<int:id>')
+@login_required
+def my_team(id):
+    """我的战队页面"""
+    return render_template('auth/my-team.html', id=id)

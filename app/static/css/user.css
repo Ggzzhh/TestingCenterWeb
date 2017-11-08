@@ -51,6 +51,39 @@
     margin-top: 0;
 }
 
+.img-file {
+    display: inline-block;
+    position: relative;
+
+}
+.img-file input {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 140px;
+    height: 140px;
+    opacity: 0;
+    cursor: pointer;
+}
+.form-group {
+    max-width: 500px;
+    margin: 0 auto;
+    padding-bottom: 25px;
+}
+.radio-inline input[type=radio] {
+    position: relative;
+}
+.help-block {
+    font-size: 0.7em;
+    position: absolute;
+}
+.user .box-content .btn {
+    margin-top: 20px;
+    max-width: 500px;
+    width: 100%;
+}
+
 @media screen and (max-width: 768px){
     .user {
         margin-top: 50px;

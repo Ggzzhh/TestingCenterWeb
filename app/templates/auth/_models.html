@@ -1,0 +1,26 @@
+{% macro create_team() %}
+	<!-- Modal -->
+	<div class="modal fade bs-example-modal-lg"
+		 id="CTeam" tabindex="-1" role="dialog"
+		 aria-labelledby="CreateTeam">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="CreateTeam"><b>创建战队</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<p>确定要删除么？</p>
+					<p>删除时会一并删除所属的评论！</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-danger" id="delete">确定</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endmacro %}

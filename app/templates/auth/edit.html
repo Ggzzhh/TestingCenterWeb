@@ -5,38 +5,7 @@
 		  href="{{ url_for('static', filename='css/user.css') }}"
 		  type="text/css">
 	<style>
-		.img-file {
-			display: inline-block;
-			position: relative;
 
-		}
-		.img-file input {
-			display: inline-block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 140px;
-			height: 140px;
-			opacity: 0;
-			cursor: pointer;
-		}
-		.form-group {
-			max-width: 500px;
-			margin: 0 auto;
-			padding-bottom: 25px;
-		}
-		.radio-inline input[type=radio] {
-			position: relative;
-		}
-		.help-block {
-			font-size: 0.7em;
-			position: absolute;
-		}
-		.user .box-content .btn {
-			margin-top: 20px;
-			max-width: 500px;
-			width: 100%;
-		}
 	</style>
 {% endblock %}
 {% block page_content %}
@@ -65,7 +34,6 @@
 							</a>
 							<input id="uploadImage" type="file"
 								   name="avatar" accept="image/*"/>
-							<!--todo: 完成本页面-->
 						</div>
 					</div>
 
@@ -217,7 +185,7 @@
                 json_data[values[i].name] = values[i].value
             }
             json_data.avatar = $('#uploadPreview').attr('src');
-			json_data.id = {{ current_user.id }};
+            json_data.id = {{ current_user.id }};
             json_data = JSON.stringify(json_data);
             // console.log(json_data);
             // console.log(re_result);
@@ -229,14 +197,14 @@
                     return
                 }
             }
-			$.post({
-				url: "{{ url_for('api.edit_user', id=current_user.id) }}",
-				data: json_data,
+            $.post({
+                url: "{{ url_for('api.edit_user', id=current_user.id) }}",
+                data: json_data,
                 dataType: 'json',
                 contentType: 'application/json',
-				success: function (data) {
-					if (data.result === 'ok'){
-					    swal({
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        swal({
                             title: '修改成功！',
                             type: 'success',
                             text: '2秒后自动跳转',
@@ -246,15 +214,15 @@
                             window.location.href =
                                 "{{ url_for('auth.index', id=current_user.id) }}"
                         });
-					}
-					else {
-					    swal('错误','修改失败！请联系单位工作人员！', 'error')
-					}
+                    }
+                    else {
+                        swal('错误','修改失败！请联系单位工作人员！', 'error')
+                    }
                 },
-				error: function () {
+                error: function () {
                     swal('错误','修改失败！请联系单位工作人员！', 'error')
                 }
-			})
+            })
         })
 
 	</script>

@@ -572,7 +572,6 @@ class Info(db.Model):
         return Info(user_id=data.get('user_id'), message=data.get('message'))
 
 
-
 class Team(db.Model):
     """队伍模版"""
     __tablename__ = 'teams'
@@ -581,6 +580,10 @@ class Team(db.Model):
     captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     # 队伍名
     name = db.Column(db.String(32), unique=True, nullable=True)
+    # 队伍座右铭
+    maxim = db.Column(db.String(64))
+    # 简介
+    about_us = db.Column(db.String(128))
     # 队员
     players = db.relationship("User", foreign_keys=[User.team_id],
                               backref='team', lazy='dynamic')

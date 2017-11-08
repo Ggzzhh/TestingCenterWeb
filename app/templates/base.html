@@ -55,7 +55,10 @@
 								<li>
 									<a href="{{ url_for('auth.index', id=current_user.id) }}">我的资料</a>
 								</li>
-								<li><a href="#">我的战队</a></li>
+{#								todo: 完成战队功能 完成活动功能#}
+								<li>
+									<a href="{{ url_for('auth.my_team', id=current_user.id) }}">我的战队</a>
+								</li>
 								<li><a href="#">我的活动</a></li>
 								<li>
 									<a href="{{ url_for('auth.change_password', id=current_user.id) }}">修改密码</a>

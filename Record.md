@@ -181,4 +181,7 @@ user = ​User.query.filter(
 
 ## 发送邮件时报错 501 有可能是：寄件人格式错误
      MAIL_SENDER = '平顶山浩瀚体育 <gggzh@139.com>' 要带上尖括号以及其中的内容
+     
+## 设置float后如何让父容器自动撑开
+    设置父容器的css属性 overflow: hidden;
 
