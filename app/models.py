@@ -519,7 +519,7 @@ class User(db.Model, UserMixin):
         user.WeChat = data.get('WeChat')
         user.name = data.get('name')
         user.nickname = data.get('nickname')
-        user.male = int(data.get('male'))
+        user.male = int(data.get('gender'))
         user.age = data.get('age')
         user.tops = data.get('tops')
         user.weight = data.get('weight')

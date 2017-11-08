@@ -215,8 +215,10 @@
                             window.location.href =
                                 "{{ url_for('auth.register_ok') }}"
                         });
-
                     }
+                    else {
+                        swal('错误','注册失败！请联系单位工作人员！', 'error')
+					}
                 },
                 error: function () {
                     swal('错误','注册失败！请联系单位工作人员！', 'error')

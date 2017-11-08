@@ -6,10 +6,12 @@ from flask_login import login_user, logout_user, login_required, current_user
 from . import manage
 from .forms import AdminLoginForm
 from ..models import Administrator, Post, SecondPageName, Activity, WebSetting
+from ..decorators import super_admin_required
 
 
 @manage.route('/')
 @login_required
+@super_admin_required
 def index():
     """管理页面首页"""
     return render_template('admin/index.html')
@@ -33,6 +35,7 @@ def login():
 
 @manage.route('/logout')
 @login_required
+@super_admin_required
 def logout():
     """管理系统登出"""
     logout_user()
@@ -42,6 +45,7 @@ def logout():
 
 @manage.route('/setting')
 @login_required
+@super_admin_required
 def web_setting():
     """管理系统相关设置"""
     return render_template('admin/setting.html')
@@ -49,6 +53,7 @@ def web_setting():
 
 @manage.route('/nav_setting')
 @login_required
+@super_admin_required
 def nav_setting():
     """导航栏相关设置"""
     return render_template('admin/nav-setting.html')
@@ -56,6 +61,7 @@ def nav_setting():
 
 @manage.route('/posts/<int:category_id>')
 @login_required
+@super_admin_required
 def posts(category_id):
     """根据类别展示相应的页面"""
     category = SecondPageName.query.get_or_404(category_id)
@@ -64,6 +70,7 @@ def posts(category_id):
 
 @manage.route('/new-posts/<category_id>', methods=["GET","POST"])
 @login_required
+@super_admin_required
 def new_post(category_id):
     """发布一篇新文章的页面"""
     category = SecondPageName.query.get_or_404(category_id)
@@ -72,6 +79,7 @@ def new_post(category_id):
 
 @manage.route('/post/<int:id>')
 @login_required
+@super_admin_required
 def get_post(id):
     """获得某文章的编辑页面"""
     post = Post.query.get_or_404(id)
@@ -81,6 +89,7 @@ def get_post(id):
 
 @manage.route('/activities')
 @login_required
+@super_admin_required
 def show_activities():
     """显示活动页面"""
     return render_template('admin/activity.html')
@@ -88,6 +97,7 @@ def show_activities():
 
 @manage.route('/new-activity')
 @login_required
+@super_admin_required
 def new_activity():
     """新建一个活动"""
     return render_template('admin/new-activity.html')
@@ -95,6 +105,7 @@ def new_activity():
 
 @manage.route('/activity/<int:id>')
 @login_required
+@super_admin_required
 def edit_activity(id):
     """展示页面"""
     activity = Activity.query.get_or_404(id)
@@ -103,6 +114,7 @@ def edit_activity(id):
 
 @manage.route('/other')
 @login_required
+@super_admin_required
 def other():
     """其余设置"""
     return render_template('admin/other.html')

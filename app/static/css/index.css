@@ -299,6 +299,16 @@ a.qq:hover{
     font-weight: normal;
     color: #9d9d9d;
 }
+
+
+/* 取消number中的上下小箭头 */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
 @media screen and (max-width: 1024px){
     .down {
         display: none;

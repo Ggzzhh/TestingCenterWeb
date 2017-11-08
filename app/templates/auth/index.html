@@ -67,7 +67,8 @@
 					</tr>
 				</table>
 			</div>
-			{% if current_user.id == user.id or current_user.id == user.team.captain_id %}
+			{% if current_user.id == user.id or
+				(user.team and current_user.id == user.team.captain_id) %}
 				<hr />
 				<div class="box-content">
 				<div class="page-header">

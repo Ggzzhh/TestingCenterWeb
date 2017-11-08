@@ -10,8 +10,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" type="text/css">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/sweetalert2.min.css') }}" type="text/css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-	<link rel="shortcut icon" href="/static/image/favicon.ico"
-		  type="image/x-icon"/>
+	<link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon"/>
 {% endblock head %}
 
 {% block navbar %}
@@ -58,6 +57,9 @@
 								</li>
 								<li><a href="#">我的战队</a></li>
 								<li><a href="#">我的活动</a></li>
+								<li>
+									<a href="{{ url_for('auth.change_password', id=current_user.id) }}">修改密码</a>
+								</li>
 								<li role="separator" class="divider"></li>
 								<li><a href="/auth/logout/{{ current_user.username }}">
 									注 销</a></li>

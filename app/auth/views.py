@@ -21,7 +21,6 @@ def before_request():
         
 
 @auth.route('/<int:id>')
-@login_required
 def index(id):
     """用户资料首页"""
     user = User.query.get_or_404(id)

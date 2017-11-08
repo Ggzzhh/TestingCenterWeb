@@ -130,7 +130,8 @@
                     infoSettingForm(data);
                 },
                 error: function (xhr, type) {
-                    alert('提交出错');
+                    console.log(xhr);
+                    console.log(type);
                 }
             })
         });

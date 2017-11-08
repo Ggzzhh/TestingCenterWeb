@@ -5,11 +5,6 @@
 		  href="{{ url_for('static', filename='css/user.css') }}"
 		  type="text/css">
 	<style>
-		.box-header input{
-			max-width: 500px;
-			margin: 0 auto;
-		}
-
 		.img-file {
 			display: inline-block;
 			position: relative;
@@ -25,6 +20,23 @@
 			opacity: 0;
 			cursor: pointer;
 		}
+		.form-group {
+			max-width: 500px;
+			margin: 0 auto;
+			padding-bottom: 25px;
+		}
+		.radio-inline input[type=radio] {
+			position: relative;
+		}
+		.help-block {
+			font-size: 0.7em;
+			position: absolute;
+		}
+		.user .box-content .btn {
+			margin-top: 20px;
+			max-width: 500px;
+			width: 100%;
+		}
 	</style>
 {% endblock %}
 {% block page_content %}
@@ -37,110 +49,137 @@
 				</div>
 			{% endfor %}
 			<div class="box-header">
-				<div class="form-group">
-					<p>点击图片更换头像 <small>（2M以内）</small></p>
-					<div class="img-file">
-						<a href="#">
-							<img src="{{ user.gravatar(size=128) }}" alt=""
-								 class="img-rounded user-thumbnail"
-								 id="uploadPreview" width="140"
-								 height="140">
-						</a>
-						<input id="uploadImage" type="file"
-							   name="avatar_hash" accept="image/*"/>
-						<!--todo: 完成本页面-->
+				<h1>个人资料编辑</h1>
+			</div>
+
+			<div class="box-content" id="avatar">
+				<form id="form">
+					<div class="form-group">
+						<p>点击图片更换头像 <small>（2M以内）</small></p>
+						<div class="img-file">
+							<a href="#">
+								<img src="{{ user.gravatar(size=128) }}" alt=""
+									 class="img-rounded user-thumbnail"
+									 id="uploadPreview" width="140"
+									 height="140">
+							</a>
+							<input id="uploadImage" type="file"
+								   name="avatar" accept="image/*"/>
+							<!--todo: 完成本页面-->
+						</div>
 					</div>
 
-				</div>
+					<div class="form-group" id="username">
+						<label class="control-label" for="username">用户名</label>
+						<input type="text" value="{{ user.username }}"
+							   class="form-control" name="username" maxlength="16">
+						<span class="help-block text-left"></span>
+					</div>
 
-				<div class="form-group">
-					<label class="control-label" for="username">用户名</label>
-					<input type="text" value="{{ user.username }}"
-						   class="form-control" name="username" id="username">
-				</div>
+					<div class="form-group" id="nickname">
+						<label class="control-label" for="nickname">（昵称）</label>
+						<input type="text" value="{{ user.nickname|default('无', True) }}"
+							   class="form-control" name="nickname" maxlength="10">
+					</div>
 
-				<small>({{ user.nickname|default('无', True) }})</small>
+					<div class="form-group" id="about_me">
+						<label class="control-label" for="about_me">自我评价</label>
+						<input type="text" value="{{ user.about_me|default('无', True) }}"
+							   class="form-control" name="about_me" maxlength="30">
+					</div>
 
-				<h2>
-					<b>自我评价：{{ user.about_me|default('无', True) }}</b>
-				</h2>
-			</div>
-			<div class="box-content">
-				<table class="table">
-					<tr>
-						<td>司职：</td>
-						<td>{{ user.position }}</td>
-					</tr>
-					<tr>
-						<td>性别：</td>
-						<td>
-							{% if user.male == 1 %}
-								男
-							{% elif user.male == 2 %}
-								女
-							{% else %}
-								待定
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<td>年龄：</td>
-						<td>{{ user.age|default('0', True) }}</td>
-					</tr>
-					<tr>
-						<td>身高：</td>
-						<td>{{ user.tops|default('0', True) }} cm</td>
-					</tr>
-					<tr>
-						<td>体重：</td>
-						<td>{{ user.weight|default('0', True) }} kg</td>
-					</tr>
-					<tr>
-						<td>队伍：</td>
-						<td>
-							{% if user.team == None %}
-								<div class="text-info">独行侠</div>
-							{% else %}
-								<a href="#">{{ user.team.name }}</a>
-							{% endif %}
-						</td>
-					</tr>
-				</table>
-			</div>
-			{% if current_user.id == user.id or current_user.id == user.team.captain_id %}
-				<hr />
-				<div class="box-content">
-				<div class="page-header">
-					<h1>个人资料</h1>
-					<small>（以下信息仅自己以及队长可见）</small>
-				</div>
-				<table class="table">
-					<tr>
-						<td>真实姓名：</td>
-						<td>{{ user.name|default('无名氏', True) }}</td>
-					</tr>
-					<tr>
-						<td>QQ：</td>
-						<td>{{ user.qq|default('无', True) }}</td>
-					</tr>
-					<tr>
-						<td>手机：</td>
-						<td>{{ user.phone|default('无', True) }}</td>
-					</tr>
-					<tr>
-						<td>微信号：</td>
-						<td>{{ user.WeChat|default('无', True) }}</td>
-					</tr>
-					<tr>
-						<td>邮箱：</td>
-						<td>{{ user.email }}</td>
-					</tr>
-				</table>
-			{% endif %}
-			{% if current_user.id == user.id  %}
-				<a class="btn btn-success btn-lg	" id="edit"
-				   href="{{ url_for('auth.edit', id=user.id) }}">编辑个人资料</a>
-			{% endif %}
+					<div class="form-group" id="position">
+						<label for="position" class="control-label">司职</label>
+						<select name="position" class="form-control">
+							<option>后卫</option>
+							<option>前锋</option>
+							<option>中锋</option>
+						</select>
+					</div>
+
+					<div class="form-group" id="gender">
+						<label class="control-label" for="about_me">性别 : &nbsp;&nbsp;</label>
+						<label class="radio-inline">
+							<input type="radio" value='1' name="gender">
+							男
+						</label>&nbsp;
+						<label class="radio-inline">
+							<input type="radio" value='2' name="gender">
+							女
+						</label>&nbsp;
+						<label class="radio-inline">
+							<input type="radio" value='3' name="gender">
+							待定
+						</label>
+					</div>
+
+					<div class="form-group" id="age">
+						<label class="control-label" for="age">年龄</label>
+						<input type="number" value="{{ user.age|default('0', True) }}"
+							   class="form-control" name="age" maxlength="3">
+						<span class="help-block text-left"></span>
+					</div>
+
+					<div class="form-group" id="tops">
+						<label class="control-label" for="tops">身高</label>
+						<div class="input-group">
+							<input type="number" value="{{ user.tops|default('0', True) }}"
+								   class="form-control" name="tops" maxlength="3">
+							<span class="input-group-addon">CM</span>
+						</div>
+						<span class="help-block text-left"></span>
+					</div>
+
+					<div class="form-group" id="weight">
+						<label class="control-label" for="weight">体重</label>
+						<div class="input-group">
+							<input type="number" value="{{ user.weight|default('0', True) }}"
+								   class="form-control" name="weight" maxlength="3">
+							<span class="input-group-addon">KG</span>
+						</div>
+						<span class="help-block text-left"></span>
+					</div>
+
+					<hr/>
+					<div class="page-header">
+						<h1>个人资料</h1>
+						<small>（以下信息仅自己以及队长可见）</small>
+					</div>
+
+					<div class="form-group" id="name">
+						<label class="control-label" for="name">真实姓名</label>
+						<input type="text" value="{{ user.name|default('无名氏', True) }}"
+							   class="form-control" name="name" maxlength="4">
+					</div>
+
+					<div class="form-group" id="qq">
+						<label class="control-label" for="qq">QQ</label>
+						<input type="number" name="qq" maxlength="13"
+							   value="{{ user.qq|default('无', True) }}"
+							   class="form-control" >
+						<span class="help-block text-left"></span>
+					</div>
+
+					<div class="form-group" id="phone">
+						<label class="control-label" for="phone">手机</label>
+						<input type="number" name="phone" maxlength="11"
+							   value="{{ user.phone|default('无', True) }}"
+							   class="form-control" >
+						<span class="help-block text-left"></span>
+					</div>
+
+					<div class="form-group" id="WeChat">
+						<label class="control-label" for="WeChat">微信号</label>
+						<input type="text" name="WeChat" maxlength="20"
+							   value="{{ user.WeChat|default('无', True) }}"
+							   class="form-control" >
+						<span class="help-block text-left"></span>
+					</div>
+					<div class="form-group">
+						<button class="btn btn-primary btn-lg"
+								id="submit">修改</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -148,9 +187,75 @@
 {% block scripts %}
 	{{ super() }}
 	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/register.js') }}"></script>
 	<script>
+
+        bind_register();
+
+        var gender = {{ user.male }},
+            re_result = {};
+
+        $('input[name="gender"]').each(function () {
+            if ($(this).val() == gender) {
+                $(this).attr('checked', true)
+            }
+        });
+
         $("#uploadImage").change(function () {
+            if (this.files[0].size > 1024 * 1024 * 2){
+                swal('信息', '图片太大了！处理一下吧！','info');
+                return
+            }
             upLoadImage(this.files[0], 'uploadPreview');
         });
+
+        $('#submit').click(function (e) {
+            e.preventDefault();
+            var values = $('#form').serializeArray();
+            var json_data = {};
+            for (var i in values){
+                json_data[values[i].name] = values[i].value
+            }
+            json_data.avatar = $('#uploadPreview').attr('src');
+			json_data.id = {{ current_user.id }};
+            json_data = JSON.stringify(json_data);
+            // console.log(json_data);
+            // console.log(re_result);
+            for (var i in re_result){
+                if (re_result[i] !== true){
+                    $("html, body").animate({scrollTop: $('#'+i).offset().top
+                    - 150},700);
+                    has_error(i, "&times; 验证不通过！");
+                    return
+                }
+            }
+			$.post({
+				url: "{{ url_for('api.edit_user', id=current_user.id) }}",
+				data: json_data,
+                dataType: 'json',
+                contentType: 'application/json',
+				success: function (data) {
+					if (data.result === 'ok'){
+					    swal({
+                            title: '修改成功！',
+                            type: 'success',
+                            text: '2秒后自动跳转',
+                            timer: 3000,
+                            showConfirmButton: false
+                        }).catch(function () {
+                            window.location.href =
+                                "{{ url_for('auth.index', id=current_user.id) }}"
+                        });
+					}
+					else {
+					    swal('错误','修改失败！请联系单位工作人员！', 'error')
+					}
+                },
+				error: function () {
+                    swal('错误','修改失败！请联系单位工作人员！', 'error')
+                }
+			})
+        })
+
 	</script>
 {% endblock %}

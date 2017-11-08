@@ -53,9 +53,11 @@ function repeat(element, re, val) {
         success: function (data) {
             if (data.repeat === true) {
                 has_error(element, repeat_message[element])
+                re_result[element] = false
             }
             else{
                 register_re(re, val, element);
+                re_result[element] = true
             }
         }
     });

@@ -100,3 +100,18 @@ def get_user(id):
     """获取用户信息"""
     user = User.query.get_or_404(id)
     return jsonify(user.easy_to_json())
+
+
+@api.route('/auth/edit/<int:id>', methods=["POST"])
+@login_required
+def edit_user(id):
+    """修改用户资料"""
+    user = User.query.get_or_404(id)
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    user = user.from_json(json_data)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'result': 'ok'})
+

@@ -25,12 +25,9 @@ function Upload(img, url) {
 
 // 参数 img 是需要上传压缩的图片
 // 参数Preview_id 是预览的img标签的id
-// 默认: 宽度以及高度为200
+// 默认: 宽度以及高度为140
 function upLoadImage(img, Preview_id) {
-    // console.log("img:" + img);
-
     var reader = new FileReader();
-    // console.log('reader:' + reader);
 
     reader.readAsDataURL(img);
     // console.log(img.length);
@@ -49,8 +46,8 @@ function upLoadImage(img, Preview_id) {
         image.src = this.result;
         return image.onload = function () {
             // 注释内是等比例缩放
-            var width = 200; // image.width;
-            var height = 200; // image.height;
+            var width = 140; // image.width;
+            var height = 140; // image.height;
             // var old_width = image.width;
             // var old_height = image.height;
             // if (old_width > 200 && old_width >= old_height) {
