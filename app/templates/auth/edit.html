@@ -160,7 +160,7 @@
 
         bind_register();
 
-        var gender = {{ user.male }},
+        var gender = "{{ user.male }}",
             re_result = {};
 
         $('input[name="gender"]').each(function () {
@@ -186,6 +186,9 @@
             }
             json_data.avatar = $('#uploadPreview').attr('src');
             json_data.id = {{ current_user.id }};
+            if (json_data.gender === undefined){
+                json_data.gender = 3
+			}
             json_data = JSON.stringify(json_data);
             // console.log(json_data);
             // console.log(re_result);

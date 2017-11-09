@@ -494,6 +494,7 @@ class User(db.Model, UserMixin):
     def easy_to_json(self):
         """返回不保密的用户信息"""
         json_data = {
+            'id': self.id,
             'username': self.username,
             'avatar_hash': self.avatar_hash,
             'nickname': self.nickname,
@@ -577,16 +578,20 @@ class Team(db.Model):
     __tablename__ = 'teams'
     id = db.Column(db.Integer, primary_key=True)
     # 队长id
-    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                           unique=True, nullable=True)
     # 队伍名
     name = db.Column(db.String(32), unique=True, nullable=True)
     # 队伍座右铭
     maxim = db.Column(db.String(64))
     # 简介
     about_us = db.Column(db.String(128))
+    # 队徽hash
+    emblem_hash = db.Column(db.String(128))
     # 队员
     players = db.relationship("User", foreign_keys=[User.team_id],
-                              backref='team', lazy='dynamic')
+                              backref='team', lazy='dynamic',
+                              cascade='all, delete-orphan')
     # 参与的活动
     activities = db.relationship("Enroll", foreign_keys=[Enroll.team_id],
                                  backref='team', lazy='dynamic',
@@ -594,6 +599,42 @@ class Team(db.Model):
     # 成立时间
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 
+    def to_json(self):
+        json_data = {
+            'captain': User.query.get(self.captain_id).easy_to_json(),
+            'name': self.name,
+            'maxim': self.maxim,
+            'about_us': self.about_us,
+            'emblem_hash': self.emblem_hash,
+            'players': [player.easy_to_json() for player in self.players],
+            'activities': "#",
+            'member_since': self.member_since,
+            'count': len([player for player in self.players])
+        }
+        return json_data
+
+    @staticmethod
+    def from_json(data):
+        team = Team()
+        id = data.get('id')
+        if id is not None:
+            team = Team.query.get(id)
+        if team is not None:
+            team.captain_id = data.get('captain_id')
+            team.name = data.get('name')
+            team.maxim = data.get('maxim')
+            team.about_us = data.get('about_us')
+            team.emblem_hash = data.get('emblem_hash')
+            return team
+        return None
+
+    @staticmethod
+    def name_is_exist(name):
+        """检验队伍名是否存在"""
+        team = Team.query.filter_by(name=name).first()
+        if team is not None:
+            return True
+        return False
 
 
 

@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, logout_user
 
 from . import api
 from .. import db
-from ..models import User
+from ..models import User, Team
 from ..email import send_email
 
 
@@ -115,3 +115,50 @@ def edit_user(id):
     db.session.commit()
     return jsonify({'result': 'ok'})
 
+
+@api.route('/team', methods=["POST"])
+@login_required
+def new_team():
+    """创建新队伍"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    team = Team.from_json(json_data)
+    if team is not None:
+        name = team.name
+        db.session.add(team)
+        db.session.commit()
+        team = Team.query.filter_by(name=name).first()
+        captain_id = json_data.get('captain_id')
+        user = User.query.get_or_404(captain_id)
+        user.team_id = team.id
+        db.session.add(user)
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})
+
+
+@api.route('/team/<int:id>')
+def get_team(id):
+    """获取队伍信息"""
+    return jsonify(Team.query.get_or_404(id).to_json())
+
+
+@api.route('/team-exist')
+@login_required
+def team_exist():
+    """检验队伍名是否存在"""
+    name = request.args.get('name')
+    return jsonify({'result': Team.name_is_exist(name)})
+
+
+@api.route('/team/<int:id>', methods=["POST"])
+@login_required
+def update_team(id):
+    team = Team.query.get_or_404(id)
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    team = team.from_json(json_data)
+    db.session.add(team)
+    db.session.commit()
+    return jsonify({'result': 'ok'})

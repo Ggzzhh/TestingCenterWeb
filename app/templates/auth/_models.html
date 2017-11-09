@@ -1,5 +1,4 @@
-{% macro create_team() %}
-	<!-- Modal -->
+{% macro create_team(current_user) %}
 	<div class="modal fade bs-example-modal-lg"
 		 id="CTeam" tabindex="-1" role="dialog"
 		 aria-labelledby="CreateTeam">
@@ -11,16 +10,181 @@
 					<h4 class="modal-title" id="CreateTeam"><b>创建战队</b></h4>
 				</div>
 				<div class="modal-body text-center">
-					<p>确定要删除么？</p>
-					<p>删除时会一并删除所属的评论！</p>
+					<form id="form" class="form">
+						<div class="form-group" id="name">
+							<label class="control-label"
+								   for="name">队名</label>
+							<input type="text" placeholder="例：洛杉矶湖人队 不可更改"
+								   class="form-control" name="name" maxlength="16">
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="captain">
+							<label class="control-label"
+								   for="username">队长</label>
+							<input type="text" name="captain" maxlength="16"
+								   value="{{ current_user.username }}"
+								   class="form-control" readonly>
+						</div>
+
+						<div class="form-group" id="maxim">
+							<label class="control-label"
+								   for="maxim">座右铭</label>
+							<input type="text" placeholder="例：Royal Never Give up"
+								   class="form-control" name="maxim"
+								   maxlength="32">
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="about_us">
+							<label class="control-label"
+								   for="about_us">队伍简介</label>
+							<textarea rows="4" class="form-control"
+									  name="about_us"></textarea>
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group">
+							<p>
+								队徽 <br/>
+								<small>（2M以下,需要转换大小请点
+									<a href="http://www.gaitubao.com/"
+									   target="_blank">这里</a>）
+								</small>
+							</p>
+							<div class="img-file">
+								<a href="#">
+									<img src="/static/image/logo.jpg" alt=""
+										 class="img-rounded user-thumbnail"
+										 id="uploadPreview" width="140"
+										 height="140">
+								</a>
+								<input id="uploadImage" type="file"
+									   name="avatar" accept="image/*"/>
+							</div>
+						</div>
+					</form>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn
-						btn-danger" id="delete">确定</button>
+						btn-info" id="submit">提交</button>
 					<button type="button" class="btn btn-default"
 							data-dismiss="modal">取消</button>
 				</div>
 			</div>
 		</div>
 	</div>
+{% endmacro %}
+
+
+{% macro update_team(current_user) %}
+	<div class="modal fade bs-example-modal-lg"
+		 id="UTeam" tabindex="-1" role="dialog"
+		 aria-labelledby="UpdateTeam">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="UpdateTeam"><b>修改战队</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<form id="form" class="form">
+						<div class="form-group" id="name">
+							<label class="control-label"
+								   for="name">队名</label>
+							<input type="text" name="name" maxlength="16"
+								   value="{{ current_user.team.name }}"
+								   class="form-control" readonly>
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="captain">
+							<label class="control-label"
+								   for="username">队长</label>
+							<input type="text" name="captain" maxlength="16"
+								   value="{{ current_user.username }}"
+								   class="form-control" readonly>
+						</div>
+
+						<div class="form-group" id="maxim">
+							<label class="control-label"
+								   for="maxim">座右铭</label>
+							<input type="text"
+								   value="{{ current_user.team.maxim }}"
+								   class="form-control" name="maxim"
+								   maxlength="32">
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group" id="about_us">
+							<label class="control-label"
+								   for="about_us">队伍简介</label>
+							<textarea rows="4" class="form-control"
+									  name="about_us">{{ current_user.team.about_us }}</textarea>
+							<span class="help-block text-left"></span>
+						</div>
+
+						<div class="form-group">
+							<p>
+								队徽 <br/>
+								<small>（2M以下,需要转换大小请点
+									<a href="http://www.gaitubao.com/"
+									   target="_blank">这里</a>）
+								</small>
+							</p>
+							<div class="img-file">
+								<a href="#">
+									<img src="{{ current_user.team.emblem_hash }}"
+										 class="img-rounded user-thumbnail"
+										 id="uploadPreview" width="140"
+										 height="140">
+								</a>
+								<input id="uploadImage" type="file"
+									   name="avatar" accept="image/*"/>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-info" id="update">提交</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro show_player(json_data, captain_id) %}
+	<tr>
+		<td>
+			<img src="{{ json_data.avatar_hash }}" width="32" height="32">
+			<a href="{{ json_data.auth_url }}">
+				{{ json_data.username }}
+			</a>
+		</td>
+		<td>
+			{{ json_data.nickname }}
+		</td>
+		<td>
+			{{ json_data.position }}
+		</td>
+		<td>
+			{{ json_data.about_me }}
+		</td>
+		<td>
+			{% if json_data.id == captain_id %}
+				队长
+			{% else %}
+				队员
+			{% endif %}
+		</td>
+		<td>
+			{% if json_data.id != captain_id %}
+				<a href="#">转让队长</a>
+			{% endif %}
+		</td>
+	</tr>
 {% endmacro %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import 'auth/_models.html' as model %}
 {% block head %}
 	{{ super() }}
 	<link rel="stylesheet"
@@ -40,6 +41,40 @@
 			background-color: #f52f2f;
 		}
 
+		.my-team {
+			padding-left: 25px;
+			padding-right: 25px;
+			overflow: hidden;
+			text-align: left;
+		}
+		.my-team img{
+			border: 2px solid #9c9c9c;
+			border-radius: 15px;
+		}
+
+		.my-team #time{
+			font-size: 0.8em;
+		}
+
+		.my-team .thumbnail{
+			padding-top: 25px;
+			text-align: center;
+			font-size: 1.2em;
+		}
+
+		.my-team .caption b{
+			color: #ff000a;
+			text-shadow: 1px 1px 1px #ff000a;
+		}
+
+		.my-team a{
+			text-decoration: none;
+		}
+
+		.my-team .well {
+			color: #0f0f0f;
+		}
+
 		.create-team {
 			margin-top: 100px;
 			font-size: 1.5em;
@@ -51,7 +86,18 @@
 			font-size: 1.3em;
 		}
 
+		.user .table>tbody>tr>td {
+			width: auto;
+		}
+
+		.table img {
+			border: none;
+		}
+
 		@media screen and (max-width: 767px){
+			.nav-pills>li{
+				width: 100%;
+			}
 			.left-nav {
 				width: 100%;
 				clear: both;
@@ -60,6 +106,10 @@
 			.right-content {
 				width: 100%;
 				clear: both;
+			}
+			.my-team {
+				padding: 0;
+				font-size: 0.8em;
 			}
 		}
 	</style>
@@ -74,15 +124,31 @@
 				<ul class="nav nav-pills nav-stacked" role="tablist" id="nav">
 					<li role="presentation" class="active">
 						<a href="#home" aria-controls="content" role="tab"
-						   data-toggle="tab">首页</a>
+						   data-toggle="tab">战队简介</a>
 					</li>
 					<li role="presentation">
-						<a href="#profile" aria-controls="profile" role="tab"
-						   data-toggle="tab">资料</a>
+						{% if current_user.team %}
+							<a href="#profile" aria-controls="profile"
+							   role="tab" data-toggle="tab">成员资料</a>
+						{% else %}
+							<a href="#">成员资料</a>
+						{% endif %}
 					</li>
 					<li role="presentation">
-						<a href="#settings" aria-controls="messages"
-						   role="tab" data-toggle="tab">操作</a>
+						{% if current_user.team %}
+							<a href="#settings" aria-controls="settings"
+							   role="tab" data-toggle="tab">相关操作</a>
+						{% else %}
+							<a href="#">相关操作</a>
+						{% endif %}
+					</li>
+					<li role="presentation">
+						{% if current_user.team %}
+							<a href="#activities" aria-controls="activity"
+							   role="tab" data-toggle="tab">活动列表</a>
+						{% else %}
+							<a href="#">活动列表</a>
+						{% endif %}
 					</li>
 				</ul>
 			</div>
@@ -90,12 +156,60 @@
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane active" id="home">
 						{% if current_user.team %}
-							队徽
-							座右铭
-							队名
-							创建时间
-							成员
-							简介
+							<div class="my-team text-left">
+								<div class="thumbnail">
+									<img src="{{ current_user.team.emblem_hash }}"
+										 class="img-rounded profile-thumbnail"
+										 width="140" height="140"/>
+									<div class="caption">
+										<table class="table">
+											<tr>
+												<td>战队名</td>
+												<td><b>{{ current_user.team.name }}</b></td>
+											</tr>
+											<tr>
+												<td>成立时间</td>
+												<td><span id="time"></span></td>
+											</tr>
+											<tr>
+												<td>队长</td>
+												<td><a href="{{ current_user.team.to_json()['captain']['auth_url'] }}">
+													{{ current_user.team.to_json()['captain']['username'] }}
+												</a></td>
+											</tr>
+											<tr>
+												<td>人数</td>
+												<td>
+													{{ current_user.team.to_json()['count'] }}
+												</td>
+											</tr>
+											<tr>
+												<td>座右铭</td>
+												<td>
+													{{ current_user.team.to_json()['maxim'] }}
+												</td>
+											</tr>
+											<tr>
+												<td>战队简介</td>
+												<td>
+													{{ current_user.team.to_json()['about_us'] }}
+												</td>
+											</tr>
+											{% if current_user.id == current_user.team.captain_id %}
+												<tr>
+													<td colspan="2">
+														<button class="btn btn-info"
+																data-toggle="modal"
+																data-target="#UTeam">
+															编辑
+														</button>
+													</td>
+												</tr>
+											{% endif %}
+										</table>
+									</div>
+								</div>
+							</div>
 						{% else %}
 							<div class="create-team">
 								<p>独行者，你还没有战队</p>
@@ -109,9 +223,35 @@
 						{% endif %}
 					</div>
 					<div role="tabpanel" class="tab-pane" id="profile">
-						<button id="ajax">image</button>
+						<div class="my-team">
+							<div class="well">
+								<table class="table table-bordered
+								table-hover table-striped text-center">
+									<tr>
+										<th class="text-center">成员</th>
+										<th class="text-center">昵称</th>
+										<th class="text-center">位置</th>
+										<th class="text-center">简介</th>
+										<th class="text-center">身份</th>
+										<th class="text-center">操作</th>
+									</tr>
+									{% if current_user.team %}
+										{% for player in current_user.team.players %}
+											{{ model.show_player(player.easy_to_json(),
+											current_user.team.captain_id) }}
+										{% endfor %}
+									{% endif %}
+								</table>
+							</div>
+						</div>
 					</div>
-					<div role="tabpanel" class="tab-pane" id="settings">3</div>
+					<div role="tabpanel" class="tab-pane" id="settings">
+						解散战队
+						查看申请者（做成遮罩层, 点击后执行ajax获取数据）
+					</div>
+					<div role="tabpanel" class="tab-pane" id="activities">
+{#						等待活动页面做好后 todo:展示已报名的活动 进入活动页面#}
+					</div>
 				</div>
 			</div>
 
@@ -119,90 +259,30 @@
 	</div>
 
 	<!-- Modal -->
-	<!-- todo: 转移这个模版到 _models中   完成战队的改查 以及队员的增删改查-->
-	<div class="modal fade bs-example-modal-lg"
-		 id="CTeam" tabindex="-1" role="dialog"
-		 aria-labelledby="CreateTeam">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="CreateTeam"><b>创建战队</b></h4>
-				</div>
-				<div class="modal-body text-center">
-					<form id="form" class="form">
-						<div class="form-group" id="name">
-							<label class="control-label"
-								   for="name">队名</label>
-							<input type="text" placeholder="例：洛杉矶湖人队"
-								   class="form-control" name="name" maxlength="16">
-							<span class="help-block text-left"></span>
-						</div>
 
-						<div class="form-group" id="captain">
-							<label class="control-label"
-								   for="username">队长</label>
-							<input type="text" name="captain" maxlength="16"
-								   value="{{ current_user.username }}"
-								   class="form-control" readonly>
-						</div>
+	{% if current_user.team %}
+		{{ model.update_team(current_user) }}
+	{% else %}
+		{{ model.create_team(current_user) }}
+	{% endif %}
 
-						<div class="form-group" id="maxim">
-							<label class="control-label"
-								   for="maxim">座右铭</label>
-							<input type="text" placeholder="例：Royal Never Give up"
-								   class="form-control" name="maxim"
-								   maxlength="32">
-							<span class="help-block text-left"></span>
-						</div>
+	<!-- todo: 队员的增删改查-->
 
-						<div class="form-group" id="about_us">
-							<label class="control-label"
-								   for="about_us">队伍简介</label>
-							<textarea rows="4" class="form-control"
-									  name="about_us"></textarea>
-							<span class="help-block text-left"></span>
-						</div>
-
-						<div class="form-group">
-							<p>
-								队徽 <br/>
-								<small>（2M以下,需要转换大小请点
-									<a href="http://www.gaitubao.com/"
-									   target="_blank">这里</a>）
-								</small>
-							</p>
-							<div class="img-file">
-								<a href="#">
-									<img src="/static/image/logo.jpg" alt=""
-										 class="img-rounded user-thumbnail"
-										 id="uploadPreview" width="140"
-										 height="140">
-								</a>
-								<input id="uploadImage" type="file"
-									   name="avatar" accept="image/*"/>
-							</div>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn
-						btn-info" id="submit">提交</button>
-					<button type="button" class="btn btn-default"
-							data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 {% endblock %}
 {% block scripts %}
 	{{ super() }}
 	<script src="{{ url_for('static', filename='js/image.js') }}"></script>
+	{% if current_user.team %}
+		<script>
+            moment.locale('zh-cn');
+            var member_since = "{{ current_user.team.to_json()['member_since'] }}";
+            $('#time').text(moment(member_since).format('YYYY年 MMM Do'))
+		</script>
+	{% endif %}
+
 	<script>
         var screen = $(window).width();
-        console.log(screen);
         if (screen < 767){
             $('#nav').removeClass('nav-stacked')
         }
@@ -215,8 +295,90 @@
             upLoadImage(this.files[0], 'uploadPreview');
         });
 
-        $("#create-team").on("click", function() {
-
+        $('#submit').click(function () {
+            $.get({
+                url: "{{ url_for('api.team_exist') }}"
+                + "?name=" + $('input[name="name"]').val(),
+                data: "",
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.result === true){
+                        swal('队名已存在','这个队名别人已经用了！', 'info');
+                    }else{
+                        var values = $('#form').serializeArray(),
+                            json_data = {};
+                        for (var e in values){
+                            json_data[values[e].name] = values[e].value
+                        }
+                        json_data.emblem_hash = $('#uploadPreview').attr('src');
+                        json_data.captain_id = {{ current_user.id }};
+                        delete json_data.captain;
+                        json_data = JSON.stringify(json_data);
+                        console.log(json_data);
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ url_for('api.new_team') }}",
+                            data: json_data,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                if (data.result === 'ok'){
+                                    window.location.reload()
+                                }
+                                else {
+                                    swal('错误','创建失败！请联系单位工作人员！', 'error')
+                                }
+                            },
+                            error: function () {
+                                swal('错误','创建失败！请联系单位工作人员！', 'error')
+                            }
+                        });
+                    }
+                }
+            });
         });
+
+        $('#update').click(function (e) {
+            e.preventDefault();
+            var values = $('#form').serializeArray(),
+                json_data = {};
+            for (var e in values){
+                json_data[values[e].name] = values[e].value
+            }
+            json_data.emblem_hash = $('#uploadPreview').attr('src');
+            json_data.captain_id = {{ current_user.id }};
+            delete json_data.captain;
+            json_data.id = {{ current_user.team.id }};
+            json_data = JSON.stringify(json_data);
+            console.log(json_data);
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('api.update_team', id=current_user.team.id)}}",
+                data: json_data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        swal({
+                            title: '修改成功!',
+                            type: 'success',
+                            text: '2秒后自动跳转',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).catch(function () {
+                            window.location.reload()
+                        });
+
+                    }
+                    else {
+                        swal('错误','创建失败！请联系单位工作人员！', 'error')
+                    }
+                },
+                error: function () {
+                    swal('错误','创建失败！请联系单位工作人员！', 'error')
+                }
+            });
+        })
 	</script>
 {% endblock %}
