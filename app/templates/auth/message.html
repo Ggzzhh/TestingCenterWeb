@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/user.css') }}"
+		  type="text/css">
+	<style>
+		.user .box-content .message {
+			padding-bottom: 15px;
+			margin-bottom: 15px;
+			border-bottom: 2px solid #ccc;
+			color: #77b3cc;
+		}
+
+		.user {
+			min-height: 500px;
+		}
+	</style>
+{% endblock %}
+{% block page_content %}
+	<div class="container">
+		<div class="user">
+			<div class="box-header">
+				<h1>通知</h1>
+			</div>
+			<div class="box-content">
+				<ul>
+					{% for info in infos %}
+						<li>
+							<div class="alert alert-info alert-dismissible"
+								 role="alert">
+								<button type="button" class="close"
+										data-dismiss="alert" aria-label="Close"
+										onclick="delete_msg({{ info.id }})">
+									<span aria-hidden="true">&times;</span></button>
+								<p class="text-left message">浩瀚体育提醒您：</p>
+								{{ info.message }}{{ info.read()|default("", True) }}
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+        function delete_msg(id) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api-v1.0/message/" + id,
+                data: "",
+                dataType: 'json',
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        window.location.reload()
+                    }
+                    else {
+                        swal('删除失败', '请联系管理员!', 'error')
+                    }
+                },
+                error: function () {
+                    swal('删除失败', '请联系管理员!', 'error')
+                }
+            })
+        }
+	</script>
+{% endblock %}

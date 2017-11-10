@@ -18,7 +18,7 @@ def before_request():
                 and request.endpoint[:5] != 'auth.' \
                 and request.endpoint != 'static':
             return redirect(url_for('auth.unconfirmed'))
-        
+
 
 @auth.route('/<int:id>')
 def index(id):
@@ -61,7 +61,9 @@ def logout(username):
 
 @auth.route('/register/ok')
 def register_ok():
-    flash('注册成功，请前往邮箱进行验证!')
+    flash('注册成功，请登录后前往邮箱进行验证!')
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     return render_template("auth/login.html")
 
 
@@ -76,7 +78,7 @@ def confirm(token):
         flash("完成验证，谢谢您的配合！")
     else:
         flash("验证无效或已过期，请重新验证邮箱！")
-    return redirect(url_for('auth.index'))
+    return redirect(url_for('auth.index', id=current_user.id))
 
 
 @auth.route('/confirm')
@@ -131,3 +133,10 @@ def change_password(id):
 def my_team(id):
     """我的战队页面"""
     return render_template('auth/my-team.html', id=id)
+
+
+@auth.route('/message/<int:id>')
+@login_required
+def message(id):
+    user = User.query.get(id)
+    return render_template('auth/message.html', infos=user.infos)

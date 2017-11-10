@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e4bd5831f8fc
+Revision ID: 7f4aa750eef1
 Revises: 
-Create Date: 2017-11-04 14:54:25.721346
+Create Date: 2017-11-10 09:04:37.217357
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e4bd5831f8fc'
+revision = '7f4aa750eef1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,7 +26,6 @@ def upgrade():
     sa.Column('start_date', sa.DateTime(), nullable=True),
     sa.Column('end_date', sa.DateTime(), nullable=True),
     sa.Column('sign_up_url', sa.String(length=64), nullable=True),
-    sa.Column('number', sa.Integer(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -37,6 +36,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=32), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.Column('confirmed', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
@@ -91,13 +91,17 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('captain_id', sa.Integer(), nullable=True),
     sa.Column('name', sa.String(length=32), nullable=True),
+    sa.Column('maxim', sa.String(length=64), nullable=True),
+    sa.Column('about_us', sa.String(length=128), nullable=True),
+    sa.Column('emblem_hash', sa.String(length=128), nullable=True),
     sa.Column('member_since', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['captain_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('captain_id'),
     sa.UniqueConstraint('name')
     )
     op.create_table('users',
-    sa.Column('avatar_hash', sa.String(length=32), nullable=True),
+    sa.Column('avatar_hash', sa.Text(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.Column('username', sa.String(length=32), nullable=True),

@@ -125,8 +125,8 @@
         if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
             (navigator.appVersion.split(";")[1]
                 .replace(/[ ]/g, "")
-                .replace("MSIE",""))<9){
-            alert("您的浏览器版本过低，请下载IE9及以上版本");
+                .replace("MSIE",""))<=10){
+            alert("您的浏览器版本过低，请下载IE10及以上版本, 或使用其他浏览器！推荐使用谷歌浏览器");
         }
 	</script>
 {% endblock scripts %}

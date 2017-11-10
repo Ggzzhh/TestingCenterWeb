@@ -300,12 +300,7 @@ class Activity(db.Model):
     end_date = db.Column(db.DateTime, index=True)
     # 活动报名页面地址
     sign_up_url = db.Column(db.String(64))
-    # 活动参与人数 例如：1v1
-    number = db.Column(db.Integer)
-    # 参与的队伍
-    teams = db.relationship("Enroll", foreign_keys=[Enroll.activity_id],
-                            backref='activity', lazy='dynamic',
-                            cascade='all, delete-orphan')
+
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 
     def to_json(self, brief=False):
@@ -388,6 +383,11 @@ class User(db.Model, UserMixin):
         管理者有权限删除留言
         删除留言后 在用户的通知信息中 显示信息
     """
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = self.gravatar()
+
     # 头像hash
     avatar_hash = db.Column(db.Text)
 
@@ -529,7 +529,11 @@ class User(db.Model, UserMixin):
             user.position = data.get('position')
         return user
 
-    def gravatar(self, size=100, default='identicon', rating='g'):
+    def info_count(self):
+        """新消息条目"""
+        return len([info for info in self.infos if info.is_read is False])
+
+    def gravatar(self, size=128, default='identicon', rating='g'):
         """使用gravatar生成用户头像"""
         if self.avatar_hash is not None:
             return self.avatar_hash
@@ -560,9 +564,12 @@ class Info(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     message = db.Column(db.Text)
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 
     def to_json(self):
         json_data = {
+            'id': self.id,
             'user_id': self.user_id,
             'message': self.message
         }
@@ -571,6 +578,11 @@ class Info(db.Model):
     @staticmethod
     def from_json(data):
         return Info(user_id=data.get('user_id'), message=data.get('message'))
+
+    def read(self):
+        """改变状态为已读"""
+        self.is_read = True
+        db.session.add(self)
 
 
 class Team(db.Model):
@@ -590,12 +602,7 @@ class Team(db.Model):
     emblem_hash = db.Column(db.String(128))
     # 队员
     players = db.relationship("User", foreign_keys=[User.team_id],
-                              backref='team', lazy='dynamic',
-                              cascade='all, delete-orphan')
-    # 参与的活动
-    activities = db.relationship("Enroll", foreign_keys=[Enroll.team_id],
-                                 backref='team', lazy='dynamic',
-                                 cascade='all, delete-orphan')
+                              backref='team', lazy='dynamic')
     # 成立时间
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 

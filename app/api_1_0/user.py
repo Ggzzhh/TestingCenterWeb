@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import jsonify, request, flash, current_app, url_for, abort, session
-from flask_login import login_required, login_user, logout_user
+from flask import jsonify, request, flash, current_app, \
+    url_for, abort, session
+from flask_login import login_required, login_user, logout_user, current_user
 
 from . import api
 from .. import db
-from ..models import User, Team
+from ..models import User, Team, Info
 from ..email import send_email
 
 
@@ -162,3 +163,76 @@ def update_team(id):
     db.session.add(team)
     db.session.commit()
     return jsonify({'result': 'ok'})
+
+
+@api.route('/team/<int:id>', methods=["DELETE"])
+@login_required
+def delete_team(id):
+    """删除战队"""
+    team = Team.query.get_or_404(id)
+    if current_user.id == team.captain_id:
+        db.session.delete(team)
+        db.session.commit()
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})
+
+
+@api.route('/team/<int:id>/new-player', methods=["POST"])
+@login_required
+def add_player(id):
+    """添加队员"""
+    team = Team.query.get_or_404(id)
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error1'})
+    if current_user.id == team.captain_id:
+        email = json_data.get('email')
+        if email:
+            user = User.query.filter_by(email=email).first()
+            if user is None:
+                return jsonify({'result': 'None'})
+            user.team_id = team.id
+            db.session.add(team)
+            return jsonify({'result': 'ok'})
+        return jsonify({'result': 'None'})
+    return jsonify({'result': 'error2'})
+
+
+@api.route('/player/<int:id>', methods=["DELETE"])
+@login_required
+def delete_player(id):
+    """删除队员"""
+    user = User.query.get_or_404(id)
+    try:
+        user.team_id = None
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'result': 'ok'})
+    except:
+        return jsonify({'result': 'error'})
+
+
+@api.route('/message', methods=["POST"])
+def add_message():
+    """给某用户发送信息"""
+    json_data = request.get_json()
+    if json_data is not None and json_data.get('user_id') is not None:
+        info = Info.from_json(json_data)
+        db.session.add(info)
+        db.session.commit()
+        return jsonify({'result': 'ok'})
+    else:
+        return jsonify({'result': 'error'})
+
+
+@api.route('/message/<int:id>', methods=["DELETE"])
+def delete_msg(id):
+    """删除信息"""
+    msg = Info.query.get_or_404(id)
+    try:
+        msg.team_id = None
+        db.session.delete(msg)
+        db.session.commit()
+        return jsonify({'result': 'ok'})
+    except:
+        return jsonify({'result': 'error'})

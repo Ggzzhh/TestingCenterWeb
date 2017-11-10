@@ -74,6 +74,17 @@
 		.my-team .well {
 			color: #0f0f0f;
 		}
+		.my-team .well .setting {
+			text-align: center;
+			margin-top: 50px;
+			font-size: 1.5em;
+			text-decoration: none;
+			padding-bottom: 50px;
+		}
+
+		.my-team .well .setting ul>li {
+			margin-top: 20px;
+		}
 
 		.create-team {
 			margin-top: 100px;
@@ -135,19 +146,12 @@
 						{% endif %}
 					</li>
 					<li role="presentation">
-						{% if current_user.team %}
+						{% if current_user.team and
+						current_user.id == current_user.team.captain_id %}
 							<a href="#settings" aria-controls="settings"
 							   role="tab" data-toggle="tab">相关操作</a>
 						{% else %}
 							<a href="#">相关操作</a>
-						{% endif %}
-					</li>
-					<li role="presentation">
-						{% if current_user.team %}
-							<a href="#activities" aria-controls="activity"
-							   role="tab" data-toggle="tab">活动列表</a>
-						{% else %}
-							<a href="#">活动列表</a>
 						{% endif %}
 					</li>
 				</ul>
@@ -218,7 +222,7 @@
 								   data-target="#CTeam">
 									创建战队
 								</a>
-								| <a href="#">加入战队</a>
+								| <a href="#" id="join-team">加入战队</a>
 							</div>
 						{% endif %}
 					</div>
@@ -245,16 +249,30 @@
 							</div>
 						</div>
 					</div>
-					<div role="tabpanel" class="tab-pane" id="settings">
-						解散战队
-						查看申请者（做成遮罩层, 点击后执行ajax获取数据）
-					</div>
-					<div role="tabpanel" class="tab-pane" id="activities">
-{#						等待活动页面做好后 todo:展示已报名的活动 进入活动页面#}
-					</div>
+					{% if current_user.team and
+						current_user.id == current_user.team.captain_id %}
+						<div role="tabpanel" class="tab-pane" id="settings">
+							<div class="my-team">
+								<div class="well">
+									<div class="setting">
+										<ul>
+											<li>
+												<a href="#" id="delete-team">解散战队</a>
+											</li>
+											<li>
+												<a href="#" id="add-player">添加队员</a>
+											</li>
+											<li>
+												<a href="#" id="del-player">遣散队员</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endif %}
 				</div>
 			</div>
-
 		</div>
 	</div>
 
@@ -266,8 +284,6 @@
 		{{ model.create_team(current_user) }}
 	{% endif %}
 
-	<!-- todo: 队员的增删改查-->
-
 
 {% endblock %}
 {% block scripts %}
@@ -277,8 +293,9 @@
 		<script>
             moment.locale('zh-cn');
             var member_since = "{{ current_user.team.to_json()['member_since'] }}";
-            $('#time').text(moment(member_since).format('YYYY年 MMM Do'))
+            $('#time').text(moment(member_since).format('YYYY年 MMM Do'));
 		</script>
+
 	{% endif %}
 
 	<script>
@@ -295,13 +312,16 @@
             upLoadImage(this.files[0], 'uploadPreview');
         });
 
+        $('#join-team').click(function () {
+            swal('提示', '只有战队队长可以添加队员，请前往论坛或其他途径联系战队队长加入其战队！', 'info')
+        });
+
         $('#submit').click(function () {
             $.get({
                 url: "{{ url_for('api.team_exist') }}"
                 + "?name=" + $('input[name="name"]').val(),
                 data: "",
                 dataType: 'json',
-                contentType: 'application/json',
                 success: function (data) {
                     if (data.result === true){
                         swal('队名已存在','这个队名别人已经用了！', 'info');
@@ -324,7 +344,12 @@
                             contentType: 'application/json',
                             success: function (data) {
                                 if (data.result === 'ok'){
-                                    window.location.reload()
+                                    MyMessage({{ current_user.id }},
+										"恭喜你！创建了战队！" + $('input[name="name"]').val());
+                                    swal('OK','创建成功！', 'success')
+                                        .then(function () {
+                                            window.location.reload()
+                                        });
                                 }
                                 else {
                                     swal('错误','创建失败！请联系单位工作人员！', 'error')
@@ -338,47 +363,186 @@
                 }
             });
         });
-
-        $('#update').click(function (e) {
-            e.preventDefault();
-            var values = $('#form').serializeArray(),
-                json_data = {};
-            for (var e in values){
-                json_data[values[e].name] = values[e].value
-            }
-            json_data.emblem_hash = $('#uploadPreview').attr('src');
-            json_data.captain_id = {{ current_user.id }};
-            delete json_data.captain;
-            json_data.id = {{ current_user.team.id }};
-            json_data = JSON.stringify(json_data);
-            console.log(json_data);
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('api.update_team', id=current_user.team.id)}}",
-                data: json_data,
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function (data) {
-                    if (data.result === 'ok'){
-                        swal({
-                            title: '修改成功!',
-                            type: 'success',
-                            text: '2秒后自动跳转',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).catch(function () {
-                            window.location.reload()
-                        });
-
-                    }
-                    else {
+	</script>
+	{% if current_user.team %}
+		<script>
+            // 更新战队资料
+            $('#update').click(function (e) {
+                e.preventDefault();
+                var values = $('#form').serializeArray(),
+                    json_data = {};
+                for (var e in values){
+                    json_data[values[e].name] = values[e].value
+                }
+                json_data.emblem_hash = $('#uploadPreview').attr('src');
+                json_data.captain_id = {{ current_user.id }};
+                delete json_data.captain;
+                json_data.id = {{ current_user.team.id }};
+                json_data = JSON.stringify(json_data);
+                console.log(json_data);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('api.update_team', id=current_user.team.id)}}",
+                    data: json_data,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.result === 'ok'){
+                            swal({
+                                title: '修改成功!',
+                                type: 'success',
+                                text: '2秒后自动跳转',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).catch(function () {
+                                window.location.reload()
+                            });
+                        }
+                        else {
+                            swal('错误','创建失败！请联系单位工作人员！', 'error')
+                        }
+                    },
+                    error: function () {
                         swal('错误','创建失败！请联系单位工作人员！', 'error')
                     }
-                },
-                error: function () {
-                    swal('错误','创建失败！请联系单位工作人员！', 'error')
+                });
+            })
+
+            // 解散战队
+            $('#delete-team').click(function () {
+                var user_id = {{ current_user.id }},
+                    captain_id = {{ current_user.team.captain_id }};
+                if (user_id !== captain_id){
+                    swal('错误', '您没有操作的权限', 'error');
+                    return
                 }
+                swal({
+                    title: '解散战队！',
+                    text: '你确定要解散这只战队么？',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '还是算了',
+                    cancelButtonText: '是的！解散！',
+                    cancelButtonColor: '#d33',
+                }).then(function () {
+                    swal(
+                        '信息!',
+                        '你没有解散战队！明智的选择.',
+                        'info'
+                    );
+                }, function () {
+					{% for player in current_user.team.players %}
+                    	MyMessage({{ player.id }}, '你的战队已经被解散！');
+					{% endfor %}
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url_for('api.delete_team', id=current_user.team.id)}}",
+                        data: "",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.result === 'ok'){
+                                swal('完成', '战队已解散！', 'success').then(function () {
+                                    window.location.reload()
+                                })
+                            }
+                            else {
+                                swal('失败', '您没有操作的权限', 'error');
+                            }
+                        },
+                        error: function () {
+                            swal('失败', '请联系管理员', 'error');
+                        }
+                    });
+                })
             });
-        })
-	</script>
+
+            // 添加队员
+            $('#add-player').click(function () {
+                swal({
+                    title: '请输入您要添加的队员的邮箱！',
+                    input: 'email',
+                    inputPlaceholder: '例如：假如我是QQ号@qq.com',
+                    confirmButtonText: '下一步'
+                }).then(function (email) {
+                    var data = JSON.stringify({'email': email});
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('api.add_player', id=current_user.team.id)}}",
+                        data: data,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            if (data.result === 'ok'){
+                                swal('完成', '添加成功！', 'success')
+                                    .then(function () {
+                                        window.location.reload()
+                                    })
+                            }
+                            else if(data.result === 'None'){
+                                swal('失败', '查无此人', 'error');
+                            }
+                            else {
+                                swal('失败', '数据出错！请联系管理员', 'error');
+                            }
+                        },
+                        error: function () {
+                            swal('失败', '数据出错！请联系管理员', 'error');
+                        }
+                    })
+                })
+            });
+
+            // 剔除队员
+            $('#del-player').click(function () {
+                var data = {};
+                {% for player in current_user.team.players %}
+                    {% if player.easy_to_json().id != current_user.team
+                    .captain_id %}
+                        data["{{ player.easy_to_json().id }}"] =
+                            "{{ player.easy_to_json().username }}";
+                    {% endif %}
+                {% endfor %}
+                swal({
+                    title: '请选择您要剔除的队员！',
+                    input: 'radio',
+                    inputOptions: data,
+                    confirmButtonText: '下一步',
+                    inputValidator: function (result) {
+                        return new Promise(function (resolve, reject) {
+                            if (result) {
+                                resolve()
+                            } else {
+                                reject('总要选一个在继续吧？')
+                            }
+                        })
+                    }
+                }).then(function (player_id) {
+                    MyMessage(player_id, "你被你的战队开除了！");
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/api-v1.0/player/" + player_id,
+                        data: "",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.result === 'ok'){
+                                swal('完成', '该成员已经从本战队移除！', 'success')
+									.then(function () {
+                                    window.location.reload()
+                                })
+                            }
+                            else {
+                                swal('失败', '请联系管理员', 'error');
+                            }
+                        },
+                        error: function () {
+                            swal('失败', '请联系管理员', 'error');
+                        }
+                    });
+                }, function (e) {
+                    // e === 'overlay'
+                    // console.log(e)
+                })
+            })
+		</script>
+	{% endif %}
 {% endblock %}

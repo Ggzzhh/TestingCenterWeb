@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from flask_login import logout_user, login_user, current_user
 
 from . import main
-from ..models import WebSetting, User
+from ..models import WebSetting, User, Info
 
 # 允许的类型
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])

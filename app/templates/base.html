@@ -9,7 +9,7 @@
 	{{ super() }}
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" type="text/css">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/sweetalert2.min.css') }}" type="text/css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon"/>
 {% endblock head %}
 
@@ -59,7 +59,11 @@
 								<li>
 									<a href="{{ url_for('auth.my_team', id=current_user.id) }}">我的战队</a>
 								</li>
-								<li><a href="#">我的活动</a></li>
+								<li>
+									<a href="{{ url_for('auth.message', id=current_user.id) }}">
+										通知<span class="badge">{{ current_user.info_count()|default("", True) }}</span>
+									</a>
+								</li>
 								<li>
 									<a href="{{ url_for('auth.change_password', id=current_user.id) }}">修改密码</a>
 								</li>
@@ -158,6 +162,7 @@
 	{{ super() }}
 	{{ moment.include_moment() }}
 	<script src="{{ url_for('static', filename='js/sweetalert2.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/message.js') }}"></script>
 	<script>
         if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
             (navigator.appVersion.split(";")[1]
