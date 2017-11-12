@@ -4,16 +4,21 @@
 	<link rel="stylesheet"
 		  href="{{ url_for('static', filename='css/register.css') }}"
 		  type="text/css">
+    <style>
+        .alert {
+            margin: 0 auto;
+        }
+    </style>
 {% endblock %}
 {% block page_content %}
 	<div class="register">
-		{% for message in get_flashed_messages() %}
+		<div class="register-box">
+        {% for message in get_flashed_messages() %}
 			<div class="alert alert-info" style="">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
 				{{ message }}
 			</div>
 		{% endfor %}
-		<div class="register-box">
 			<div class="mod-body">
 				<div class="page-header">
 					<h1>
@@ -25,11 +30,11 @@
 				<div class="page-content">
 					<p class="text-left">
 						在您访问此站点之前，您需要确认您的帐户。<br/>
-						您的收件箱应该收到一封带有确认链接的电子邮件。<br/>
+						您的 <a href="http://{{ current_user.email }}" target="_blank">收件箱</a>
+              已收到一封带有确认链接的电子邮件。<br/>
 						请点击链接进行验证。
 					</p>
-					<p class="text-left">
-						需要另确认电子邮件吗？
+					<p class="text-left">如需再次发送确认邮件，请
 						<a href="{{ url_for('auth.resend_confirmation') }}">点击这里</a>
 					</p>
 				</div>
