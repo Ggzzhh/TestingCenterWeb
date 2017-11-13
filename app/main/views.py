@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import datetime
+
 from flask import url_for, render_template, redirect, \
     jsonify, request, current_app, flash, session
 from werkzeug.utils import secure_filename
 from flask_login import logout_user, login_user, current_user
 
 from . import main
-from ..models import WebSetting, User, Info
+from ..models import WebSetting, User, Info, Activity
+from ..decorators import user_required
 
 # 允许的类型
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 @main.route('/')
+@user_required
 def index():
     setting = WebSetting.query.first()
     return render_template("index.html", setting=setting)
@@ -46,3 +50,45 @@ def upload():
         'status': 'true'
     }
     return jsonify(json_data)
+
+
+@main.route('/activity')
+def show_activity():
+    """展示活动"""
+    condition = request.args.get('condition')
+    if condition is None:
+        condition = 'all'
+    now = datetime.now()
+    page = request.args.get('page', 1, type=int)
+    if condition == 'start':
+        pagination = Activity.query \
+            .filter(Activity.start_date < now, Activity.end_date > now) \
+            .order_by(Activity.timestamp.desc()) \
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'end':
+        pagination = Activity.query \
+            .filter(Activity.end_date < now) \
+            .order_by(Activity.timestamp.desc()) \
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'future':
+        pagination = Activity.query \
+            .filter(Activity.start_date > now) \
+            .order_by(Activity.timestamp.desc()) \
+            .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                      error_out=True)
+    if condition == 'all':
+        pagination = Activity.query.order_by(
+            Activity.timestamp.desc()).paginate(
+            page, per_page=current_app.config['POSTS_PER_PAGE'],
+            error_out=True)
+    activities = pagination.items
+    prev_page = None
+    if pagination.has_prev:
+        prev_page = page - 1
+    next_page = None
+    if pagination.has_next:
+        next_page = page + 1
+    return render_template('activity.html', activities=activities,
+                           pagination=pagination)

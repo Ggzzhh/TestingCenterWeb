@@ -184,4 +184,29 @@ user = ​User.query.filter(
      
 ## 设置float后如何让父容器自动撑开
     设置父容器的css属性 overflow: hidden;
+    
+## flask-SQLAlchemy 多对多(many-to-many)关系
+    多对多关系,需要定义一个用于关系的辅助表。
+    对于这个辅助表， 
+    强烈建议 不 使用模型，而是采用一个实际的表:
+```python
+tags = db.Table('tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
+    db.Column('page_id', db.Integer, db.ForeignKey('page.id'))
+)
+
+class Page(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tags = db.relationship('Tag', secondary=tags,
+        backref=db.backref('pages', lazy='dynamic'))
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+
+# 添加内容 多对多内容
+page = Page()
+tag = Tag()
+page.tags.append(tag)
+```
 

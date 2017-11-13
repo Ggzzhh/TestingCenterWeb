@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 7f4aa750eef1
+Revision ID: eab6c382b388
 Revises: 
-Create Date: 2017-11-10 09:04:37.217357
+Create Date: 2017-11-13 10:03:18.512910
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7f4aa750eef1'
+revision = 'eab6c382b388'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -45,17 +45,18 @@ def upgrade():
     sa.Column('url', sa.String(length=32), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('enrolls',
+    op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('activity_id', sa.Integer(), nullable=False),
-    sa.Column('team_id', sa.Integer(), nullable=False),
+    sa.Column('post_id', sa.Integer(), nullable=True),
+    sa.Column('body', sa.Text(), nullable=True),
+    sa.Column('disabled', sa.Boolean(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.Column('champion_team_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['activity_id'], ['activities.id'], ),
-    sa.ForeignKeyConstraint(['champion_team_id'], ['teams.id'], ),
-    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
-    sa.PrimaryKeyConstraint('id', 'activity_id', 'team_id')
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_comments_timestamp'), 'comments', ['timestamp'], unique=False)
     op.create_table('friend_links',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=32), nullable=True),
@@ -66,8 +67,17 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('message', sa.Text(), nullable=True),
+    sa.Column('is_read', sa.Boolean(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_info_timestamp'), 'info', ['timestamp'], unique=False)
+    op.create_table('many',
+    sa.Column('team_id', sa.Integer(), nullable=True),
+    sa.Column('activity_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['activity_id'], ['activities.id'], ),
+    sa.ForeignKeyConstraint(['team_id'], ['teams.id'], )
     )
     op.create_table('nav_settings',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -87,6 +97,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_posts_timestamp'), 'posts', ['timestamp'], unique=False)
+    op.create_table('solo',
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('activity_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['activity_id'], ['activities.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], )
+    )
     op.create_table('teams',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('captain_id', sa.Integer(), nullable=True),
@@ -148,12 +164,16 @@ def downgrade():
     op.drop_table('web_settings')
     op.drop_table('users')
     op.drop_table('teams')
+    op.drop_table('solo')
     op.drop_index(op.f('ix_posts_timestamp'), table_name='posts')
     op.drop_table('posts')
     op.drop_table('nav_settings')
+    op.drop_table('many')
+    op.drop_index(op.f('ix_info_timestamp'), table_name='info')
     op.drop_table('info')
     op.drop_table('friend_links')
-    op.drop_table('enrolls')
+    op.drop_index(op.f('ix_comments_timestamp'), table_name='comments')
+    op.drop_table('comments')
     op.drop_table('carousels')
     op.drop_table('administrator')
     op.drop_index(op.f('ix_activities_timestamp'), table_name='activities')

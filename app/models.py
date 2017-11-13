@@ -21,6 +21,22 @@ def load_user(user_id):
     return None
 
 
+# 多对多关联表
+# 单人报名表
+solo = db.Table('solo',
+                db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                db.Column('activity_id',
+                          db.Integer, db.ForeignKey('activities.id'))
+                )
+
+# 团队活动报名表
+many = db.Table('many',
+                db.Column('team_id', db.Integer, db.ForeignKey('teams.id')),
+                db.Column('activity_id',
+                          db.Integer, db.ForeignKey('activities.id'))
+                )
+
+
 class AnonymousUser(AnonymousUserMixin):
     """匿名用户类"""
     def can(self):
@@ -70,6 +86,10 @@ class Administrator(UserMixin, db.Model):
         for name in SecondPageName.query.all():
             names.append((name.page_name, name.url))
         return names
+
+    @staticmethod
+    def info_count(self):
+        return None
 
 
 class WebSetting(db.Model):
@@ -275,18 +295,27 @@ class Post(db.Model):
         db.session.commit()
 
 
-class Enroll(db.Model):
-    """报名表 活动以及参加活动的队伍 多对多关系表"""
-    __tablename__ = 'enrolls'
+class Comment(db.Model):
+    """文章评论"""
+    # todo: 搞定这里
+    __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
-    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'),
-                            primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'),
-                        primary_key=True)
-    # 报名时间戳
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    # 冠军
-    champion_team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    body = db.Column(db.Text)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def to_json(self):
+        """把评论转换成JSON格式的序列化字典"""
+        json_comment = {
+            # 'url': url_for('api.get_comment', id=self.id, _external=True),
+            # 'post': url_for('api.get_post', id=self.post_id, _external=True),
+            'body': self.body,
+            'timestamp': self.timestamp,
+            # 'author': url_for('api.get_user', id=self.author_id, _external=True)
+        }
+        return json_comment
 
 
 class Activity(db.Model):
@@ -300,8 +329,12 @@ class Activity(db.Model):
     end_date = db.Column(db.DateTime, index=True)
     # 活动报名页面地址
     sign_up_url = db.Column(db.String(64))
-
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    # 报名关系
+    is_solo = db.relationship('User', secondary=solo,
+                              backref=db.backref('activities', lazy='dynamic'))
+    is_team = db.relationship('Team', secondary=many,
+                              backref=db.backref('activities', lazy='dynamic'))
 
     def to_json(self, brief=False):
         json_data = {
@@ -314,8 +347,22 @@ class Activity(db.Model):
             'start_date': datetime.strftime(self.start_date, '%Y-%m-%d'),
             'end_date': datetime.strftime(self.end_date, '%Y-%m-%d'),
             'timestamp': self.timestamp,
+            'sign_up_url': self.sign_up_url
+        }
+        if brief:
+            json_data.pop('body')
+        return json_data
+
+    def easy_to_json(self, brief=False):
+        json_data = {
+            'title': self.title,
+            'image_url': self.img_url,
+            'body': self.body,
+            'start_date': datetime.strftime(self.start_date, '%Y-%m-%d'),
+            'end_date': datetime.strftime(self.end_date, '%Y-%m-%d'),
+            'timestamp': self.timestamp,
             'sign_up_url': self.sign_up_url,
-            'number': self.number
+            'show_url': ''
         }
         if brief:
             json_data.pop('body')
@@ -328,8 +375,13 @@ class Activity(db.Model):
             activity = Activity.query.get_or_404(id)
         else:
             activity = Activity()
+        select = json_data.get('select')
+        if select == 'solo':
+            activity.sign_up_url = ''
+        if select == 'many':
+            activity.sign_up_url = ''
         activity.title = json_data.get('title')
-        activity.img_url = json_data.get('img_url')
+        activity.img_url = json_data.get('image_url')
         activity.body = json_data.get('body')
         activity.start_date = datetime.strptime(json_data.get(
             'start_date'), '%Y-%m-%d')
@@ -415,7 +467,6 @@ class User(db.Model, UserMixin):
     qq = db.Column(db.Integer)
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
-
     confirmed = db.Column(db.Boolean, default=False)
 
     @property
@@ -556,6 +607,10 @@ class User(db.Model, UserMixin):
         except:
             return None
         return data.get('confirm')
+
+    def is_captain(self):
+        """返回是否是队长"""
+        return self.id == self.team.captain_id
 
 
 class Info(db.Model):
