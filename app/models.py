@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import html
 import hashlib
 from random import randint
 from datetime import datetime
@@ -88,8 +89,9 @@ class Administrator(UserMixin, db.Model):
         return names
 
     @staticmethod
-    def info_count(self):
-        return None
+    def is_user():
+        return False
+
 
 
 class WebSetting(db.Model):
@@ -362,7 +364,7 @@ class Activity(db.Model):
             'end_date': datetime.strftime(self.end_date, '%Y-%m-%d'),
             'timestamp': self.timestamp,
             'sign_up_url': self.sign_up_url,
-            'show_url': ''
+            'show_url': url_for('main.activity', id=self.id),
         }
         if brief:
             json_data.pop('body')
@@ -375,11 +377,7 @@ class Activity(db.Model):
             activity = Activity.query.get_or_404(id)
         else:
             activity = Activity()
-        select = json_data.get('select')
-        if select == 'solo':
-            activity.sign_up_url = ''
-        if select == 'many':
-            activity.sign_up_url = ''
+        activity.sign_up_url = json_data.get('select')
         activity.title = json_data.get('title')
         activity.img_url = json_data.get('image_url')
         activity.body = json_data.get('body')
@@ -468,6 +466,10 @@ class User(db.Model, UserMixin):
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     confirmed = db.Column(db.Boolean, default=False)
+
+    @staticmethod
+    def is_user():
+        return False
 
     @property
     def password(self):
@@ -565,7 +567,7 @@ class User(db.Model, UserMixin):
             user.username = data.get('username')
             user.email = data.get('email')
             user.password = data.get('password')
-        user.avatar_hash = data.get('avatar')
+        user.avatar_hash = data.get('avatar') or user.gravatar()
         user.phone = data.get('phone')
         user.qq = data.get('qq')
         user.WeChat = data.get('WeChat')

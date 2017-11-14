@@ -53,8 +53,9 @@ def upload():
 
 
 @main.route('/activity')
+@user_required
 def show_activity():
-    """展示活动"""
+    """展示所有活动"""
     condition = request.args.get('condition')
     if condition is None:
         condition = 'all'
@@ -66,19 +67,19 @@ def show_activity():
             .order_by(Activity.timestamp.desc()) \
             .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                       error_out=True)
-    if condition == 'end':
+    elif condition == 'end':
         pagination = Activity.query \
             .filter(Activity.end_date < now) \
             .order_by(Activity.timestamp.desc()) \
             .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                       error_out=True)
-    if condition == 'future':
+    elif condition == 'future':
         pagination = Activity.query \
             .filter(Activity.start_date > now) \
             .order_by(Activity.timestamp.desc()) \
             .paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                       error_out=True)
-    if condition == 'all':
+    else:
         pagination = Activity.query.order_by(
             Activity.timestamp.desc()).paginate(
             page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -90,5 +91,16 @@ def show_activity():
     next_page = None
     if pagination.has_next:
         next_page = page + 1
+    count = len(activities)
     return render_template('activity.html', activities=activities,
-                           pagination=pagination)
+                           pagination=pagination, next_page=next_page,
+                           prev_page=prev_page, count=count)
+
+
+@main.route('/activity/<int:id>')
+@user_required
+def activity(id):
+    """活动详情页"""
+    ac = Activity.query.get_or_404(id)
+    return render_template('show-activity.html', ac=ac)
+

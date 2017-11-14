@@ -39,11 +39,12 @@
 						<a href="#">社区论坛</a>
 					</li>
 					<li class="active">
-						<a href="{{ url_for('main.show_activity') }}">官方活动</a>
+						<a href="{{ url_for('main.show_activity',
+						condition='all') }}">官方活动</a>
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					{% if current_user.is_authenticated %}
+					{% if current_user.is_authenticated  %}
 						<li class="btn-group">
 							<a href="#"
 							   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -55,13 +56,13 @@
 								<li>
 									<a href="{{ url_for('auth.index', id=current_user.id) }}">我的资料</a>
 								</li>
-{#								todo: 完成活动功能#}
 								<li>
 									<a href="{{ url_for('auth.my_team', id=current_user.id) }}">我的战队</a>
 								</li>
 								<li>
 									<a href="{{ url_for('auth.message', id=current_user.id) }}">
-										通知<span class="badge">{{ current_user.info_count()|default("", True) }}</span>
+										通知<span class="badge">{{ current_user
+										.info_count()|default('', True) }}</span>
 									</a>
 								</li>
 								<li>

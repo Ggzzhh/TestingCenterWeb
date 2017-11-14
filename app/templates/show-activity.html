@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='css/activity.css') }}"
+		  type="text/css">
+	<style>
+		a:focus{
+			display: none;
+		}
+		.container .ac-content{
+			margin-top: 70px;
+			padding: 30px;
+			background: #fff;
+			position: relative;
+			overflow: hidden;
+		}
+		.ac-content .page-header h1{
+			font-size: 55px;
+			text-align: center;
+			font-weight: 900;
+			text-shadow: -1px -1px 0 #fff,1px 1px 0 #333,1px 1px 0 #444;
+			letter-spacing: 0.1em;
+		}
+		.container .ac-content #logo {
+			position: absolute;
+			left: 30px;
+			top: 30px;
+			width: 80px;
+			height: 80px;
+		}
+
+		.container .ac-content .page-body {
+			width: 80%;
+			margin: 0 auto;
+		}
+
+		.sign_up .btn{
+			position: fixed;
+			bottom: 45%;
+			right: -1px;
+			background: #f4645f;
+			width: 70px;
+			height: 70px;
+			border-radius: 10px;
+			text-align: center;
+			padding-top: 17px;
+			z-index: 1000;
+		}
+		.sign_up a {
+			font-weight: 900;
+			color: #48e6f5;
+			font-size: 1.3em;
+			text-decoration: none;
+			border: none;
+		}
+		.sign_up a:hover {
+			color: #f0f0f0;
+			transition: color 0.5s ease-in-out;
+		}
+
+
+		@media screen and (max-width: 768px){
+			.ac-content .page-header h1 {
+				font-size: 2em;
+			}
+			.container .ac-content #logo {
+				left: 10px;
+				top: 10px;
+				width: 50px;
+				height: 50px;
+			}
+			.container .ac-content .page-body {
+				width: 90%;
+			}
+			.sign_up .btn{
+				width: 50px;
+				height: 50px;
+				font-size: 0.5em;
+				padding-top: 15px;
+			}
+		}
+
+	</style>
+{% endblock %}
+{% block page_content %}
+	<div class="sign_up">
+		<a href="#" class="btn" onclick="sign_up()">报 名</a>
+	</div>
+	<div class="container">
+		<div class="ac-content">
+			<img src="\static\image\logo.jpg"
+				 class="img-circle" id="logo">
+			<div class="page-header">
+				<h1>{{ ac.easy_to_json().title }}</h1>
+			</div>
+			<div class="page-body">
+				{{ ac.easy_to_json().body|safe }}
+			</div>
+		</div>
+
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+        function sign_up() {
+            var data = {};
+
+            {% if not current_user.is_authenticated %}
+                swal('提醒', '请登录后继续操作!', 'info').catch();
+                return null;
+            {% endif %}
+            var select = "{{ ac.easy_to_json().sign_up_url }}";
+            if (select === 'many'){
+                {% if current_user.id != current_user.team.captain_id %}
+                    swal('提醒', '抱歉，您不是{{ current_user.team.name }}队长!', 'info')
+                        .catch();
+                    return null;
+                {% endif %}
+                data.team_id = {{ current_user.team.id }};
+                data.activity_id = {{ ac.id }};
+                data = JSON.stringify(data);
+                $.post({
+                    url: "{{ url_for('api.sign_up_many') }}",
+                    data: data,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.result === 'error'){
+                            swal('提醒', '请勿重复报名!', 'info').catch();
+                        }
+                        else if (data.result === 'ok'){
+                            swal('OK', '报名成功!', 'success').catch();
+                            MyMessage({{ current_user.id }}, "您已成功报名了活动：{{ ac.title }}")
+                        }
+                        else {
+                            swal('警告', '出现异常!请联系管理员！', 'error').catch();
+                        }
+                    },
+                    error: function () {
+                        swal('警告', '出现异常!请联系管理员！', 'error').catch();
+                    }
+                })
+            }
+            else if (select === 'solo'){
+                data.user_id = {{ current_user.id }};
+                data.activity_id = {{ ac.id }};
+                data = JSON.stringify(data);
+                $.post({
+                    url: "{{ url_for('api.sign_up_solo') }}",
+                    data: data,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.result === 'error'){
+                            swal('提醒', '请勿重复报名!', 'info').catch();
+                        }
+                        else if (data.result === 'ok'){
+                            swal('OK', '报名成功!', 'success').catch();
+                            MyMessage({{ current_user.id }}, "您已成功报名了活动：{{ ac.title }}")
+                        }
+                        else {
+                            swal('警告', '出现异常!请联系管理员！', 'error').catch();
+                        }
+                    },
+                    error: function () {
+                        swal('警告', '出现异常!请联系管理员！', 'error').catch();
+                    }
+                })
+            }
+
+        }
+
+	</script>
+{% endblock %}

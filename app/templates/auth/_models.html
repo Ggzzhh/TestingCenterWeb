@@ -159,7 +159,9 @@
 {% macro show_player(json_data, captain_id) %}
 	<tr>
 		<td>
-			<img src="{{ json_data.avatar_hash }}" width="32" height="32">
+			<img src="{{ json_data.avatar_hash|default('/static/image/default.jpg',true) }}"
+				 width="32"
+				 height="32">
 			<a href="{{ json_data.auth_url }}">
 				{{ json_data.username }}
 			</a>
@@ -191,16 +193,21 @@
 {% macro show_activity(data) %}
 	<div class="activity">
 		<div class="post-head">
-			<div class="page-head">
+			<div class="page-header">
 				<h1>{{ data.title }}</h1>
-				<small>起止时间：{{ data.start_date }} - {{ data.end_date }}</small>
+				<small>起止时间：
+					<span class="time">
+						{{ data.start_date }} 至
+						{{ data.end_date }}
+					</span>
+				</small>
 			</div>
 		</div>
 		<div class="post-body">
 			<div class="img">
 				<a href="{{ data.show_url }}">
 					<img src="{{ data.image_url }}" alt="{{ data.title }}"
-						class="img-responsive">
+						 class="img-responsive">
 				</a>
 			</div>
 		</div>
@@ -209,4 +216,45 @@
 			   class="btn btn-default">阅读全文</a>
 		</div>
 	</div>
+{% endmacro %}
+
+{% macro pagination_widget(pagination, endpoint) %}
+	<nav aria-label="Page navigation">
+		<ul class="pagination">
+			<li {% if not pagination.has_prev %} class="disabled" {% endif %}>
+				<a href="{% if pagination.has_prev %}
+								 {{ url_for(endpoint,page=pagination.page - 1, **kwargs) }}
+							 {% else %}
+							   #
+							 {% endif %}">
+					&laquo;
+				</a>
+			</li>
+			{% for p in pagination.iter_pages() %}
+				{% if p %}
+					{% if p == pagination.page %}
+						{#					如果p的值是当前页面,css效果默认选中#}
+						<li class="active">
+							<a href="{{ url_for(endpoint, page=p, **kwargs) }}">{{ p }}</a>
+						</li>
+					{% else %}
+						<li>
+							<a href="{{ url_for(endpoint, page=p, **kwargs) }}">{{ p }}</a>
+						</li>
+					{% endif %}
+				{% else %}
+					<li class="disabled"><a href="#">&hellip;</a></li>
+				{% endif %}
+			{% endfor %}
+			<li{% if not pagination.has_next %} class="disabled"{% endif %}>
+				<a href="{% if pagination.has_next %}
+									{{ url_for(endpoint,page=pagination.page + 1, **kwargs) }}
+							 {% else %}
+							 		#
+					     {% endif %}">
+					&raquo;
+				</a>
+			</li>
+		</ul>
+	</nav>
 {% endmacro %}

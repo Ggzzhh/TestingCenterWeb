@@ -23,8 +23,9 @@ def user_required(func):
     @wraps(func)
     def decorator_function(*args, **kwargs):
         if hasattr(current_user, 'info_count'):
+            pass
+        else:
             logout_user()
-            return redirect(url_for('main.index'))
         return func(*args, **kwargs)
     return decorator_function
 

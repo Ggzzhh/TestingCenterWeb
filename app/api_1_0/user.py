@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 
 from . import api
 from .. import db
-from ..models import User, Team, Info
+from ..models import User, Team, Info, Activity
 from ..email import send_email
 
 
@@ -236,3 +236,37 @@ def delete_msg(id):
         return jsonify({'result': 'ok'})
     except:
         return jsonify({'result': 'error'})
+
+
+@api.route('/sign_up/solo', methods=["POST"])
+def sign_up_solo():
+    """单人活动报名"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'null'})
+    user_id = json_data.get('user_id')
+    user = User.query.get_or_404(user_id)
+    activity_id = json_data.get('activity_id')
+    activity = Activity.query.get_or_404(activity_id)
+    if user not in activity.is_solo:
+        activity.is_solo.append(user)
+        db.session.add(activity)
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})
+
+
+@api.route('/sign_up/many', methods=["POST"])
+def sign_up_many():
+    """多人活动报名"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'null'})
+    team_id = json_data.get('team_id')
+    team = Team.query.get_or_404(team_id)
+    activity_id = json_data.get('activity_id')
+    activity = Activity.query.get_or_404(activity_id)
+    if team not in activity.is_team:
+        activity.is_team.append(team)
+        db.session.add(activity)
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})

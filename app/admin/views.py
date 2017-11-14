@@ -118,3 +118,6 @@ def edit_activity(id):
 def other():
     """其余设置"""
     return render_template('admin/other.html')
+
+
+# todo: 打印/生成活动报名表
