@@ -93,7 +93,6 @@ class Administrator(UserMixin, db.Model):
         return False
 
 
-
 class WebSetting(db.Model):
     """网站设置"""
     __tablename__ = 'web_settings'
@@ -239,6 +238,26 @@ class SecondPageName(db.Model):
         return names
 
 
+class Comment(db.Model):
+    """文章评论"""
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    body = db.Column(db.Text)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def to_json(self):
+        """把评论转换成JSON格式的序列化字典"""
+        json_comment = {
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'author': url_for('api.get_user', id=self.author_id, _external=True)
+        }
+        return json_comment
+
+
 class Post(db.Model):
     """发布文章模版"""
     __tablename__ = 'posts'
@@ -250,6 +269,7 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     category_id = db.Column(db.Integer, db.ForeignKey('nav_settings.id'))
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     def to_json(self):
         json_post = {
@@ -259,7 +279,8 @@ class Post(db.Model):
             'image_url': self.image_url,
             'body_html': self.body_html,
             'abstract': self.abstract,
-            'timestamp': self.timestamp  # ,
+            'timestamp': self.timestamp,
+            'url': url_for('main.show_post', id=self.id)
             # 'category': [self.category.page_name, url_for(
             #     'manage.posts', category_id=self.category_id)]
         }
@@ -295,29 +316,6 @@ class Post(db.Model):
             post.category_id = randint(1, 3)
             db.session.add(post)
         db.session.commit()
-
-
-class Comment(db.Model):
-    """文章评论"""
-    # todo: 搞定这里
-    __tablename__ = 'comments'
-    id = db.Column(db.Integer, primary_key=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-    body = db.Column(db.Text)
-    disabled = db.Column(db.Boolean)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-
-    def to_json(self):
-        """把评论转换成JSON格式的序列化字典"""
-        json_comment = {
-            # 'url': url_for('api.get_comment', id=self.id, _external=True),
-            # 'post': url_for('api.get_post', id=self.post_id, _external=True),
-            'body': self.body,
-            'timestamp': self.timestamp,
-            # 'author': url_for('api.get_user', id=self.author_id, _external=True)
-        }
-        return json_comment
 
 
 class Activity(db.Model):
@@ -466,6 +464,7 @@ class User(db.Model, UserMixin):
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     confirmed = db.Column(db.Boolean, default=False)
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     @staticmethod
     def is_user():

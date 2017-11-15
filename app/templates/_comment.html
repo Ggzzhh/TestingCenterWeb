@@ -1,0 +1,53 @@
+<ul class="comments">
+	{% for comment in comments %}
+		<li class="comment">
+			<div class="comment-thumbnail">
+				<a href="{{ url_for('auth.index', username=comment.author
+				.id) }}">
+					<img src="{{ comment.author.gravatar(size=40) }}" alt="用户资料"
+						 class="img-rounded profile-thumbnail" />
+				</a>
+			</div>
+			<div class="comment-content">
+				<div class="comment-date">
+					{{ moment(comment.timestamp).fromNow() }}
+				</div>
+				<div class="comment-author">
+					<a href="{{ url_for('auth.index', username=comment.author
+					.id) }}">
+						{{ comment.author.username }}
+					</a>
+				</div>
+				<div class="comment-body">
+					{% if comment.disabled %}
+						<p>***和谐 民主***</p>
+					{% else %}
+						{{ comment.body | safe }}
+					{% endif %}
+				</div>
+			</div>
+		</li>
+	{% endfor %}
+	<li class="comment">
+		<div class="comment-thumbnail">
+			<a href="#">
+				<img src="{{ current_user.gravatar(size=40) }}" alt="用户资料"
+					 class="img-rounded profile-thumbnail" />
+			</a>
+		</div>
+		<div class="comment-content">
+			<div class="comment-date">
+				{{ moment().fromNow() }}
+			</div>
+			<div class="comment-author">
+				<a href="#">
+					{{ current_user.username }}
+				</a>
+			</div>
+			<div class="comment-body">
+				<p>***和谐 民主***</p>
+			</div>
+		</div>
+	</li>
+</ul>
+<button class="add-comment btn btn-info">发表评论</button>

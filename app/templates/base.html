@@ -30,9 +30,12 @@
 			<div class="collapse navbar-collapse text-center"
 				 id="example-navbar-collapse">
 				<ul class="nav navbar-nav">
+
 					{% for name in names %}
 						<li>
-							<a href="#"><b>{{ name }}</b></a>
+							<a href="{{ url_for('main.show_posts',
+							id=names[name]) }}">
+								<b>{{ name }}</b></a>
 						</li>
 					{% endfor %}
 					<li>

@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from flask_login import logout_user, login_user, current_user
 
 from . import main
-from ..models import WebSetting, User, Info, Activity
+from ..models import WebSetting, User, Info, Activity, SecondPageName, Post
 from ..decorators import user_required
 
 # 允许的类型
@@ -104,3 +104,20 @@ def activity(id):
     ac = Activity.query.get_or_404(id)
     return render_template('show-activity.html', ac=ac)
 
+
+@main.route('/posts/<int:id>')
+@user_required
+def show_posts(id):
+    """展示某类文章"""
+    name = SecondPageName.query.filter_by(id=id).first().page_name
+    return render_template('posts.html', id=id, name=name)
+
+
+@main.route('/post/<int:id>')
+@user_required
+def show_post(id):
+    """展示某文章"""
+    post = Post.query.get_or_404(id)
+    author = WebSetting.query.first().corporate_name
+    return render_template('post.html', post=post, author=author,
+                           comments=post.comments)

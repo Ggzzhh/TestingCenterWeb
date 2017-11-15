@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 
 from . import api
 from .. import db
-from ..models import User, Team, Info, Activity
+from ..models import User, Team, Info, Activity, Comment, Post
 from ..email import send_email
 
 
@@ -268,5 +268,36 @@ def sign_up_many():
     if team not in activity.is_team:
         activity.is_team.append(team)
         db.session.add(activity)
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})
+
+
+@api.route('/comment', methods=["POST"])
+@login_required
+def add_comment():
+    """添加评论"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'null'})
+    body = json_data.get('body')
+    post = Post.query.get_or_404(json_data.get('post_id'))
+    comment = Comment(body=body,
+                      post=post,
+                      author=current_user._get_current_object())
+    db.session.add(comment)
+    try:
+        db.session.commit()
+        return jsonify({'result': 'ok'})
+    except:
+        return jsonify({'result': 'error'})
+
+
+@api.route('/comment/<int:id>', methods=["DELETE"])
+@login_required
+def delete_comment(id):
+    comment = Comment.query.get(id)
+    if current_user.is_admin or current_user.id == comment.author_id:
+        db.session.delete(comment)
+        db.session.commit()
         return jsonify({'result': 'ok'})
     return jsonify({'result': 'error'})

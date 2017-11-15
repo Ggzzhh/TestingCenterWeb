@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block head %}
+	{{ super() }}
+	<style>
+		.container {
+			margin-top: 100px;
+		}
+		ul.comments {
+			list-style-type: none;
+			padding: 0px;
+			margin: 16px 0px 0px 0px;
+		}
+		ul.comments li.comment {
+			margin-left: 32px;
+			padding: 8px;
+			border-bottom: 1px solid #e0e0e0;
+		}
+		ul.comments li.comment:nth-child(1) {
+			border-top: 1px solid #e0e0e0;
+		}
+		ul.comments li.comment:hover {
+			background-color: #f0f0f0;
+		}
+		div.comment-date {
+			float: right;
+		}
+		div.comment-author {
+			font-weight: bold;
+		}
+		div.comment-thumbnail {
+			position: absolute;
+		}
+		div.comment-content {
+			margin-left: 48px;
+			min-height: 48px;
+			overflow: hidden;
+			padding: 0.2em 1em;
+		}
+		div.comment-form {
+			margin: 16px 0px 16px 32px;
+		}
+		#time {
+			font-size: 0.9em;
+			color: #5e5e5e;
+		}
+		.comment .page-header {
+			margin-bottom: 30px;
+		}
+	</style>
+{% endblock %}
+{% block page_content %}
+	<div class="container well">
+		<div class="page-header text-center">
+			<h1>{{ post.title|safe }}</h1>
+			<small>发布人： {{ author|safe }}</small>
+		</div>
+		<div class="content">
+			{{ post.body_html|safe }}
+			<p class="text-right" id="time">
+				发布时间: {{ moment(post.timestamp).fromNow() }}
+			</p>
+		</div>
+		<div class="comment">
+			<div class="page-header">
+				<h3>评论区:</h3>
+			</div>
+			{% include '_comment.html' %}
+		</div>
+
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+		moment.locale('zh-cn');
+	</script>
+{% endblock %}
