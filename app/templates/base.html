@@ -14,12 +14,18 @@
 {% endblock head %}
 
 {% block navbar %}
+	<noscript unselectable="on" id="noscript">
+		<div class="aw-404 aw-404-wrap container">
+			<img src="http://wenda.ghostchina.com/static/common/no-js.jpg">
+			<p>你的浏览器禁用了JavaScript, 请开启后刷新浏览器获得更好的体验!</p>
+		</div>
+	</noscript>
 	<nav class="navbar navbar-fixed-top my-navbar" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle"
 						data-toggle="collapse" id="navar-toggle"
-						data-target="#example-navbar-collapse">
+						data-target="#navbar-collapse">
 					<span class="sr-only">切换导航</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -28,7 +34,7 @@
 				<a class="navbar-brand" href="/"><b>浩瀚体育</b></a>
 			</div>
 			<div class="collapse navbar-collapse text-center"
-				 id="example-navbar-collapse">
+				 id="navbar-collapse">
 				<ul class="nav navbar-nav">
 
 					{% for name in names %}
@@ -39,7 +45,7 @@
 						</li>
 					{% endfor %}
 					<li>
-						<a href="#">社区论坛</a>
+						<a href="{{ url_for('main.community') }}">社区论坛</a>
 					</li>
 					<li class="active">
 						<a href="{{ url_for('main.show_activity',
@@ -168,12 +174,17 @@
 	<script src="{{ url_for('static', filename='js/sweetalert2.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/message.js') }}"></script>
 	<script>
-        if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
-            (navigator.appVersion.split(";")[1]
-                .replace(/[ ]/g, "")
-                .replace("MSIE",""))<9){
-            alert("您的浏览器版本过低，请下载IE9及以上版本");
+        function less_IE_10() {
+            if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
+                (navigator.appVersion.split(";")[1]
+                    .replace(/[ ]/g, "")
+                    .replace("MSIE",""))<=10){
+                alert("您的浏览器版本过低，部分功能无法使用，为了正常使用本网站，请下载IE10及以上版本, 或使用谷歌浏览器! ");
+                return true
+            }
+            return false
         }
+        less_IE_10();
 
         var csrf_token = "{{ csrf_token() }}";
         $.ajaxSetup({

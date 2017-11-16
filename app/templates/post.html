@@ -5,12 +5,16 @@
 		.container {
 			margin-top: 100px;
 		}
+		.container a {
+			color: #fb4a4c;
+		}
 		ul.comments {
 			list-style-type: none;
 			padding: 0px;
 			margin: 16px 0px 0px 0px;
 		}
 		ul.comments li.comment {
+			font-size: 1em;
 			margin-left: 32px;
 			padding: 8px;
 			border-bottom: 1px solid #e0e0e0;
@@ -43,16 +47,26 @@
 			font-size: 0.9em;
 			color: #5e5e5e;
 		}
-		.comment .page-header {
+		.comment {
 			margin-bottom: 30px;
+		}
+		.container .page-header h1 {
+			text-shadow: 0 0 1px rgba(23, 70, 91, 1);
+		}
+		.container {
+			padding: 30px;
+		}
+		.text-color {
+			color: #fb4a4c;
 		}
 	</style>
 {% endblock %}
 {% block page_content %}
 	<div class="container well">
 		<div class="page-header text-center">
-			<h1>{{ post.title|safe }}</h1>
-			<small>发布人： {{ author|safe }}</small>
+			<h1><b>{{ post.title|safe }}</b></h1>
+			<small>发布人： <span class="text-color">{{ author|safe }}</span>
+			</small>
 		</div>
 		<div class="content">
 			{{ post.body_html|safe }}
@@ -66,13 +80,86 @@
 			</div>
 			{% include '_comment.html' %}
 		</div>
-
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">发表评论</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<textarea name="body" id="body"
+									  rows="5" class="form-control"
+									  placeholder="说点什么吧"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success"
+							id="submit">发表</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock %}
 
 {% block scripts %}
 	{{ super() }}
 	<script>
-		moment.locale('zh-cn');
+        moment.locale('zh-cn');
+
+        $('#add-comment').click(function () {
+            {% if not current_user.is_authenticated %}
+                swal('您还未登录！').then(function () {
+                    return
+                }).catch(function () {
+                    return
+                });
+                if (less_IE_10() === true){
+                    alert('您还未登录');
+                    return;
+                }
+            {% else %}
+                $('#myModal').modal('show');
+            {% endif %}
+
+        });
+
+        $('#submit').click(function () {
+
+            var body = $('#body').val(),
+                data = {};
+            if (body === ""){
+                swal('内容不能为空！');
+                return
+            }
+            data.body = body;
+            data.post_id = {{ post.id }};
+            data = JSON.stringify(data);
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('api.add_comment') }}",
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#myModal').modal('hide');
+                    if (data.result !== 'ok'){
+                        alert('发送失败！请联系管理员！')
+					}
+					setTimeout(function () {
+						window.location.reload()
+                    }, 1000);
+
+                }
+            })
+        })
+
 	</script>
 {% endblock %}

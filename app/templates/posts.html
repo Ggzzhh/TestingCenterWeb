@@ -144,10 +144,7 @@
                     }
                     // console.log(data);
                     create_model(data);
-                    // 重新布局 最好等图片加载完再布局 方法如下
-                    $('#masonry').imagesLoaded(function () {
-                        $('#masonry').masonry('reloadItems').masonry();
-                    });
+
                     if (page === 1){
                         $(window).scrollTop(0);
                     }
@@ -213,17 +210,5 @@
 				</p>
 			</div>
 		</div>
-	</script>
-
-	<script>
-        //瀑布式布局
-        $(function() {
-            $('#masonry').imagesLoaded(function () {
-                $('#masonry').masonry({
-                    isAnimated: true
-                });
-            });
-        });
-
 	</script>
 {% endblock %}

@@ -88,9 +88,13 @@
                             }).catch(function () {
                                 // console.log(data);
                                 window.location.href =
-									'{{ url_for("main.index") }}'
+                                    '{{ url_for("main.index") }}'
                             });
-
+                            if (less_IE_10() === true){
+                                alert('登录成功');
+                                window.location.href =
+                                    '{{ url_for("main.index") }}'
+                            }
                         }
                         else if (data.result === 'error'){
                             swal('错误','用户名或密码错误', 'error')
@@ -103,7 +107,7 @@
                             swal('错误','登录失败！请重试！', 'error')
                                 .catch(function () {
                                     $('[name="password"]').val('');
-                                     $('[name="username"]').focus()
+                                    $('[name="username"]').focus()
                                 });
                         }
                     }

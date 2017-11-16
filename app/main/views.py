@@ -119,5 +119,17 @@ def show_post(id):
     """展示某文章"""
     post = Post.query.get_or_404(id)
     author = WebSetting.query.first().corporate_name
+    count = len([comment for comment in post.comments])
     return render_template('post.html', post=post, author=author,
-                           comments=post.comments)
+                           comments=post.comments, count=count)
+
+
+@main.route('/community')
+@user_required
+def community():
+    return render_template('community.html')
+
+
+@main.route('/m/community')
+def community_m():
+    return render_template('m/community.html')
