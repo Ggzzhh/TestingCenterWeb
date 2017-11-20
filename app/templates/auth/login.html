@@ -73,7 +73,7 @@
                 // console.log(data);
                 $.ajax({
                     type: "POST",
-                    url: '/api-v1.0/login',
+                    url: '{{ url_for("api.login") }}',
                     data: data,
                     dataType: 'json',
                     contentType: 'application/json',
@@ -103,6 +103,10 @@
                                     $('[name="username"]').focus()
                                 });
                         }
+                        else if (data.result === 'disable'){
+                            swal('禁止登录！', '该账户目前禁止登录，允许登录时间为：'
+								+ data.disabled_time , 'info')
+						}
                         else{
                             swal('错误','登录失败！请重试！', 'error')
                                 .catch(function () {

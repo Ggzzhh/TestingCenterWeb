@@ -6,7 +6,7 @@ from datetime import datetime
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
-from flask import current_app, request, url_for
+from flask import current_app, request, url_for, abort
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from markdown import markdown
 import bleach
@@ -238,6 +238,73 @@ class SecondPageName(db.Model):
         return names
 
 
+class CommunityComment(db.Model):
+    """社区评论"""
+    __tablename__ = 'community_comments'
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('community_posts.id'))
+    body = db.Column(db.Text)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def to_json(self):
+        """把评论转换成JSON格式的序列化字典"""
+        json_comment = {
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'author': self.author.easy_to_json()
+        }
+        return json_comment
+
+
+class CommunityPost(db.Model):
+    """社区发布的文章"""
+    __tablename__ = 'community_posts'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50))
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comments = db.relationship('CommunityComment',
+                               backref='post', lazy='dynamic')
+    last_comment_time = db.Column(db.DateTime, index=True)
+    page_view = db.Column(db.Integer)
+
+    def add_page_view(self):
+        """文章浏览量+1"""
+        self.page_view += 1
+        db.session.add(self)
+        return True
+
+    def to_json(self):
+        json_post = {
+            'id': self.id,
+            'title': self.title,
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'author': self.author.easy_to_json(),
+            'url': "",
+            'edit_url': ""
+        }
+        return json_post
+
+    @staticmethod
+    def from_json(json_data):
+        """从前台传来的json数据中创建新文章"""
+        id = json_data.get('id')
+        body = json_data.get('body')
+        title = json_data.get('title')
+        if title is None or title == '':
+            abort(403)
+        if id is not None:
+            post = Post.query.get_or_404(id)
+            post.title = title
+            post.body = body
+            return post
+        return Post(body=body, title=title)
+
+
 class Comment(db.Model):
     """文章评论"""
     __tablename__ = 'comments'
@@ -441,7 +508,10 @@ class User(db.Model, UserMixin):
 
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    # 是否是管理员
     is_admin = db.Column(db.Boolean, default=False)
+    # 禁用日期
+    disable_time = db.Column(db.DateTime)
     # 接收的信息
     infos = db.relationship("Info", backref='user', lazy='dynamic')
     # 必填
@@ -464,7 +534,19 @@ class User(db.Model, UserMixin):
     WeChat = db.Column(db.String(16))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
     confirmed = db.Column(db.Boolean, default=False)
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    # 普通文章的评论
+    comments = db.relationship('Comment',
+                               foreign_keys=[Comment.author_id],
+                               backref='author', lazy='dynamic')
+    # 论坛发出的文章
+    community_posts = db.relationship('CommunityPost',
+                                      foreign_keys=[CommunityPost.author_id],
+                                      backref='author', lazy='dynamic')
+    # 论坛发出的评论
+    community_comments = db.relationship('CommunityComment',
+                                         foreign_keys=
+                                         [CommunityComment.author_id],
+                                         backref='author', lazy='dynamic')
 
     @staticmethod
     def is_user():

@@ -1,22 +1,5 @@
-{% extends 'bootstrap/base.html' %}
-{% block navbar %}
-	<noscript unselectable="on" id="noscript">
-		<div class="aw-404 aw-404-wrap container">
-			<img src="http://wenda.ghostchina.com/static/common/no-js.jpg">
-			<p>你的浏览器禁用了JavaScript, 请开启后刷新浏览器获得更好的体验!</p>
-		</div>
-	</noscript>
-	111
-{% endblock %}
-{% block content %}
-	<div class="container">
-		手机端
-	</div>
-{% endblock %}
-{% block scripts %}
-	{{ super() }}
-	<script type="text/javascript">
-        //判断访问终端
+function is_phone() {
+            //判断访问终端
         var browser={
             versions:function(){
                 var u = navigator.userAgent, app = navigator.appVersion;
@@ -39,9 +22,12 @@
         };
 
         //判断是否移动端
-        if(browser.versions.iPad||!(browser.versions.mobile||browser.versions.android||browser.versions.ios)){
-            window.location.href = "{{ url_for('main.community') }}"
+        if(browser.versions.mobile||browser.versions.android||browser.versions.ios){
+            if (!browser.versions.iPad){
+                return true
+            }
         }
-	</script>
-
-{% endblock %}
+        else {
+            return false
+        }
+}

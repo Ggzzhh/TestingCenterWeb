@@ -8,7 +8,8 @@ from werkzeug.utils import secure_filename
 from flask_login import logout_user, login_user, current_user
 
 from . import main
-from ..models import WebSetting, User, Info, Activity, SecondPageName, Post
+from ..models import WebSetting, User, Info, Activity, SecondPageName, \
+    Post, CommunityPost, CommunityComment
 from ..decorators import user_required
 
 # 允许的类型
@@ -127,9 +128,6 @@ def show_post(id):
 @main.route('/community')
 @user_required
 def community():
+    """论坛页面"""
     return render_template('community.html')
 
-
-@main.route('/m/community')
-def community_m():
-    return render_template('m/community.html')
