@@ -298,11 +298,11 @@ class CommunityPost(db.Model):
         if title is None or title == '':
             abort(403)
         if id is not None:
-            post = Post.query.get_or_404(id)
+            post = CommunityPost.query.get_or_404(id)
             post.title = title
             post.body = body
             return post
-        return Post(body=body, title=title)
+        return CommunityPost(body=body, title=title)
 
 
 class Comment(db.Model):
@@ -577,7 +577,7 @@ class User(db.Model, UserMixin):
         """自动注册一个id为999的管理者， 之后注册的用户id从1000开始"""
         user = User(id=999, is_admin=True,
                     email=current_app.config['ADMIN_USERNAME'],
-                    username='管理员')
+                    username='管理员', confirmed=True)
         user.password = current_app.config['ADMIN_PASSWORD']
         db.session.add(user)
         db.session.commit()

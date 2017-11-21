@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: eab6c382b388
+Revision ID: fedff65d6ad0
 Revises: 
-Create Date: 2017-11-13 10:03:18.512910
+Create Date: 2017-11-21 15:56:45.397004
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'eab6c382b388'
+revision = 'fedff65d6ad0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -57,6 +57,31 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_comments_timestamp'), 'comments', ['timestamp'], unique=False)
+    op.create_table('community_comments',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('post_id', sa.Integer(), nullable=True),
+    sa.Column('body', sa.Text(), nullable=True),
+    sa.Column('disabled', sa.Boolean(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['community_posts.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_community_comments_timestamp'), 'community_comments', ['timestamp'], unique=False)
+    op.create_table('community_posts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=50), nullable=True),
+    sa.Column('body', sa.Text(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.Column('last_comment_time', sa.DateTime(), nullable=True),
+    sa.Column('page_view', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_community_posts_last_comment_time'), 'community_posts', ['last_comment_time'], unique=False)
+    op.create_index(op.f('ix_community_posts_timestamp'), 'community_posts', ['timestamp'], unique=False)
     op.create_table('friend_links',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=32), nullable=True),
@@ -120,6 +145,7 @@ def upgrade():
     sa.Column('avatar_hash', sa.Text(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('is_admin', sa.Boolean(), nullable=True),
+    sa.Column('disable_time', sa.DateTime(), nullable=True),
     sa.Column('username', sa.String(length=32), nullable=True),
     sa.Column('email', sa.String(length=32), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
@@ -172,6 +198,11 @@ def downgrade():
     op.drop_index(op.f('ix_info_timestamp'), table_name='info')
     op.drop_table('info')
     op.drop_table('friend_links')
+    op.drop_index(op.f('ix_community_posts_timestamp'), table_name='community_posts')
+    op.drop_index(op.f('ix_community_posts_last_comment_time'), table_name='community_posts')
+    op.drop_table('community_posts')
+    op.drop_index(op.f('ix_community_comments_timestamp'), table_name='community_comments')
+    op.drop_table('community_comments')
     op.drop_index(op.f('ix_comments_timestamp'), table_name='comments')
     op.drop_table('comments')
     op.drop_table('carousels')
