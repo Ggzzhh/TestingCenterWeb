@@ -59,8 +59,7 @@
 						<td>队伍：</td>
 						<td>
 							{% if user.team == None %}
-								<div class="text-info"><a href="{{ url_for('auth.my_team',
-								id=current_user.id) }}">独行侠</a></div>
+								<div class="text-info">独行侠</div>
 							{% else %}
 								<a href="#">{{ user.team.name }}</a>
 							{% endif %}

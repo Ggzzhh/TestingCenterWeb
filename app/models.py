@@ -49,6 +49,7 @@ class AnonymousUser(AnonymousUserMixin):
     def get_names(self):
         return []
 
+
 login_manager.anonymous_user = AnonymousUser
 
 
@@ -268,8 +269,14 @@ class CommunityPost(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('CommunityComment',
                                backref='post', lazy='dynamic')
-    last_comment_time = db.Column(db.DateTime, index=True)
+    last_comment_time = db.Column(db.DateTime, index=True,
+                                  default=datetime.utcnow())
     page_view = db.Column(db.Integer)
+    # 置顶
+    top = db.Column(db.Integer, default=0)
+
+    def count(self):
+        return len([num for num in self.comments])
 
     def add_page_view(self):
         """文章浏览量+1"""
@@ -282,8 +289,10 @@ class CommunityPost(db.Model):
             'id': self.id,
             'title': self.title,
             'body': self.body,
-            'timestamp': self.timestamp,
+            'last_timestamp': self.last_comment_time,
             'author': self.author.easy_to_json(),
+            'page_view': self.page_view,
+            'count': self.count,
             'url': "",
             'edit_url': ""
         }

@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/community.css') }}" type="text/css">
+	<style>
+		body {
+			margin: 0;
+			height: 100%;
+			line-height: 160%;
+			color: #666;
+			background: #f0f0f0;
+		}
+		a {
+			cursor: pointer;
+		}
+		a:hover {
+			text-decoration: none;
+		}
+		.container {
+			min-width: 990px!important;
+		}
+		.aw-top-menu-wrap {
+			position: relative;
+			z-index: 1001;
+			width: 100%;
+			min-height: 50px;
+			background-color: #499ef3;
+		}
+		.aw-container-wrap {
+			margin-top: 30px;
+		}
+		.aw-content-wrap {
+			margin: 0 15px;
+			background-color: #fff;
+			border: 1px solid #e6e6e6;
+			border-radius: 4px;
+		}
+		.aw-logo {
+			float: left;
+			font-size: 1.5em;
+			margin-top: 15px;
+			margin-right: 45px;
+		}
+		.aw-logo a {
+			color: #f0f0f0;
+			text-decoration: none;
+			text-shadow: 1px 1px 3px #000;
+		}
+		.aw-search-box {
+			position: relative;
+			margin: 10px 0;
+			float: left;
+		}
+		.aw-search-box .input-group {
+			width: 260px;
+		}
+
+		.aw-user-nav {
+			position: relative;
+			margin: 10px 0 0 10px;
+			float: right;
+		}
+		.aw-main-content {
+			padding: 0 0 20px;
+			border-right: 1px solid #e6e6e6;
+		}
+
+		.welcome {
+			font-size: 1.2em;
+			letter-spacing: 0.2em;
+			color: #fff;
+			text-shadow: 1px 1px 3px #000;
+		}
+
+		.welcome a {
+			color: #ffffff;
+			text-shadow: 1px 1px 3px #000;
+			text-decoration: none;
+		}
+		.welcome a:hover {
+			color: #eeeeee;
+			text-shadow: 3px 3px 3px #000;
+		}
+		.aw-box-header {
+			padding-left: 20px;
+			padding-bottom: 20px;
+			border-bottom: 1px solid #e6e6e6;
+		}
+		.aw-box-header a{
+			font-size: 1.7em;
+			color: #4390df;
+			text-decoration: none;
+		}
+		.aw-box-header a:hover {
+			color: #275582;
+		}
+
+		.aw-side-bar {
+			padding: 20px;
+			margin-left: -1px;
+			border-left: 1px solid #e6e6e6;
+		}
+
+		.aw-mod {
+			padding-bottom: 10px;
+			border-bottom: 1px solid #e6e6e6;
+		}
+		.aw-list {
+			padding: 0 20px;
+		}
+		.aw-list>div+div {
+			border-top: 1px solid #eeeeee;
+		}
+		.widget {
+			margin: 20px 0 0;
+		}
+		.pagination>.active>a,
+		.pagination>.active>span,
+		.pagination>.active>a:hover,
+		.pagination>.active>span:hover,
+		.pagination>.active>a:focus,
+		.pagination>.active>span:focus {
+			background-color: #499ef3;
+			color: #fff;
+			border-color: #499ef3;
+		}
+		.aw-item {
+			position: relative;
+			z-index: 0;
+			min-height: 45px;
+			padding: 14px 0 14px 50px;
+		}
+		.aw-user-name {
+			position: absolute;
+			left: 0;
+			top: 18px;
+			line-height: 20px;
+			font-weight: 400;
+		}
+		.aw-user-name a {
+			text-decoration: none;
+		}
+		.aw-user-name img{
+			width: 40px;
+			height: 40px;
+			border-radius: 	4px;
+			padding: 2px;
+		}
+		.aw-question-content h4 {
+			margin: 0 0 3px;
+			padding-right: 20px;
+			font-size: 1.1em;
+			font-weight: 500;
+			word-wrap: break-word;
+		}
+		.aw-question-content p {
+			margin: 0;
+			color: #999;
+		}
+
+		.new-post {
+			margin-right: 15px;
+		}
+
+		.new-post .btn{
+			font-size: 0.8em;
+			font-weight: 600;
+			height: 30px;
+			background-color: #499ef3;
+			border-color: #499ef3;
+		}
+
+		.new-post .btn:focus{
+			background-color: #4390df;
+			border-color: #4390df;
+		}
+
+		@media screen and (max-width: 1025px){
+			.container {
+				min-width: 100%!important;
+			}
+			.aw-content-wrap {
+				margin: 0 15px;
+			}
+			.aw-item {
+				padding-left: 5px;
+			}
+		}
+	</style>
+{% endblock %}
+{% block navbar %}
+	<noscript unselectable="on" id="noscript">
+		<div class="aw-404 aw-404-wrap container">
+			<img src="http://wenda.bootcss.com/static/common/no-js.jpg">
+			<p>你的浏览器禁用了JavaScript, 请开启后刷新浏览器获得更好的体验!</p>
+		</div>
+	</noscript>
+	<div class="aw-top-menu-wrap">
+		<div class="container">
+			<!-- logo -->
+			<div class="aw-logo">
+				<a href="{{ url_for('main.index') }}">浩瀚体育</a>
+			</div>
+			<!-- end logo -->
+			<!-- 搜索框 -->
+			<div class="aw-search-box hidden-xs hidden-sm">
+				<form class="navbar-search" id="global_search_form" method="post">
+					<div class="input-group">
+						<input type="text" class="form-control"
+							   placeholder="搜索内容...">
+						<span class="input-group-btn">
+        				<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+      					</span>
+					</div>
+
+				</form>
+			</div>
+			<!-- end 搜索框 -->
+			<!-- 用户栏 -->
+			<div class="aw-user-nav">
+				<!-- 登陆&注册栏 -->
+				<span>
+					{% if current_user.is_authenticated  %}
+						<span class="welcome">
+							<a href="{{ url_for('auth.index', id=current_user.id) }}">
+								{{ current_user.username }}
+							</a> |
+							<a href="/auth/logout/{{ current_user.username }}">
+								注 销
+							</a>
+						</span>
+					{% else %}
+						<a class="login btn btn-normal btn-primary"
+						   href="{{ url_for('auth.login') }}">登录</a>
+						<a class="register btn btn-normal btn-success"
+						   href="{{ url_for('auth.register') }}">注册</a>
+					{% endif %}
+				</span>
+				<!-- end 登陆&注册栏 -->
+			</div>
+			<!-- end 用户栏 -->
+			<!-- 发起 -->
+			<!-- end 发起 -->
+		</div>
+	</div>
+{% endblock %}
+{% block content %}
+	<div class="aw-container-wrap">
+		<div class="container">
+			<div class="row">
+				<div class="aw-content-wrap clearfix">
+					<div class="col-sm-12 col-md-9 aw-main-content">
+						{% block page_content %}{% endblock %}
+					</div>
+					<div class="col-sm-12 col-md-3 aw-side-bar hidden-xs hidden-sm">
+						<div class="aw-mod">
+							热门帖子
+						</div>
+						<div class="aw-list">
+							{{ posts[0].title }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+{% endblock %}
+{% block scripts %}
+	{{ super() }}
+	<script>
+
+        var data = {'title': '标题', 'body': '内容'};
+        // add_community_post(data);
+        // show_community_post();
+        // delete_community('comment', 2);
+        // update_community_post(data);
+        // add_community_comment(data);
+
+
+        function add_community_post(data) {
+            if (data.title === undefined || data.title === "" || data.body ===
+                undefined || data.body === ""){
+                return
+            }
+            data = JSON.stringify(data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.add_community_post') }}",
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function delete_community(method, id) {
+            var url;
+            if (method === 'post'){
+                url = "/api-v1.0/community-post/" + id
+            }
+            else if (method === 'comment'){
+                url = "/api-v1.0/community-comment/" + id
+            }
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function show_community_post(id) {
+            $.ajax({
+                type: 'GET',
+                url: "/api-v1.0/community-post/" + id,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function update_community_post(data) {
+            if (data.title === undefined || data.title === "" || data.body ===
+                undefined || data.body === ""){
+                return
+            }
+            data = JSON.stringify(data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.update_community_post', id=1) }}",
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function add_community_comment(data) {
+            if (data.body === undefined || data.body === ""){
+                return
+            }
+            data.post_id = 1; // 之后改为 { id }
+            data = JSON.stringify(data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.add_community_comment') }}",
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+	</script>
+{% endblock %}

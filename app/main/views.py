@@ -129,5 +129,11 @@ def show_post(id):
 @user_required
 def community():
     """论坛页面"""
-    return render_template('community.html')
+    page = request.args.get('page', 1, type=int)
+    pagination = CommunityPost.query.order_by(CommunityPost.top.desc(),
+        CommunityPost.last_comment_time.desc()).paginate(
+        page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('community.html', posts=posts, pagination=pagination)
 
