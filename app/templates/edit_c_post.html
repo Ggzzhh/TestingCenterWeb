@@ -1,0 +1,59 @@
+{% extends 'c_base.html' %}
+{% block page_content %}
+	<form action="" class="form">
+		<div class="page-header aw-box-header">
+			<div class="mod-head">
+				<h3>修改</h3>
+			</div>
+		</div>
+		<div class="page-body">
+			<div class="mod-body">
+				<div class="form-group">
+					<label for="title">标题</label>
+					<input type="text" class="form-control"
+						   value="{{ post.title }}" id="title">
+				</div>
+				<div class="form-group">
+					<label for="body">内容</label>
+					<textarea class="form-control"
+							  rows="10" id="body">{{ post.body }}</textarea>
+				</div>
+				<p></p>
+				<a class="btn btn-info"
+				   onclick="update_community_post()">
+					提交
+				</a>
+			</div>
+		</div>
+	</form>
+{% endblock %}
+{% block scripts %}
+	{{ super() }}
+	<script>
+        function update_community_post() {
+            var data = {'body': $('#body').val(), 'title': $('#title').val(),
+                'id': {{ post.id }} };
+            data = JSON.stringify(data);
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('api.update_community_post', id=post.id) }}",
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json;',
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        swal('成功', '修改成功！', 'success')
+                            .then(function () {
+                                window.location.href="{{ url_for('main.show_community_post', id=post.id) }}"
+                            }).catch(function () {
+                             window.location.href="{{ url_for('main.show_community_post', id=post.id) }}"
+                        })
+                    }
+                },
+                error: function (xhr, type) {
+                    console.log(xhr, type)
+                }
+            })
+        }
+	</script>
+{% endblock %}

@@ -16,6 +16,14 @@
 		a:hover {
 			text-decoration: none;
 		}
+		pre.post-body {
+			background-color: transparent!important;
+			border: none;
+			font-size: inherit;
+			color: inherit;
+			line-height: 30px;
+			padding: 0;
+		}
 		.container {
 			min-width: 990px!important;
 		}
@@ -60,6 +68,24 @@
 			margin: 10px 0 0 10px;
 			float: right;
 		}
+		ul.nav {
+			margin-left: 30px;
+		}
+		ul.nav>li {
+			text-align: center;
+		}
+		ul.nav>li a{
+			color: #ffffff;
+			text-shadow: 1px 1px 3px #000;
+			font-size: 1em;
+		}
+
+		ul.nav>li>a.active {
+			background: #4dabff;
+			font-weight: 700;
+			height: 53px;
+		}
+
 		.aw-main-content {
 			padding: 0 0 20px;
 			border-right: 1px solid #e6e6e6;
@@ -157,6 +183,11 @@
 			margin: 0;
 			color: #999;
 		}
+		.aw-question-content .pull-right span{
+			position: absolute;
+			bottom: 10px;
+			right: 10px;
+		}
 
 		.new-post {
 			margin-right: 15px;
@@ -175,6 +206,101 @@
 			border-color: #4390df;
 		}
 
+		#hot {
+			margin-top: 20px;
+		}
+
+		#hot>li>p {
+			font-size: 0.8em;
+			color: #acacac;
+		}
+
+		.page-body {
+			margin-left: 10px;
+		}
+
+		.post-top {
+			color: #ff000a;
+			font-weight: 700;
+		}
+
+		.post-top-admin a{
+			color: #ff000a;
+			font-size: 0.5em;
+		}
+
+		.mod-body {
+			margin-bottom: 30px;
+			padding: 10px 20px 0;
+		}
+
+		.mod-footer {
+			margin-bottom: 50px;
+			padding: 10px 20px 0;
+			min-height: 20px;
+			line-height: 20px;
+			font-size: 12px;
+			color: #a3a3a3;
+		}
+
+		.mod-footer>span {
+			margin-right: 10px;
+		}
+
+		.mod-footer a {
+			color: #a3a3a3;
+		}
+
+		.mod-footer a:hover {
+			color: #c8c8c8;
+		}
+
+		.aw-comment {
+			padding-left: 20px;
+		}
+
+		ul.comments {
+			list-style-type: none;
+			padding: 0px;
+			margin: 16px 0px 0px 0px;
+		}
+		ul.comments li.comment {
+			font-size: 0.9em;
+			margin-left: 32px;
+			margin-right: 32px;
+			padding: 8px;
+			border-bottom: 1px solid #e0e0e0;
+			border-radius: 5px;
+		}
+		ul.comments li.comment:nth-child(1) {
+			border-top: 1px solid #e0e0e0;
+		}
+		ul.comments li.comment:hover {
+			background-color: #f0f0f0;
+		}
+		div.comment-date {
+			float: right;
+		}
+		div.comment-author {
+			font-weight: bold;
+		}
+		div.comment-thumbnail {
+			position: absolute;
+		}
+		div.comment-content {
+			margin-left: 48px;
+			min-height: 48px;
+			overflow: hidden;
+			padding: 0.2em 1em;
+		}
+		div.comment-form {
+			margin: 16px 0px 16px 32px;
+		}
+		#time {
+			font-size: 0.9em;
+			color: #5e5e5e;
+		}
+
 		@media screen and (max-width: 1025px){
 			.container {
 				min-width: 100%!important;
@@ -184,6 +310,9 @@
 			}
 			.aw-item {
 				padding-left: 5px;
+			}
+			ul.nav {
+				display: none!important;
 			}
 		}
 	</style>
@@ -218,6 +347,12 @@
 				</form>
 			</div>
 			<!-- end 搜索框 -->
+			<ul class="nav navbar-nav">
+				<li><a href="/community" class="active">
+					<i class="fa fa-navicon"></i>
+					发现</a>
+				</li>
+			</ul>
 			<!-- 用户栏 -->
 			<div class="aw-user-nav">
 				<!-- 登陆&注册栏 -->
@@ -259,7 +394,7 @@
 							热门帖子
 						</div>
 						<div class="aw-list">
-							{{ posts[0].title }}
+							<ul id="hot"></ul>
 						</div>
 					</div>
 				</div>
@@ -270,7 +405,10 @@
 {% endblock %}
 {% block scripts %}
 	{{ super() }}
+	{{ moment.include_moment() }}
+	{{ moment.lang("zh-CN") }}
 	<script>
+        get_hot();
 
         var data = {'title': '标题', 'body': '内容'};
         // add_community_post(data);
@@ -280,11 +418,10 @@
         // add_community_comment(data);
 
 
-        function add_community_post(data) {
-            if (data.title === undefined || data.title === "" || data.body ===
-                undefined || data.body === ""){
-                return
-            }
+        function add_community_post() {
+            var data = {};
+            data.title = $('#new_title').val();
+            data.body = $('#new_body').val();
             data = JSON.stringify(data);
             $.ajax({
                 type: 'POST',
@@ -293,28 +430,64 @@
                 dataType: 'json',
                 contentType: 'application/json;',
                 success: function (data) {
-                    console.log(data)
+                    if (data.result === 'ok'){
+                        swal('成功','恭喜你！发表成功！快去看看吧', 'success')
+                            .then(function () {
+                                window.location.reload()
+                            })
+                    }
+                    else {
+                        alert('发表失败')
+                    }
+                },
+                error: function (xhr, type) {
+                    alert("出现错误:" + xhr + "，错误类型：" + type + "! 请联系管理员");
                 }
+
             })
         }
 
         function delete_community(method, id) {
             var url;
-            if (method === 'post'){
+            if (method === 'post') {
                 url = "/api-v1.0/community-post/" + id
             }
-            else if (method === 'comment'){
+            else if (method === 'comment') {
                 url = "/api-v1.0/community-comment/" + id
             }
-            $.ajax({
-                type: 'DELETE',
-                url: url,
-                data: data,
-                dataType: 'json',
-                success: function (data) {
-                    console.log(data)
-                }
-            })
+            swal({
+                title: '删除帖子！',
+                text: '你确定要删除该帖子么？',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '取消',
+                cancelButtonText: '确定',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false
+            }).then(function () {
+                },
+                function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: "",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.result === 'ok') {
+                                swal('成功', '帖子已删除！', 'success')
+                                    .then(function () {
+                                        window.location.reload()
+                                    })
+                            }
+                            else {
+                                swal('删除失败', '', 'error');
+                            }
+                        },
+                        error: function () {
+                            swal('失败', '请联系管理员', 'error');
+                        }
+                    });
+                });
         }
 
         function show_community_post(id) {
@@ -329,29 +502,12 @@
             })
         }
 
-        function update_community_post(data) {
-            if (data.title === undefined || data.title === "" || data.body ===
-                undefined || data.body === ""){
-                return
-            }
-            data = JSON.stringify(data);
-            $.ajax({
-                type: 'POST',
-                url: "{{ url_for('api.update_community_post', id=1) }}",
-                data: data,
-                dataType: 'json',
-                contentType: 'application/json;',
-                success: function (data) {
-                    console.log(data)
-                }
-            })
-        }
 
-        function add_community_comment(data) {
+        function add_community_comment(data, id) {
             if (data.body === undefined || data.body === ""){
                 return
             }
-            data.post_id = 1; // 之后改为 { id }
+            data.post_id = id; // 之后改为 { id }
             data = JSON.stringify(data);
             $.ajax({
                 type: 'POST',
@@ -360,9 +516,111 @@
                 dataType: 'json',
                 contentType: 'application/json;',
                 success: function (data) {
-                    console.log(data)
+                    if (data.result === 'ok'){
+                        swal('成功', '您提交发表了一篇评论！', 'success')
+                            .then(function () {
+                                window.location.reload()
+                            }).catch(function () {
+                            window.location.reload()
+                        })
+                    }
                 }
             })
+        }
+
+        function get_hot() {
+            $.ajax({
+                type: 'GET',
+                url: "{{ url_for('api.get_hot') }}",
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    var element = $('#hot');
+                    if (data.result === 'ok'){
+                        for (var i in data.posts){
+                            element.append('<li><a href="'+ data.posts[i].url
+                                +'">'+ data.posts[i].title +'</a><p>评论数：'
+                                + data.posts[i].count + ' &nbsp;&nbsp;浏览量：'
+                                + data.posts[i].page_view + '</p></li>')
+
+                        }
+                    }
+                }
+            });
+        }
+
+        function do_top(id) {
+            $.ajax({
+                type: 'GET',
+                url: "{{ url_for('api.do_top') }}" + "?id=" + id,
+                data: "",
+                dataType: 'json',
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        swal('成功','', 'success')
+                            .then(function () {
+                                window.location.reload()
+                            })
+                    }
+                    else {
+                        console.log(data)
+                    }
+                },
+                error: function (xhr, type) {
+                    alert("出现错误:" + xhr + "，错误类型：" + type + "! 请联系管理员");
+                }
+            });
+        }
+
+        function remove_top(id) {
+            $.ajax({
+                type: 'GET',
+                url: "{{ url_for('api.remove_top') }}" + "?id=" + id,
+                data: "",
+                dataType: 'json',
+                success: function (data) {
+                    if (data.result === 'ok'){
+                        swal('成功','', 'success')
+                            .then(function () {
+                                window.location.reload()
+                            })
+                    }
+                    else {
+                        console.log(data)
+                    }
+                },
+                error: function (xhr, type) {
+                    alert("出现错误:" + xhr + "，错误类型：" + type + "! 请联系管理员");
+                }
+            });
+        }
+
+        function less_IE_10() {
+            if(navigator.appName === "Microsoft Internet Explorer"&&parseInt
+                (navigator.appVersion.split(";")[1]
+                    .replace(/[ ]/g, "")
+                    .replace("MSIE",""))<=10){
+                alert("您的浏览器版本过低，部分功能无法使用，为了正常使用本网站，请下载IE10及以上版本, 或使用谷歌浏览器! ");
+                return true
+            }
+            return false
+        }
+
+        function new_comment(id) {
+            if (less_IE_10()){
+                return
+            }
+            swal({
+                title: '请输入评论:',
+                input: 'text',
+                showCancelButton: true,
+                confirmButtonText: '发表',
+                allowOutsideClick: false,
+				cancelButtonText: '取消'
+            }).then(function(body) {
+                var data = {'body': body};
+                add_community_comment(data, id);
+            });
         }
 	</script>
 {% endblock %}

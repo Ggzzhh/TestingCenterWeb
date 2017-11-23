@@ -43,7 +43,7 @@ def register():
     return jsonify({'result': 'error'})
 
 
-@api.route('/login', methods=["GET"])
+@api.route('/login', methods=["GET", "DELETE"])
 def get_login():
     return jsonify({'result': 'error', 'msg': '用户需要登陆！请进入登录页面登录!'})
 
@@ -311,85 +311,3 @@ def delete_comment(id):
     return jsonify({'result': 'error'})
 
 
-@api.route('/community-post', methods=["POST"])
-@login_required
-def add_community_post():
-    """在论坛发布一篇新文章"""
-    json_data = request.get_json()
-    if json_data is None:
-        return jsonify({'result': 'null'})
-    community_post = CommunityPost.from_json(json_data)
-    community_post.author = current_user._get_current_object()
-    db.session.add(community_post)
-    try:
-        db.session.commit()
-        return jsonify({'result': 'ok'})
-    except:
-        return jsonify({'result': 'error'})
-
-
-@api.route('/community-post/<int:id>', methods=["DELETE"])
-@login_required
-def delete_community_post(id):
-    """删除论坛内某文章"""
-    community_post = CommunityPost.query.get_or_404(id)
-    if current_user.is_admin or current_user.id == community_post.author_id:
-        db.session.delete(community_post)
-        db.session.commit()
-        return jsonify({'result': 'ok'})
-    return jsonify({'result': 'error'})
-
-
-@api.route('/community-post/<int:id>', methods=["POST", "PUT"])
-@login_required
-def update_community_post(id):
-    """修改论坛内某文章"""
-    json_data = request.get_json()
-    if json_data is None:
-        return jsonify({'result': 'null'})
-    community_post = CommunityPost.query.get_or_404(id)
-    if current_user.is_admin or current_user.id == community_post.author_id:
-        db.session.add(community_post.from_json(json_data))
-        db.session.commit()
-        return jsonify({'result': 'ok'})
-    return jsonify({'result': 'error'})
-
-
-@api.route('/community-post/<int:id>')
-def show_community_post(id):
-    """返回论坛内某文章的内容"""
-    community_post = CommunityPost.query.get_or_404(id)
-    return jsonify({'community_post': community_post.to_json()})
-
-
-@api.route('/community-comment', methods=["POST"])
-@login_required
-def add_community_comment():
-    """在论坛发布新评论"""
-    json_data = request.get_json()
-    if json_data is None:
-        return jsonify({'result': 'null'})
-    post = CommunityPost.query.get(json_data.get('post_id'))
-    body = json_data.get('body')
-    if post is not None and body is not None:
-        community_comment = \
-            CommunityComment(body=body,
-                             post=post,
-                             author=current_user._get_current_object())
-        db.session.add(community_comment)
-    try:
-        db.session.commit()
-        return jsonify({'result': 'ok'})
-    except:
-        return jsonify({'result': 'error'})
-
-
-@api.route('/community-comment/<int:id>', methods=["DELETE"])
-@login_required
-def delete_community_comment(id):
-    comment = CommunityComment.query.get_or_404(id)
-    if current_user.is_admin or current_user.id == comment.author_id:
-        db.session.delete(comment)
-        db.session.commit()
-        return jsonify({'result': 'ok'})
-    return jsonify({'result': 'error'})

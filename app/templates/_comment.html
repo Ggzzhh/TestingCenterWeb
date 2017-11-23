@@ -4,7 +4,8 @@
 			<div class="comment-thumbnail">
 				<a href="{{ url_for('auth.index', id=comment.author.id) }}">
 					<img src="{{ comment.author.gravatar(size=40) }}" alt="用户资料"
-						 class="img-rounded profile-thumbnail" />
+						 class="img-rounded profile-thumbnail" width="40"
+						 height="40"/>
 				</a>
 			</div>
 			<div class="comment-content">
@@ -34,4 +35,3 @@
 		</li>
 	{% endif %}
 </ul>
-<button class="btn btn-info" id="add-comment">发表评论</button>

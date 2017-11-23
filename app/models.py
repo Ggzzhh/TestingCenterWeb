@@ -247,7 +247,7 @@ class CommunityComment(db.Model):
     body = db.Column(db.Text)
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow(), index=True)
 
     def to_json(self):
         """把评论转换成JSON格式的序列化字典"""
@@ -271,7 +271,7 @@ class CommunityPost(db.Model):
                                backref='post', lazy='dynamic')
     last_comment_time = db.Column(db.DateTime, index=True,
                                   default=datetime.utcnow())
-    page_view = db.Column(db.Integer)
+    page_view = db.Column(db.Integer, default=0)
     # 置顶
     top = db.Column(db.Integer, default=0)
 
@@ -290,11 +290,21 @@ class CommunityPost(db.Model):
             'title': self.title,
             'body': self.body,
             'last_timestamp': self.last_comment_time,
-            'author': self.author.easy_to_json(),
+            'author': self.author.easy_to_json() if self.author is not None
+            else '',
             'page_view': self.page_view,
-            'count': self.count,
+            'count': self.count(),
+            'url': url_for('main.show_community_post', id=self.id),
+            'edit_url': url_for('main.edit_community_post', id=self.id)
+        }
+        return json_post
+
+    def easy_to_json(self):
+        json_post = {
+            'title': self.title,
             'url': "",
-            'edit_url': ""
+            'count': self.count(),
+            'page_view': self.page_view
         }
         return json_post
 
@@ -322,7 +332,7 @@ class Comment(db.Model):
     body = db.Column(db.Text)
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow(), index=True)
 
     def to_json(self):
         """把评论转换成JSON格式的序列化字典"""
@@ -751,7 +761,7 @@ class Team(db.Model):
     players = db.relationship("User", foreign_keys=[User.team_id],
                               backref='team', lazy='dynamic')
     # 成立时间
-    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow())
 
     def to_json(self):
         json_data = {

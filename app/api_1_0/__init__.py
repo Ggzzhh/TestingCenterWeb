@@ -3,4 +3,4 @@ from flask import Blueprint
 
 api = Blueprint('api', __name__)
 
-from . import web_manage, user, error
+from . import web_manage, user, error, community

@@ -5,9 +5,10 @@ from datetime import datetime
 from flask import url_for, render_template, redirect, \
     jsonify, request, current_app, flash, session
 from werkzeug.utils import secure_filename
-from flask_login import logout_user, login_user, current_user
+from flask_login import logout_user, login_user, current_user, login_required
 
 from . import main
+from .. import db
 from ..models import WebSetting, User, Info, Activity, SecondPageName, \
     Post, CommunityPost, CommunityComment
 from ..decorators import user_required
@@ -35,9 +36,7 @@ def upload():
     file_urls = []
     if request.method == 'POST':
         files = request.files.getlist("File")
-        print(files)
         for file in files:
-            print(file)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file_url = os.path.join(current_app.config['UPLOAD_FOLDER'],
@@ -137,3 +136,23 @@ def community():
     posts = pagination.items
     return render_template('community.html', posts=posts, pagination=pagination)
 
+
+@main.route('/community-post/<int:id>')
+@user_required
+def show_community_post(id):
+    """帖子展示页"""
+    post = CommunityPost.query.get_or_404(id)
+    if post.page_view is None:
+        post.page_view = 0
+    post.page_view += 1
+    db.session.add(post)
+    return render_template('c_post.html', post=post, comments=post.comments)
+
+
+@main.route('/community/<int:id>')
+@login_required
+@user_required
+def edit_community_post(id):
+    """编辑某文章"""
+    post = CommunityPost.query.get_or_404(id)
+    return render_template('edit_c_post.html', post=post)

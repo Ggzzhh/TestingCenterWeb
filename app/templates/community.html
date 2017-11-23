@@ -8,16 +8,17 @@
 		</a>
 		{% if current_user.is_authenticated  %}
 		<div class="new-post pull-right">
-			<button class="btn btn-info">
+			<button class="btn btn-info" data-toggle="modal" data-target="#myModal">
 				发 表 新 帖
 				<span class="fa fa-plus"></span>
 			</button>
+			{{ model.new_c_post() }}
 		</div>
 		{% endif %}
 	</div>
 	<div class="aw-list">
 		{% for post in posts %}
-			{{ model.show_community(post, post.author) }}
+			{{ model.show_community(post, post.author, current_user, moment) }}
 		{% endfor %}
 		<div class="widget pull-right">
 			{{ model.pagination_widget(pagination, 'main.community') }}

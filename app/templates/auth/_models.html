@@ -218,7 +218,7 @@
 	</div>
 {% endmacro %}
 
-{% macro show_community(post, author) %}
+{% macro show_community(post, author, current_user, moment) %}
 	{% if author != None %}
 		<div class="aw-item" data-topic-id="">
 			<a class="aw-user-name hidden-xs" data-id="{{ post.id }}"
@@ -227,7 +227,14 @@
 			</a>
 			<div class="aw-question-content">
 				<h4>
-					<a href="{{ post.url }}">{{ post.title }}</a>
+					{% if post.top and post.top > 0 %}
+						<a href="{{ url_for('main.show_community_post', id=post.id) }}" class="post-top">
+							[顶] {{ post.title }}
+						</a>
+					{% else %}
+						<a href="{{ url_for('main.show_community_post', id=post.id) }}">{{ post.title }}</a>
+					{% endif %}
+
 				</h4>
 				<p>
 					来自：
@@ -237,11 +244,82 @@
 					</a>
 					<span class="text-color-999"> 共 {{ post.count() }} 个回复 •
 					{{ post.page_view }} 次浏览 •
-						{{ post.last_comment_time }}</span>
+						{{ moment(post.last_comment_time).fromNow() }}</span>
 				</p>
+				<div class="pull-right">
+					<span class="text-right">
+						{% if current_user.is_authenticated %}
+							{% if current_user.is_admin %}
+								{% if post.top == 0 %}
+									<p class="post-top-admin">
+										<a href="#"
+										   onclick="do_top({{ post.id }})">
+											置顶
+										</a>
+									</p>
+								{% else %}
+									<p class="post-top-admin">
+										<a href="#"
+										   onclick="remove_top({{ post.id }})">
+											取消置顶
+										</a>
+									</p>
+								{% endif %}
+							{% endif %}
+							{% if current_user.id == author.id %}
+								<a href="{{ url_for('main.edit_community_post',
+								id=post.id) }}">
+									<i class="fa fa-edit"></i>
+								</a>&nbsp;
+							{% endif %}
+							{% if current_user.is_admin or
+									current_user.id == author.id %}
+								<a href="#"
+								   onclick="delete_community('post', {{ post.id }})">
+									<i class="fa fa-remove" style="color: #d5d5d5">
+									</i>
+								</a>
+							{% endif %}
+						{% endif %}
+					</span>
+				</div>
 			</div>
 		</div>
 	{% endif %}
+{% endmacro %}
+
+{% macro new_c_post() %}
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel"><b>发表新帖</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<form action="" class="form">
+						<div class="form-group">
+							<label for="new_title">标题</label>
+							<input type="text" class="form-control"
+								   maxlength="20" id="new_title"
+								   placeholder="帖子标题">
+						</div>
+						<div class="form-group">
+							<label for="new_body">内容</label>
+							<textarea class="form-control" maxlength="400"
+									  id="new_body" rows="10"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-success" id="new_post_btn"
+							onclick="add_community_post()">发表</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endmacro %}
 
 {% macro pagination_widget(pagination, endpoint) %}

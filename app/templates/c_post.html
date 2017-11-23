@@ -1,0 +1,42 @@
+{% extends 'c_base.html' %}
+{% block page_content %}
+	<div class="page-header aw-box-header">
+		<div class="mod-head">
+			<h3>{{ post.title }}</h3>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="mod-body">
+			<pre class="post-body">{{ post.body }}</pre>
+		</div>
+		<div class="mod-footer">
+			<span> {{ moment(post.timestamp).format("YYYY-mm-DD") }} </span>
+			<a href="#" onclick="new_comment({{ post.id }})">
+				<i class="fa fa-commenting-o"></i>添加评论</a>
+		</div>
+	</div>
+	<div class="aw-question-comment">
+		<div class="mod-head aw-comment">
+			<h4>{{ post.count() }}个回复</h4>
+		</div>
+	</div>
+	<div class="aw-comment-box">
+		{% if post.count() == 0 %}
+			<div class="aw-mod" style="margin-bottom: 30px"></div>
+			{% if current_user.is_authenticated  %}
+				<p align="center">
+				还没有评论！赶紧来
+					<a href="#" onclick="new_comment({{ post.id }})">抢沙发</a>!
+				</p>
+			{% else %}
+				<p align="center">
+				要回复问题请先<a href="{{ url_for('auth.login') }}">登录</a>
+				或<a href="{{ url_for('auth.register') }}">注册</a>
+			</p>
+			{% endif %}
+		{% else %}
+			{% include '_comment.html' %}
+		{% endif %}
+	</div>
+
+{% endblock %}
