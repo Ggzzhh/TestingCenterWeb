@@ -57,7 +57,7 @@ class Config:
     JSON_AS_ASCII = False
 
     # 存储图片的位置
-    UPLOAD_FOLDER = 'app\static\image'
+    UPLOAD_FOLDER = 'app//static//image'
 
     # 分页设置
     POSTS_PER_PAGE = 15
