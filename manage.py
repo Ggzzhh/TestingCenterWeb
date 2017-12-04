@@ -19,5 +19,21 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
+
+@manager.command
+def deploy():
+    """部署时运行"""
+    from flask.ext.migrate import upgrade
+    from app.models import User, Administrator
+
+    # 把数据库迁移到最新版本
+    upgrade()
+
+    # 注册管理员账号
+    Administrator.register_admin()
+
+    # 注册前端管理员账号
+    User.default_user()
+
 if __name__ == "__main__":
     manager.run()

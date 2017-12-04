@@ -21,8 +21,6 @@ def index():
 def login():
     """管理系统登录页面"""
     admin = Administrator.query.first()
-    if admin is None:
-        Administrator.register_admin()
     form = AdminLoginForm()
     if form.validate_on_submit():
         admin = Administrator.query.filter_by(username=form.username.data).first()

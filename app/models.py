@@ -569,7 +569,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def is_user():
-        return False
+        return True
 
     @property
     def password(self):
