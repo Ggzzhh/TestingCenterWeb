@@ -36,6 +36,7 @@ def register():
         user = User.from_json(json_data)
         db.session.add(user)
         db.session.commit()
+        login_user(user)
         token = user.generate_confirmation_token()
         send_email(user.email, '确认你的账户', 'auth/email/confirm', user=user,
                    token=token)

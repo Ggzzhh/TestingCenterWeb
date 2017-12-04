@@ -102,3 +102,13 @@
 10. 完成注册以及验证功能
 11. 登录以及邮箱验证
 12. 活动页面以及报名页面  分成单人/多人两个表格即可
+
+* 部署腾讯云
+    * 在腾讯云的CentOS部署
+    * 1.准备python环境
+         sudo yum install gcc-c++
+         安装python3.6 按照https://www.cnblogs.com/cloud-80808174-sea/p/6902934.html
+         配置pip3 ln -s /usr/python3.6/bin/pip3 /usr/bin/pip3
+    * 2.配置flask环境
+         pip freeze | tee requirements.txt # 输出本地包环境至文件
+         pip install -r requirements.txt # 根据文件进行包安装    

@@ -111,7 +111,7 @@
             {% if not current_user.is_authenticated %}
                 swal('提醒', '请登录后继续操作!', 'info').catch();
                 return null;
-            {% endif %}
+			{% else %}
             var select = "{{ ac.easy_to_json().sign_up_url }}";
             if (select === 'many'){
                 {% if current_user.id != current_user.team.captain_id %}
@@ -170,7 +170,7 @@
                     }
                 })
             }
-
+			{% endif %}
         }
 
 	</script>

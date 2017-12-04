@@ -41,8 +41,8 @@ class Config:
     MAIL_USE_SSL = True
 
     # 发送邮件所用的邮箱用户名以及密码
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'gggzh@139.com'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'Ggzzhh65700'
 
     # 管理员邮箱
     ADMIN_MAIL = os.environ.get('ADMIN_EMAIL')

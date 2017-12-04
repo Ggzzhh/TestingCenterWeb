@@ -62,7 +62,6 @@ def logout(username):
 
 @auth.route('/register/ok')
 def register_ok():
-    flash('注册成功，请登录后前往邮箱进行验证!')
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     return render_template("auth/login.html")
