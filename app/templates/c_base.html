@@ -610,6 +610,7 @@
             if (less_IE_10()){
                 return
             }
+			{% if current_user.is_authenticated  %}
             swal({
                 title: '请输入评论:',
                 input: 'text',
@@ -621,6 +622,9 @@
                 var data = {'body': body};
                 add_community_comment(data, id);
             });
+			{% else %}
+				swal("请登录！")
+			{% endif %}
         }
 	</script>
 {% endblock %}
