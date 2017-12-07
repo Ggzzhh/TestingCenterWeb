@@ -278,5 +278,43 @@ def delete_link(id):
     return jsonify({'result': 'ok'}), 201
 
 
+@api.route('/admin', methods=["POST"])
+@login_required
+@super_admin_required
+def new_admin():
+    """添加网站管理员"""
+    json_data = request.get_json()
+    if json_data is None:
+        return jsonify({'result': 'error'})
+    username = json_data.get('username')
+    email = json_data.get('email')
+    print(username, email)
+    if username is not None and username != '':
+        user = User.query.filter_by(username=username).first()
+    elif email is not None and email != '':
+        user = User.query.filter_by(email=email).first()
+    else:
+        user = None
+        return jsonify({'result': 'None', 'username': username, 'email': email})
+    if user is not None:
+        user.is_admin = True
+        db.session.add(user)
+        return jsonify({'result': 'ok'})
+    return jsonify({'result': 'error'})
+
+
+@api.route('/admin/<int:id>', methods=["DELETE"])
+@login_required
+@super_admin_required
+def delete_admin(id):
+    """删除管理员"""
+    user = User.query.get_or_404(id)
+    user.is_admin = False
+    try:
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'result': 'ok'}), 201
+    except:
+        return jsonify({'result': 'error'})
 
 

@@ -5,7 +5,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from . import manage
 from .forms import AdminLoginForm
-from ..models import Administrator, Post, SecondPageName, Activity, WebSetting
+from ..models import Administrator, Post, \
+    SecondPageName, Activity, WebSetting, User
 from ..decorators import super_admin_required
 
 
@@ -14,7 +15,12 @@ from ..decorators import super_admin_required
 @super_admin_required
 def index():
     """管理页面首页"""
-    return render_template('admin/index.html')
+    users = User.query.all()
+    posts = Post.query.all()
+    user_num = len(users)
+    page_num = len(posts)
+    return render_template('admin/index.html', user_num=user_num,
+                           page_num=page_num)
 
 
 @manage.route('/login', methods=["POST", "GET"])
@@ -115,7 +121,6 @@ def edit_activity(id):
 @super_admin_required
 def other():
     """其余设置"""
-    return render_template('admin/other.html')
+    admins = User.query.filter_by(is_admin=True).all()
+    return render_template('admin/other.html', admins=admins)
 
-
-# todo: 打印/生成活动报名表

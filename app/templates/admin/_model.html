@@ -70,3 +70,36 @@
 		</div>
 	</div>
 {% endmacro %}
+
+
+{% macro add_admin() %}
+	<!-- Modal -->
+	<div class="modal fade" id="add_admin" tabindex="-1" role="dialog"
+		 aria-labelledby="addAdmin">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="addAdmin"><b>添加管理员</b></h4>
+				</div>
+				<div class="modal-body text-center">
+					<form class="form">
+						<div class="form-group">
+							<label for="admin-data">用户名/邮箱：</label>
+							<input type="text" id="admin-data" name="admin-data"
+								   class="form-control"
+								   placeholder='username/email' required/>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn
+						btn-info" onclick="addAdmin()">添加</button>
+					<button type="button" class="btn btn-default"
+							data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
