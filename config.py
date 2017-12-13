@@ -45,7 +45,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'Ggzzhh65700'
 
     # 管理员邮箱
-    ADMIN_MAIL = os.environ.get('ADMIN_EMAIL')
+    ADMIN_MAIL = os.environ.get('ADMIN_EMAIL') or 'gggzh@139.com'
     # 管理员账号
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
     # 管理员密码
@@ -87,8 +87,8 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     """正常使用时的配置 以及数据库地址 发生错误时自动发送邮件"""
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-         'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
     @classmethod
     def init_app(cls, app):
