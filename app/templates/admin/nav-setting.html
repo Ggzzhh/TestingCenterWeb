@@ -96,6 +96,7 @@
         function delete_nav(id) {
             $('#myModal').modal('show');
             $('#delete').on('click', function () {
+                $('#myModal').modal('hide');
                 $.ajax({
                     type: 'DELETE',
                     url: "/api-v1.0/nav-setting/" + id,
