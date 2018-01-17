@@ -7,7 +7,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     """基础配置，导入所有配置中"""
     # 密匙
-    SECRET_KEY = os.environ.get('SECRET_KEY') or "PDSHHTY"
+    SECRET_KEY = os.environ.get('SECRET_KEY') or "SecretKey"
 
     # 数据库自动提交数据
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
@@ -26,7 +26,7 @@ class Config:
     MAIL_SUBJECT_PREFIX = '<平顶山浩瀚体育>'
 
     # 寄件人名称
-    MAIL_SENDER = '平顶山浩瀚体育 <gggzh@139.com>'
+    MAIL_SENDER = '平顶山浩瀚体育 <你的邮箱@test.com>'
 
     # 邮箱端口号
     MAIL_PORT = 465
@@ -41,14 +41,14 @@ class Config:
     MAIL_USE_SSL = True
 
     # 发送邮件所用的邮箱用户名以及密码
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'gggzh@139.com'
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'Ggzzhh65700'
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or '你的邮箱@test.com'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or '你的邮箱密码'
 
     # 管理员邮箱
-    ADMIN_MAIL = os.environ.get('ADMIN_EMAIL') or 'gggzh@139.com'
-    # 管理员账号
+    ADMIN_MAIL = os.environ.get('ADMIN_EMAIL') or '你的邮箱@test.com'
+    # 管理员账号 默认为admin 可修改 第一次运行时会自动注册
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
-    # 管理员密码
+    # 管理员密码 默认为admin 可修改 第一次运行时会自动注册
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or 'admin'
     # SSL安全协议开关 False会打开
     SSL_DISABLE = True
@@ -57,10 +57,10 @@ class Config:
     JSON_AS_ASCII = False
 
     # 存储图片的位置
-    # windows用'app\static\image'  linux用'app//static//image'
+    # windows用'app\static\image'  linux用'app//static//image' 或自定义
     UPLOAD_FOLDER = 'app//static//image'
 
-    # 分页设置
+    # 分页设置 每页显示数量
     POSTS_PER_PAGE = 15
 
     # 配置类可以定义 init_app() 类方法，其参数是程序实例。
